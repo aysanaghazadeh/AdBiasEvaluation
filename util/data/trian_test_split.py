@@ -48,7 +48,7 @@ def get_test_data(args):
     topics_data_file = os.path.join(args.data_path, 'train/Topics_train.json')
     test_file = os.path.join(args.data_path, f'train/test_set_images_{args.AD_type}.csv')
     if os.path.exists(test_file):
-        return pd.read_csv(test_file)
+        return pd.read_csv(test_file).values
     if args.AD_type == 'all':
         # Take exactly 290 samples from each dataset (PSA and Commercial)
         test_set = pd.concat([
