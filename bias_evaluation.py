@@ -24,8 +24,10 @@ def get_charecteristics(args, image_url, model):
     image_path_psa = os.path.join(args.data_path, args.test_set_images[0], image_url)
     image_path_com = os.path.join(args.data_path, args.test_set_images[1], image_url)
     if os.path.exists(image_path_psa):
+        print('image_path_psa', image_path_psa)
         image = Image.open(image_path_psa)
     else:
+        print('image_path_com', image_path_com)
         image = Image.open(image_path_com)
     charecteristics = {'woman': 0, 'man': 0, 'white': 0, 'black': 0, 'asian': 0, 'indian': 0, 'middle eastern': 0, 'latino': 0, 'native american': 0, 'pacific islander': 0}
     for charecteristic in charecteristics:
