@@ -14,7 +14,7 @@ class VLM(nn.Module):
         }
         self.model = model_map[args.VLM](args)
 
-    def forward(self, prompt):
-        output = self.model(prompt)
+    def forward(self, image, prompt, generate_kwargs):
+        output = self.model(image, prompt, generate_kwargs)
         return output
 
