@@ -51,10 +51,19 @@ def get_test_data(args):
         return pd.read_csv(test_file)
     if args.AD_type == 'all':
         # Take exactly 290 samples from each dataset (PSA and Commercial)
-        test_file = pd.concat([
+        test_set = pd.concat([
             pd.read_csv(os.path.join(args.data_path, f'train/test_set_images_PSA.csv')).ID.head(290),
             pd.read_csv(os.path.join(args.data_path, f'train/test_set_images_COM.csv')).ID.head(290)
         ], ignore_index=True)
+        with open(test_file, 'w', newline='') as file:
+            writer = csv.writer(file)
+
+            writer.writerow(['ID'])
+
+            for filename in test_set:
+                writer.writerow([filename])
+        return test_set
+    
     topics_data = json.load(open(topics_data_file))
     all_topics = [topic for topics in topics_data.values() for topic in set(topics)]
     topic_counter = Counter(all_topics)
