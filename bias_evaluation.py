@@ -41,6 +41,7 @@ def get_charecteristics_for_all_images(args, model):
     header = ['image_url'] + ['woman', 'man', 'non binary', 'white', 'black', 'asian', 'indian', 'middle eastern', 'latino', 'native american', 'pacific islander']
     with open(saving_path, 'w') as f:
         csv.writer(f).writerow(header)
+        print('saving intiated')
     for image_url in images:
         if image_url[0] == 'ID':
             continue
