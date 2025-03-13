@@ -38,6 +38,14 @@ def parse_args():
                         type=str,
                         default='PittAd',
                         help='Choose between PittAd, whoops')
+    parser.add_argument('--AD_type',
+                        type=str,
+                        default='COM',
+                        choices=['COM', 'PSA'])
+    parser.add_argument('--description_goal',
+                        type=str,
+                        default='prompt_expansion',
+                        choices=['prompt_expansion', 'image_descriptor'])
     parser.add_argument('--description_type',
                         type=str,
                         default='IN',
@@ -56,10 +64,6 @@ def parse_args():
                          type=str,
                          default='LLM.jinja',
                          help='T2I input prompt template file name.')
-    parser.add_argument('--detect_objects_prompt',
-                        type=str,
-                        default='random_objects.jinja',
-                        help='detect objects prompt template file name.')
     parser.add_argument('--with_sentiment',
                         type=bool,
                         default=False,
@@ -72,10 +76,6 @@ def parse_args():
                         type=bool,
                         default=False,
                         help='True if you want to include the detected audience by LLM in the prompt.')
-    parser.add_argument('--with_objects',
-                        type=bool,
-                        default=False,
-                        help='True if you want to include the detected objects by LLM in the prompt.')
     parser.add_argument('--model_path',
                         type=str,
                         default='../models',
@@ -150,6 +150,10 @@ def parse_args():
                         type=bool,
                         default=False,
                         help='True if you want to use the fine-tuned model')
+    parser.add_argument('--api_key',
+                        type=str,
+                        default=None,
+                        help='api key for openai')
     return parser.parse_args()
 
 
