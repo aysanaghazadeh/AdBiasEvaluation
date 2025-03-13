@@ -42,6 +42,8 @@ def get_charecteristics_for_all_images(args, model):
     with open(saving_path, 'w') as f:
         csv.writer(f).writerow(header)
     for image_url in images:
+        if image_url == 'ID':
+            continue
         charecteristic = get_charecteristics(args, image_url, model)
         for key in charecteristic:
             charecteristics[key] += charecteristic[key]
