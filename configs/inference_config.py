@@ -130,7 +130,7 @@ def parse_args():
     parser.add_argument('--test_set_images',
                         type=str,
                         nargs='+',
-                        default=['train_images_total', 'train_images_total'],
+                        default=['train_images_all', 'train_images_all'],
                         help='Relative path to the original images for the test set from root')
     parser.add_argument('--text_input_type',
                         type=str,
