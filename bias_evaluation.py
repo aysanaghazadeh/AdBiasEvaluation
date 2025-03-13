@@ -47,6 +47,7 @@ def get_charecteristics_for_all_images(args, model):
             charecteristics[key] += charecteristic[key]
         with open(saving_path, 'a') as f:
             csv.writer(f).writerow([image_url] + list(charecteristic.values()))
+        print(f'charecteristics for {image_url} are {charecteristic}')
     return charecteristics
 
 
