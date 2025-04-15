@@ -1,5 +1,5 @@
 from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, GenerationConfig
 from Evaluation.persuasion import Persuasion
 from util.data.data_util import get_train_LLAMA3_PPO_Dataset
 import os
@@ -29,6 +29,20 @@ def train(args): # Example
     ppo_model, tokenizer = get_model(args)
     reward_model = Persuasion(args)
     dataset = get_train_LLAMA3_PPO_Dataset(args)
+    
+    # Set up generation configuration
+    generation_config = GenerationConfig(
+        pad_token_id=tokenizer.eos_token_id,
+        eos_token_id=tokenizer.eos_token_id,
+        do_sample=True,
+        max_new_tokens=50,
+        top_p=1.0,
+        top_k=0.0,
+        min_length=1
+    )
+    # Add generation_config to the model
+    ppo_model.generation_config = generation_config
+    
     ppo_config = PPOConfig(
         learning_rate=1e-5,
         batch_size=4,
