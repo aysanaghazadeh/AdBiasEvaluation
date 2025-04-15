@@ -88,7 +88,7 @@ def train(args): # Example
                                     "do_sample": True,
                                     "pad_token_id": tokenizer.eos_token_id,
                                 }
-            inputs = tokenizer(queries, return_tensors="pt", padding=True, truncation=True).to(ppo_model.device)
+            inputs = tokenizer(queries, return_tensors="pt", padding=True, truncation=True).to(args.device)
             responses = ppo_trainer.policy_model.generate(**inputs, **generation_kwargs)    
             responses = tokenizer.batch_decode(responses, skip_special_tokens=True)
             # Get rewards using your custom function
