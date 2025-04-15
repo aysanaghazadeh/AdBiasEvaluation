@@ -77,7 +77,7 @@ def train(args): # Example
         value_model=ppo_model  # Explicitly set the value model
     )
     for epoch in range(args.epoch):
-        for i, batch in enumerate(ppo_trainer.policy_model.dataloader):
+        for i, batch in enumerate(ppo_trainer.dataloader):
             queries = tokenizer.batch_decode(batch["input_ids"], skip_special_tokens=True)
             responses = []
             generation_kwargs = {
@@ -90,7 +90,7 @@ def train(args): # Example
                                 }
             for query in queries:
                 
-                response = ppo_trainer.generate(query, **generation_kwargs)
+                response = ppo_trainer.policy_model.generate(query, **generation_kwargs)
                 responses.append(response)
 
             # Get rewards using your custom function
