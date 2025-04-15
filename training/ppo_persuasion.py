@@ -1,11 +1,13 @@
 from copy import copy
 from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead
-from transformers import AutoTokenizer, AutoModelForCausalLM, GenerationConfig
+from transformers import AutoTokenizer, AutoModelForCausalLM, GenerationConfig, BitsAndBytesConfig
 from Evaluation.persuasion import Persuasion
 from util.data.data_util import get_train_LLAMA3_PPO_Dataset
 import os
 from peft import get_peft_model, LoraConfig, TaskType, prepare_model_for_kbit_training
 import wandb
+import torch
+
 # Convert to value-head model
 
 def get_model(args):
@@ -18,10 +20,16 @@ def get_model(args):
     )
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     # model = AutoModelForCausalLM.from_pretrained(args.model_name)
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.float16,
+    )
     ppo_model = AutoModelForCausalLMWithValueHead.from_pretrained(
                                                                     args.model_name,
-                                                                    peft_config=lora_config,
-                                                                    load_in_4bit=True,
+                                                                    quantization_config=bnb_config,
+                                                                    device_map="auto"
                                                                 )
     # ppo_model.gradient_checkpointing_enable()
     # ppo_model = prepare_model_for_kbit_training(ppo_model)
