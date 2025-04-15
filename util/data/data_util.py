@@ -667,3 +667,63 @@ def analyze_object_directions(image_path, visualize=True):
         return objects, viz_image
     
     return objects, None
+
+
+
+def get_PPO_training_data(args, image_urls, tokenizer):
+    # tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-7B-Instruct",
+    #                                           #"meta-llama/Meta-Llama-3-8B-instruct",
+    #                                           token='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',
+    #                                           trust_remote_code=True,
+    #                                           padding='right')
+    tokenizer.pad_token = tokenizer.eos_token
+    
+    # Set chat template based on model type
+    if "qwen" in args.model_name.lower():
+        tokenizer.chat_template = "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
+    elif "llama" in args.model_name.lower():
+        tokenizer.chat_template = "{% for message in messages %}{% if message['role'] == 'user' %}{{ '<|user|>\n' + message['content'] + '\n' }}{% elif message['role'] == 'assistant' %}{{ '<|assistant|>\n' + message['content'] + '\n' }}{% endif %}{% endfor %}"
+    
+    def process(row):
+        # Apply chat template only if the prompt is in the correct format
+        if isinstance(row["prompt"], list) and all(isinstance(msg, dict) and "role" in msg and "content" in msg for msg in row["prompt"]):
+            row["prompt"] = tokenizer.apply_chat_template(row["prompt"], tokenize=False)
+        return row
+    
+    # Load QA data
+    QAs = json.load(open(os.path.join(args.data_path, args.test_set_QA)))
+    
+    # Create dataset with proper prompt formatting
+    dataset = {'prompt': []}
+    for image_url in image_urls:
+        if image_url in QAs:
+            QA = QAs[image_url]
+            # Format prompt based on model type
+            if "qwen" in args.model_name.lower() or "llama" in args.model_name.lower():
+                prompt = f"""Describe an advertisement image that conveys the following message in detail:
+
+                            - {'\n-'.join(QA[0])}
+
+                            Only return one paragraph of description without further explanation. Description of the image:"""
+                prompt = [{'content': prompt, 'role': 'user'}]
+            else:
+                prompt = f"""Describe an advertisement image that conveys the following message in detail:
+
+                            - {'\n-'.join(QA[0])}
+
+                            Only return one paragraph of description without further explanation. Description of the image:"""
+            dataset['prompt'].append(prompt)
+    
+    # Convert to dataset and process
+    dataset = Dataset.from_dict(dataset)
+    with PartialState().local_main_process_first():
+        ds = dataset.map(process)
+    
+    return ds
+
+
+def get_train_LLAMA3_PPO_Dataset(args):
+    image_urls = get_train_data(args)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+    dataset = get_PPO_training_data(args, image_urls, tokenizer)
+    return dataset

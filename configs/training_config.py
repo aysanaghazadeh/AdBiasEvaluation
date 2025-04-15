@@ -162,6 +162,14 @@ def parse_args():
                         type=str,
                         default='LLAMA3_instruct',
                         help='evaluation model for the reward model')
+    parser.add_argument('--model_name',
+                        type=str,
+                        default='meta-llama/Meta-Llama-3-8B-instruct',
+                        help='model name for the reward model')
+    parser.add_argument('--training_type',
+                        type=str,
+                        default='PPO',
+                        help='training type for the model')
     return parser.parse_args()
 
 
