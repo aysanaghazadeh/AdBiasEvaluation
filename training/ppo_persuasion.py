@@ -21,7 +21,7 @@ def get_model(args):
                                                                 )
     ppo_model.gradient_checkpointing_enable()
     ppo_model = prepare_model_for_kbit_training(ppo_model)
-    ppo_model = get_peft_model(ppo_model, lora_config).to(device=args.device)
+    ppo_model = get_peft_model(ppo_model, lora_config).to('cuda:0')
     return ppo_model, tokenizer
 
 def train(args): # Example

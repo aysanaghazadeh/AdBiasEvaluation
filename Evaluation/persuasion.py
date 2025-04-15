@@ -29,6 +29,7 @@ class Persuasion(nn.Module):
             'QWenVL': QWenVL
         }
         self.model = model_map[args.evaluation_model](args)
+        args.device = 'cuda:1'
         self.T2I = T2IModel(args)
 
     def forward(self, prompt):
