@@ -3,6 +3,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from Evaluation.persuasion import Persuasion
 from util.data.data_util import get_train_LLAMA3_PPO_Dataset
 import os
+from peft import LoraConfig
 # Convert to value-head model
 
 def get_model(args):
