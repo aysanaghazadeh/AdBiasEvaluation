@@ -32,6 +32,7 @@ def get_model(args):
                                                                     device_map="auto"
                                                                 )
     print(f"Top-level modules in ppo_model: {ppo_model._modules}")
+    ppo_model.base_model_prefix = "pretrained_model"
     # ppo_model.gradient_checkpointing_enable()
     # ppo_model = prepare_model_for_kbit_training(ppo_model)
     # ppo_model = get_peft_model(ppo_model, lora_config).to('cuda:0')
