@@ -19,6 +19,8 @@ def get_model(args):
         peft_type=TaskType.CAUSAL_LM,
     )
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
     # model = AutoModelForCausalLM.from_pretrained(args.model_name)
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
