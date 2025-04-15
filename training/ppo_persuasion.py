@@ -88,10 +88,9 @@ def train(args): # Example
                                     "do_sample": True,
                                     "pad_token_id": tokenizer.eos_token_id,
                                 }
-            for query in queries:
                 
-                response = ppo_trainer.policy_model.generate(query, **generation_kwargs)
-                responses.append(response)
+            responses = ppo_trainer.policy_model.generate(queries, **generation_kwargs)
+                
 
             # Get rewards using your custom function
             outputs = [reward_model(r) for r in responses]
