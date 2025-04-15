@@ -1,16 +1,15 @@
 from transformers import Qwen2VLForConditionalGeneration, AutoTokenizer, AutoProcessor
 from qwen_vl_utils import process_vision_info
 import torch
-
+import os
 
 class QWenVL(torch.nn.Module):
     def __init__(self, args):
         super().__init__()
+        os.environ["CUDA_VISIBLE_DEVICES"] = "2"
         self.model = Qwen2VLForConditionalGeneration.from_pretrained("Qwen/Qwen2-VL-7B-Instruct",
-                                                                     load_in_8bit=True,
-                                                                     torch_dtype="auto",
-                                                                     device_map={"": 2})
-
+                                                                     load_in_8bit=True,)
+        os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
         self.processor = AutoProcessor.from_pretrained("Qwen/Qwen2-VL-7B-Instruct")
 
 
