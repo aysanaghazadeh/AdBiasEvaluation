@@ -1,6 +1,6 @@
 from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from Evaluation.persuasion import PersuasionEvaluator
+from Evaluation.persuasion import Persuasion
 from util.data.data_util import get_train_LLAMA3_PPO_Dataset
 import os
 # Convert to value-head model
@@ -25,7 +25,7 @@ def get_model(args):
 
 def train(args): # Example
     ppo_model, tokenizer = get_model(args)
-    reward_model = PersuasionEvaluator(args)
+    reward_model = Persuasion(args)
     dataset = get_train_LLAMA3_PPO_Dataset(args)
     ppo_config = PPOConfig(
         model_name=args.model_name,
