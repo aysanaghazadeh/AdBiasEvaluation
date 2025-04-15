@@ -170,6 +170,10 @@ def parse_args():
                         type=str,
                         default='PPO',
                         help='training type for the model')
+    parser.add_argument('--epoch',
+                        type=int,
+                        default=10,
+                        help='number of epochs for the training')
     return parser.parse_args()
 
 
