@@ -3,7 +3,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from Evaluation.persuasion import Persuasion
 from util.data.data_util import get_train_LLAMA3_PPO_Dataset
 import os
-from peft import LoraConfig
+from peft import get_peft_model, LoraConfig, TaskType, prepare_model_for_kbit_training
 # Convert to value-head model
 
 def get_model(args):
@@ -12,16 +12,16 @@ def get_model(args):
         lora_alpha=64,
         lora_dropout=0.05,
         bias="none",
-        task_type="CAUSAL_LM",
+        peft_type=TaskType.CAUSAL_LM,
     )
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    model = AutoModelForCausalLM.from_pretrained(args.model_name)
+    # model = AutoModelForCausalLM.from_pretrained(args.model_name)
     ppo_model = AutoModelForCausalLMWithValueHead.from_pretrained(
-                                                                    args.model_name, 
-                                                                    peft_config=lora_config,
-                                                                    load_in_4bit=True,
-                                                                ).to(device=args.device)
-    
+                                                                    args.model_name,
+                                                                )
+    ppo_model.gradient_checkpointing_enable()
+    ppo_model = prepare_model_for_kbit_training(ppo_model)
+    ppo_model = get_peft_model(ppo_model, lora_config).to(device=args.device)
     return ppo_model, tokenizer
 
 def train(args): # Example
