@@ -11,7 +11,7 @@ class InternVL(nn.Module):
         super(InternVL, self).__init__()
         self.args = args
         self.model = AutoModel.from_pretrained(
-            "OpenGVLab/InternVL2-8B",
+            "OpenGVLab/InternVL2-4B",
             torch_dtype=torch.bfloat16,
             load_in_8bit=True,
             low_cpu_mem_usage=True,
