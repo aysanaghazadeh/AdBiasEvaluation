@@ -53,7 +53,7 @@ def train(args): # Example
         processing_class=tokenizer,
         data_collator=data_collator,
         reward_model=reward_model,
-        ref_model=ppo_model
+        ref_model=None
     )
     for epoch in range(args.epoch):
         for i, batch in enumerate(ppo_trainer.dataloader):
