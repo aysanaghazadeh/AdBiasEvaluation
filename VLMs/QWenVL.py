@@ -14,7 +14,7 @@ class QWenVL(torch.nn.Module):
         self.processor = AutoProcessor.from_pretrained("Qwen/Qwen2-VL-7B-Instruct")
 
 
-    def forward(self, image, prompt, generate_kwargs):
+    def forward(self, image, prompt, generate_kwargs={'max_new_tokens': 20}):
 
         messages = [
             {
