@@ -90,7 +90,7 @@ def train(args): # Example
                                 }
             inputs = tokenizer(queries, return_tensors="pt", padding=True, truncation=True).to(ppo_model.device)
             responses = ppo_trainer.policy_model.generate(**inputs, **generation_kwargs)    
-
+            responses = tokenizer.batch_decode(responses, skip_special_tokens=True)
             # Get rewards using your custom function
             outputs = [reward_model(r) for r in responses]
             rewards = [o[0] for o in outputs]
