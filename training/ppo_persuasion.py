@@ -40,14 +40,17 @@ def train(args): # Example
         output_dir=os.path.join(args.model_path, f"ppo_{args.model_name}_{args.evaluation_model}")
     )
     wandb.init(project="llama3-ppo-chat")
+    def data_collator(data):
+        prompts = [item["prompt"] for item in data]
+        tokenized = tokenizer(prompts, return_tensors="pt", padding=True, truncation=True)
+        return {"input_ids": tokenized["input_ids"]}
 
     # Initialize trainer
     ppo_trainer = PPOTrainer(
         args=ppo_config,
         model=ppo_model,
-        tokenizer=tokenizer,
         dataset=dataset,
-        data_collator=lambda data: {"input_ids": tokenizer(data["prompt"], return_tensors="pt", padding=True)["input_ids"]}
+        data_collator=data_collator
     )
     for epoch in range(args.epoch):
         for i, batch in enumerate(ppo_trainer.dataloader):
