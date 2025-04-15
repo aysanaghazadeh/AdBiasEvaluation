@@ -51,4 +51,4 @@ class Persuasion(nn.Module):
             output = self.model(eval_prompt, image)
         else:
             output = self.model(eval_prompt)
-        return extract_score(output)
+        return extract_score(output), image

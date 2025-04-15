@@ -50,34 +50,37 @@ def train(args): # Example
         data_collator=lambda data: {"input_ids": tokenizer(data["prompt"], return_tensors="pt", padding=True)["input_ids"]}
     )
     for epoch in range(args.epoch):
-    for i, batch in enumerate(ppo_trainer.dataloader):
-        queries = tokenizer.batch_decode(batch["input_ids"], skip_special_tokens=True)
-        responses = []
-        generation_kwargs = {
-                                "min_length": 1,
-                                "top_k": 0.0,
-                                "top_p": 1.0,
-                                "max_new_tokens": 50,
-                                "do_sample": True,
-                                "pad_token_id": tokenizer.eos_token_id,
-                            }
-        for query in queries:
-            
-            response = ppo_trainer.generate(query, **generation_kwargs)
-            responses.append(response)
+        for i, batch in enumerate(ppo_trainer.dataloader):
+            queries = tokenizer.batch_decode(batch["input_ids"], skip_special_tokens=True)
+            responses = []
+            generation_kwargs = {
+                                    "min_length": 1,
+                                    "top_k": 0.0,
+                                    "top_p": 1.0,
+                                    "max_new_tokens": 50,
+                                    "do_sample": True,
+                                    "pad_token_id": tokenizer.eos_token_id,
+                                }
+            for query in queries:
+                
+                response = ppo_trainer.generate(query, **generation_kwargs)
+                responses.append(response)
 
-        # Get rewards using your custom function
-        rewards = [reward_model(r) for r in responses]
-
-        # Run PPO step
-        stats = ppo_trainer.step(queries, responses, rewards)
-        ppo_trainer.logger.log(
-            {
-                "custom_metric/mean_reward": sum(rewards) / len(rewards),
-                "num_tokens": sum(len(r.split()) for r in responses),
-            }
-        )
-        wandb.log(stats)
-        print(f'epoch: {epoch}, step : {i}, \n queries: {queries}, \nresponses: {responses}')
-        print(f'stats: {stats}')
-        print('-'*100)
+            # Get rewards using your custom function
+            outputs = [reward_model(r) for r in responses]
+            rewards = [o[0] for o in outputs]
+            images = [o[1] for o in outputs]
+            # Run PPO step
+            stats = ppo_trainer.step(queries, responses, rewards)
+            ppo_trainer.logger.log(
+                {
+                    "custom_metric/mean_reward": sum(rewards) / len(rewards),
+                    "num_tokens": sum(len(r.split()) for r in responses),
+                }
+            )
+            if i % 10 == 0:
+                wandb.log(stats)
+                wandb.log({f"sample_{i}": wandb.Image(images[0], caption=f"Prompt: {queries[0]}")})
+                print(f'epoch: {epoch}, step : {i}, \n queries: {queries}, \nresponses: {responses}')
+                print(f'stats: {stats}')
+                print('-'*100)
