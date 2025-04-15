@@ -48,7 +48,7 @@ class Persuasion(nn.Module):
                 ASSISTANT:
         """
         if self.args.evaluation_model in ['LLAVA16', 'QWenVL', 'InternVL']:
-            output = self.model(eval_prompt, image)
+            output = self.model(image, eval_prompt)
         else:
             output = self.model(eval_prompt)
         return extract_score(output), image
