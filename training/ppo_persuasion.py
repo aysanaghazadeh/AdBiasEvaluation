@@ -29,7 +29,6 @@ def train(args): # Example
     reward_model = Persuasion(args)
     dataset = get_train_LLAMA3_PPO_Dataset(args)
     ppo_config = PPOConfig(
-        model_name=args.model_name,
         learning_rate=1e-5,
         batch_size=4,
         mini_batch_size=2,
