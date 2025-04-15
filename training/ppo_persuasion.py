@@ -41,7 +41,8 @@ def train(args): # Example
     ppo_model, tokenizer = get_model(args)
     reward_model = Persuasion(args)
     dataset = get_train_LLAMA3_PPO_Dataset(args)
-    
+    print(ppo_model.base_model_prefix)
+    print(dir(ppo_model))
     # Set up generation configuration
     # generation_config = GenerationConfig(
     #     pad_token_id=tokenizer.eos_token_id,
