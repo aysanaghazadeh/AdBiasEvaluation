@@ -1,3 +1,4 @@
+from copy import copy
 from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead
 from transformers import AutoTokenizer, AutoModelForCausalLM, GenerationConfig
 from Evaluation.persuasion import Persuasion
@@ -67,7 +68,7 @@ def train(args): # Example
         processing_class=tokenizer,
         data_collator=data_collator,
         reward_model=reward_model,
-        ref_model=None
+        ref_model=copy(ppo_model)  # Set ref_model to the same model as policy model
     )
     for epoch in range(args.epoch):
         for i, batch in enumerate(ppo_trainer.dataloader):
