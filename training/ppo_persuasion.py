@@ -51,7 +51,9 @@ def train(args): # Example
         model=ppo_model,
         train_dataset=dataset,
         processing_class=tokenizer,
-        data_collator=data_collator
+        data_collator=data_collator,
+        reward_model=reward_model,
+        ref_model=ppo_model
     )
     for epoch in range(args.epoch):
         for i, batch in enumerate(ppo_trainer.dataloader):
