@@ -6,7 +6,6 @@ import os
 class QWenVL(torch.nn.Module):
     def __init__(self, args):
         super().__init__()
-        os.environ["CUDA_VISIBLE_DEVICES"] = "2"
         self.model = Qwen2VLForConditionalGeneration.from_pretrained("Qwen/Qwen2-VL-7B-Instruct",
                                                                      load_in_8bit=True,
                                                                      device_map="auto")
@@ -40,7 +39,7 @@ class QWenVL(torch.nn.Module):
             padding=True,
             return_tensors="pt",
         )
-        inputs = inputs.to("cuda:0")
+        inputs = inputs.to("cuda")
 
         # Inference: Generation of the output
         generated_ids = self.model.generate(**inputs,
