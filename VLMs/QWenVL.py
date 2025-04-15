@@ -40,7 +40,7 @@ class QWenVL(torch.nn.Module):
             padding=True,
             return_tensors="pt",
         )
-        inputs = inputs.to("cuda:2")
+        inputs = inputs.to("cuda:0")
 
         # Inference: Generation of the output
         generated_ids = self.model.generate(**inputs,
