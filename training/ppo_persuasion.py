@@ -44,6 +44,17 @@ def train(args): # Example
     # Add generation_config to the model
     ppo_model.generation_config = generation_config
     
+    # Create a separate value model
+    value_model = AutoModelForCausalLM.from_pretrained(args.model_name)
+    value_model = prepare_model_for_kbit_training(value_model)
+    value_model = get_peft_model(value_model, LoraConfig(
+        r=16,
+        lora_alpha=64,
+        lora_dropout=0.05,
+        bias="none",
+        peft_type=TaskType.CAUSAL_LM,
+    )).to('cuda:0')
+    
     ppo_config = PPOConfig(
         learning_rate=1e-5,
         batch_size=4,
@@ -68,7 +79,8 @@ def train(args): # Example
         processing_class=tokenizer,
         data_collator=data_collator,
         reward_model=reward_model,
-        ref_model=copy(ppo_model)  # Set ref_model to the same model as policy model
+        ref_model=copy(ppo_model),  # Set ref_model to a copy of the policy model
+        value_model=value_model  # Explicitly set the value model
     )
     for epoch in range(args.epoch):
         for i, batch in enumerate(ppo_trainer.dataloader):
