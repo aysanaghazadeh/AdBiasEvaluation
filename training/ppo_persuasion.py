@@ -43,7 +43,7 @@ def train(args): # Example
 
     # Initialize trainer
     ppo_trainer = PPOTrainer(
-        config=ppo_config,
+        args=ppo_config,
         model=ppo_model,
         tokenizer=tokenizer,
         dataset=dataset,
