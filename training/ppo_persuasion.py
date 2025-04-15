@@ -49,7 +49,8 @@ def train(args): # Example
     ppo_trainer = PPOTrainer(
         args=ppo_config,
         model=ppo_model,
-        dataset=dataset,
+        train_dataset=dataset,
+        processing_class=tokenizer,
         data_collator=data_collator
     )
     for epoch in range(args.epoch):
