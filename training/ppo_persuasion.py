@@ -53,7 +53,7 @@ def train(args): # Example
         lora_dropout=0.05,
         bias="none",
         peft_type=TaskType.CAUSAL_LM,
-    )).to('cuda:0')
+    ))
     
     ppo_config = PPOConfig(
         learning_rate=1e-5,
