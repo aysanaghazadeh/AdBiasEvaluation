@@ -94,7 +94,7 @@ def train(args): # Example
         data_collator=data_collator,
         reward_model=reward_model,
         ref_model=None,  # Set ref_model to a copy of the policy model
-        # value_model=value_model  # Explicitly set the value model
+        value_model=ppo_model  # Explicitly set the value model
     )
     for epoch in range(args.epoch):
         for i, batch in enumerate(ppo_trainer.dataloader):
