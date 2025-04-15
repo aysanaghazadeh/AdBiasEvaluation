@@ -8,8 +8,8 @@ class QWenVL(torch.nn.Module):
         super().__init__()
         os.environ["CUDA_VISIBLE_DEVICES"] = "2"
         self.model = Qwen2VLForConditionalGeneration.from_pretrained("Qwen/Qwen2-VL-7B-Instruct",
-                                                                     load_in_8bit=True,)
-        os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
+                                                                     load_in_8bit=True,
+                                                                     device_map="auto")
         self.processor = AutoProcessor.from_pretrained("Qwen/Qwen2-VL-7B-Instruct")
 
 
