@@ -1,3 +1,5 @@
+import os
+print(os.getcwd())
 from configs.training_config import get_args
 from training.ppo_persuasion import train as ppo_train
 

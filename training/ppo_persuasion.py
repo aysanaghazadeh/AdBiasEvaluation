@@ -36,7 +36,7 @@ def train(args): # Example
         log_with="wandb",
         project_kwargs={"project": "ppo-persuasion"},
         logging_steps=10,  # Log every 10 PPO updates
-        output_dir=os.path.join(args.model_path, "ppo_model")
+        output_dir=os.path.join(args.model_path, f"ppo_{args.model_name}_{args.evaluation_model}")
     )
 
     # Initialize trainer
