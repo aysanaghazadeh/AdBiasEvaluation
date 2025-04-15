@@ -45,29 +45,7 @@ def train(args): # Example
     dataset = get_train_LLAMA3_PPO_Dataset(args)
     print(ppo_model.base_model_prefix)
     print(dir(ppo_model))
-    # Set up generation configuration
-    # generation_config = GenerationConfig(
-    #     pad_token_id=tokenizer.eos_token_id,
-    #     eos_token_id=tokenizer.eos_token_id,
-    #     do_sample=True,
-    #     max_new_tokens=50,
-    #     top_p=1.0,
-    #     top_k=0.0,
-    #     min_length=1
-    # )
-    # # Add generation_config to the model
-    # ppo_model.generation_config = generation_config
-    
-    # Create a separate value model
-    # value_model = AutoModelForCausalLM.from_pretrained(args.model_name)
-    # value_model = prepare_model_for_kbit_training(value_model)
-    # value_model = get_peft_model(value_model, LoraConfig(
-    #     r=16,
-    #     lora_alpha=64,
-    #     lora_dropout=0.05,
-    #     bias="none",
-    #     peft_type=TaskType.CAUSAL_LM,
-    # ))
+    print(len(dataset))
     
     ppo_config = PPOConfig(
         learning_rate=1e-5,
