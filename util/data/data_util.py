@@ -5,15 +5,12 @@ from transformers import AutoTokenizer
 from datasets import Dataset, Features, Sequence, Value, Array3D
 import torchvision.transforms as transforms
 from PIL import Image
-import pandas as pd
 import os
 import json
 import torch
 from torch.utils.data import DataLoader
 from torchvision.transforms.functional import crop
 import numpy as np
-import tensorflow as tf
-import tensorflow_hub as hub
 import cv2
 import mediapipe as mp
 from PIL import Image, ImageDraw
