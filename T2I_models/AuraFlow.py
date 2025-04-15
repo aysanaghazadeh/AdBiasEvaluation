@@ -17,7 +17,7 @@ class AuraFlow(nn.Module):
             torch_dtype=torch.float16,
             variant="fp16",
             quantization_config=quantization_config
-        ).to("cuda")
+        ).to(args.device)
 
     def forward(self, prompt):
         image = self.pipeline(
