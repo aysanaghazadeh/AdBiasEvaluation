@@ -18,7 +18,7 @@ class InternVL(nn.Module):
             device_map={'': 2},
             trust_remote_code=True).eval()
         self.tokenizer = AutoTokenizer.from_pretrained("OpenGVLab/InternVL2-4B",
-                                                       trust_remote_code=True)
+                                                       trust_remote_code=True).to("cuda:2")
         # path = "OpenGVLab/InternVL-Chat-V1-1"
         # self.model = AutoModel.from_pretrained(
         #     path,
