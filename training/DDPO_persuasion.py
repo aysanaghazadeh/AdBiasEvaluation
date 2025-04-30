@@ -137,8 +137,7 @@ def image_outputs_logger(image_data, global_step, accelerate_logger):
     )
 
 
-if __name__ == "__main__":
-    args = get_args()
+def trian(args):
     parser = HfArgumentParser((args, DDPOConfig))
     script_args, training_args = parser.parse_args_into_dataclasses()
     training_args.project_kwargs = {
