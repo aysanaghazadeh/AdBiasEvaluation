@@ -724,3 +724,14 @@ def get_train_LLAMA3_PPO_Dataset(args):
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     dataset = get_PPO_training_data(args, image_urls, tokenizer)
     return dataset
+
+
+def get_train_DDPO_persuasion_Dataset(args):
+    image_urls = get_train_data(args)
+    QAs = json.load(open(os.path.join(args.data_path, args.test_set_QA)))
+    prompts = []
+    for image_url in image_urls:
+        prompt = f"""Generate an advertisement image that conveys the following message in detail: \n {'\n'.join(QAs[image_url][0])}"""
+        prompts.append(prompt)
+    
+    return prompts

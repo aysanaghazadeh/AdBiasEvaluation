@@ -12,9 +12,9 @@ from VLMs.QWenVL import QWenVL
 from T2I_models.T2I_model import T2IModel
 
 
-class Persuasion(nn.Module):
+class PersuasionScorer(nn.Module):
     def __init__(self, args):
-        super(Persuasion, self).__init__()
+        super(PersuasionScorer, self).__init__()
         self.args = args
         model_map = {
             'Mistral7B': Mistral7B,
@@ -29,17 +29,16 @@ class Persuasion(nn.Module):
             'QWenVL': QWenVL
         }
         self.model = model_map[args.evaluation_model](args)
-        args.device = 'cuda:1'
-        self.T2I = T2IModel(args)
+        
 
-    def forward(self, prompt):
+    @torch.no_grad()
+    def forward(self, image):
         def extract_score(output):
             string_value = output.split('Answer: ')[-1]
             # Extract only the digit from the string
             int_value = int(''.join(filter(str.isdigit, string_value)))
             return int_value
 
-        image = self.T2I(prompt)
         eval_prompt = """
                 <image>\n USER:
                 Context: If the image convinces the audience to take an action it is considered persuasive.

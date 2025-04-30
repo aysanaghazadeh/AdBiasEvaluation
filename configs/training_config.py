@@ -174,6 +174,24 @@ def parse_args():
                         type=int,
                         default=10,
                         help='number of epochs for the training')
+    parser.add_argument('--pretrained_model',
+                        type=str,
+                        default='runwayml/stable-diffusion-v1-5',
+                        help='pretrained model for the training')
+    parser.add_argument('--pretrained_revision',
+                        type=str,
+                        default='main',
+                        help='pretrained model revision for the training')
+    parser.add_argument('--hf_hub_model_id',
+                        type=str,
+                        default='ddpo-finetuned-stable-diffusion',
+                        help='huggingface model id for the training')
+    parser.add_argument('--use_lora',
+                        type=bool,
+                        default=True,
+                        help='use lora for the training')
+    
+    
     return parser.parse_args()
 
 

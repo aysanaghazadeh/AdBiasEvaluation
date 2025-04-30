@@ -1,7 +1,7 @@
 from copy import copy
 from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead
 from transformers import AutoTokenizer, AutoModelForCausalLM, GenerationConfig, BitsAndBytesConfig
-from Evaluation.persuasion import Persuasion
+from Evaluation.persuasion import PersuasionScorer
 from util.data.data_util import get_train_LLAMA3_PPO_Dataset
 import os
 from peft import get_peft_model, LoraConfig, TaskType, prepare_model_for_kbit_training
@@ -43,7 +43,7 @@ def get_model(args):
 
 def train(args): # Example
     ppo_model, tokenizer = get_model(args)
-    reward_model = Persuasion(args)
+    reward_model = PersuasionScorer(args)
     dataset = get_train_LLAMA3_PPO_Dataset(args)
     print(ppo_model.base_model_prefix)
     print(dir(ppo_model))
