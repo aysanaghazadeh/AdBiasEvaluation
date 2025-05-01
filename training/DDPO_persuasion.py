@@ -139,19 +139,27 @@ def image_outputs_logger(image_data, global_step, accelerate_logger):
 def train(args):
     # list of example prompts to feed stable diffusion
     animals = get_train_DDPO_persuasion_Dataset(args)
-    parser = HfArgumentParser((args, DDPOConfig))
-    script_args, training_args = parser.parse_args_into_dataclasses()
-    training_args.project_kwargs = {
-        "logging_dir": "./logs",
-        "automatic_checkpoint_naming": True,
-        "total_limit": 5,
-        "project_dir": "./save",
-    }
+    
+    # Create DDPOConfig with our arguments
+    training_args = DDPOConfig(
+        num_epochs=args.epoch,
+        train_gradient_accumulation_steps=1,
+        sample_num_steps=50,
+        sample_batch_size=6,
+        train_batch_size=3,
+        sample_num_batches_per_epoch=4,
+        per_prompt_stat_tracking=True,
+        per_prompt_stat_tracking_buffer_size=32,
+        tracker_project_name="stable_diffusion_training",
+        log_with="wandb",
+        output_dir="./save",
+        push_to_hub=False
+    )
 
     pipeline = DefaultDDPOStableDiffusionPipeline(
-        script_args.pretrained_model,
-        pretrained_model_revision=script_args.pretrained_revision,
-        use_lora=script_args.use_lora,
+        args.pretrained_model,
+        pretrained_model_revision=args.pretrained_revision,
+        use_lora=args.use_lora,
     )
 
     trainer = DDPOTrainer(
@@ -167,4 +175,4 @@ def train(args):
     # Save and push to hub
     trainer.save_model(training_args.output_dir)
     if training_args.push_to_hub:
-        trainer.push_to_hub(dataset_name=script_args.dataset_name)
+        trainer.push_to_hub(dataset_name=args.hf_hub_model_id)
