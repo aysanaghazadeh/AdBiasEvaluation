@@ -136,7 +136,7 @@ def image_outputs_logger(image_data, global_step, accelerate_logger):
     )
 
 
-def trian(args):
+def train(args):
     # list of example prompts to feed stable diffusion
     animals = get_train_DDPO_persuasion_Dataset(args)
     parser = HfArgumentParser((args, DDPOConfig))
