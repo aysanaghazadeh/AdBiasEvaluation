@@ -143,16 +143,15 @@ def train(args):
     # Create DDPOConfig with our arguments
     training_args = DDPOConfig(
         num_epochs=args.epoch,
-        train_gradient_accumulation_steps=1,
-        sample_num_steps=50,
-        sample_batch_size=6,
-        train_batch_size=3,
+        train_gradient_accumulation_steps=4,
+        sample_num_steps=500,
+        sample_batch_size=args.batch_size,
+        train_batch_size=args.batch_size,
         sample_num_batches_per_epoch=4,
         per_prompt_stat_tracking=True,
         per_prompt_stat_tracking_buffer_size=32,
         tracker_project_name="stable_diffusion_training",
         log_with="wandb",
-        output_dir="./save",
         push_to_hub=False
     )
 
@@ -173,6 +172,6 @@ def train(args):
     trainer.train()
 
     # Save and push to hub
-    trainer.save_model(training_args.output_dir)
+    trainer.save_model(args.output_dir)
     if training_args.push_to_hub:
         trainer.push_to_hub(dataset_name=args.hf_hub_model_id)
