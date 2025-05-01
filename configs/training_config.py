@@ -190,6 +190,10 @@ def parse_args():
                         type=bool,
                         default=True,
                         help='use lora for the training')
+    parser.add_argument('--batch_size',
+                        type=int,
+                        default=1,
+                        help='batch size for the training')
     
     
     return parser.parse_args()
