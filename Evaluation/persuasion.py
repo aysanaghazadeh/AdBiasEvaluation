@@ -10,7 +10,7 @@ from LLMs.InternLM import InternLM
 from VLMs.InternVL2 import InternVL
 from VLMs.LLAVA16 import LLAVA16
 from VLMs.QWenVL import QWenVL
-from T2I_models.T2I_model import T2IModel
+# from T2I_models.T2I_model import T2IModel
 
 
 class PersuasionScorer(nn.Module):

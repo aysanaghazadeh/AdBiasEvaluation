@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 from torchvision.transforms.functional import crop
 import numpy as np
 import cv2
-import mediapipe as mp
+# import mediapipe as mp
 from PIL import Image, ImageDraw
 
 
