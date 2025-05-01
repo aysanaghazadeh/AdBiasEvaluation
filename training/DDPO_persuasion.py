@@ -112,11 +112,10 @@ def persuasion_scorer(args):
     return _fn
 
 
-# list of example prompts to feed stable diffusion
-animals = get_train_DDPO_persuasion_Dataset()
 
 
-def prompt_fn():
+
+def prompt_fn(animals):
     return np.random.choice(animals), {}
 
 
@@ -138,6 +137,8 @@ def image_outputs_logger(image_data, global_step, accelerate_logger):
 
 
 def trian(args):
+    # list of example prompts to feed stable diffusion
+    animals = get_train_DDPO_persuasion_Dataset(args)
     parser = HfArgumentParser((args, DDPOConfig))
     script_args, training_args = parser.parse_args_into_dataclasses()
     training_args.project_kwargs = {
@@ -156,7 +157,7 @@ def trian(args):
     trainer = DDPOTrainer(
         training_args,
         persuasion_scorer(args),
-        prompt_fn,
+        prompt_fn(animals),
         pipeline,
         image_samples_hook=image_outputs_logger,
     )
