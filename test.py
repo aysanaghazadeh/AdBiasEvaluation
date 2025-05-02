@@ -230,8 +230,8 @@ if __name__ == "__main__":
         pipeline,
         image_samples_hook=image_outputs_logger
     )
+    trainer.accelerator.trackers.append(WandbCallback(project_name="test_DDPO"))
     trainer.accelerator.init_trackers("test_DDPO")
-
     trainer.train()
 
     # Save and push to hub
