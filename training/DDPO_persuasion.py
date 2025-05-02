@@ -198,7 +198,6 @@ def train(args):
         prompt_fn(animals),
         pipeline,
         image_samples_hook=image_outputs_logger,
-        output_dir=args.output_dir
     )
 
     trainer.train()
