@@ -98,18 +98,26 @@ def persuasion_scorer(args):
     scorer = PersuasionScorer(
         args=args
     )
-    # Move scorer to the specified device
-    scorer = scorer.to(args.device)
-    scorer.eval()  # Set to evaluation mode
+    if is_torch_npu_available():
+        scorer = scorer.npu()
+    elif is_torch_xpu_available():
+        scorer = scorer.xpu()
+    else:
+        scorer = scorer.cuda()
 
     def _fn(images, prompts, metadata):
         # Convert images to PIL format
         from PIL import Image
         import torchvision.transforms as transforms
         
+        # Get the device of the scorer
+        scorer_device = next(scorer.parameters()).device
+        
         # Convert tensor to PIL images
         pil_images = []
         for img in images:
+            # Ensure image is on the same device as scorer
+            img = img.to(scorer_device)
             # Convert from [0, 1] to [0, 255] and to uint8
             img = (img * 255).round().clamp(0, 255).to(torch.uint8)
             # Convert to PIL Image
@@ -163,7 +171,7 @@ def train(args):
     training_args = DDPOConfig(
         num_epochs=args.epoch,
         train_gradient_accumulation_steps=4,
-        sample_num_steps=500,
+        sample_num_steps=10,
         sample_batch_size=args.batch_size,
         train_batch_size=args.batch_size,
         sample_num_batches_per_epoch=4,
