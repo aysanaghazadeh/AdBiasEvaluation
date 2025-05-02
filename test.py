@@ -78,8 +78,7 @@ class ScriptArguments:
     )
     
     use_lora: bool = field(default=True, metadata={"help": "Whether to use LoRA."})
-    accelerator_kwargs: dict = field(default={'init_trackers': 'test_DDPO'}, metadata={"help": "Accelerator kwargs."})
-
+    
 
 class MLP(nn.Module):
     def __init__(self):
@@ -215,6 +214,7 @@ if __name__ == "__main__":
         "total_limit": 5,
         "project_dir": "../models/ddpo_checkpoints",
     }
+    training_args.accelerator_kwargs = {'init_trackers': 'test_DDPO'}
 
     pipeline = DefaultDDPOStableDiffusionPipeline(
         script_args.pretrained_model,
