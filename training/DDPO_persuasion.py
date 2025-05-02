@@ -128,7 +128,7 @@ def persuasion_scorer(args):
         for img in pil_images:
             score, _ = scorer(img)
             scores.append(score)
-            wandb.Image({'image': img, 'caption': str(score)})
+            wandb.Image(image=img, caption=str(score))
         
         # Convert scores to tensor and move to the original device
         scores_tensor = torch.tensor(scores, device=images.device)
