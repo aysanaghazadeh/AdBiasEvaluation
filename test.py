@@ -229,6 +229,7 @@ if __name__ == "__main__":
         prompt_fn,
         pipeline,
         image_samples_hook=image_outputs_logger,
+        accelerator_kwargs={'init_trackers': 'test_DDPO'}
     )
 
     trainer.train()
