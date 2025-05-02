@@ -167,6 +167,10 @@ def train(args):
     # list of example prompts to feed stable diffusion
     animals = get_train_DDPO_persuasion_Dataset(args)
     
+    # Create output directory if it doesn't exist
+    # output_dir = os.path.join(args.result_path, "ddpo_checkpoints")
+    # os.makedirs(output_dir, exist_ok=True)
+    
     # Create DDPOConfig with our arguments
     training_args = DDPOConfig(
         num_epochs=args.epoch,
@@ -179,7 +183,8 @@ def train(args):
         per_prompt_stat_tracking_buffer_size=32,
         tracker_project_name="stable_diffusion_training",
         log_with="wandb",
-        push_to_hub=False
+        push_to_hub=False,
+        output_dir=args.output_dir
     )
 
     pipeline = DefaultDDPOStableDiffusionPipeline(
