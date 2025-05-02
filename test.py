@@ -222,7 +222,6 @@ if __name__ == "__main__":
         use_lora=script_args.use_lora,
     )
     
-    DefaultDDPOStableDiffusionPipeline.accelerator.init_tracker("test_DDPO")
 
     trainer = DDPOTrainer(
         training_args,
