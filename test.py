@@ -221,6 +221,8 @@ if __name__ == "__main__":
         pretrained_model_revision=script_args.pretrained_revision,
         use_lora=script_args.use_lora,
     )
+    training_args.log_with = "wandb"
+    training_args.report_to="wandb"
     
 
     trainer = DDPOTrainer(
@@ -230,12 +232,6 @@ if __name__ == "__main__":
         pipeline,
         image_samples_hook=image_outputs_logger,
     )
-    accelerator = Accelerator()
-    accelerator.init_trackers(
-        project_name="ad_bias_ddpo",
-        config={"train_batch_size": 4},  # optional logging config
-    )
-    training_args.accelerator = accelerator
     trainer.accelerator.init_trackers(project_name="test_DDPO")
     trainer.train()
 
