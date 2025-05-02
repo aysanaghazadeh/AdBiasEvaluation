@@ -214,7 +214,7 @@ if __name__ == "__main__":
         "total_limit": 5,
         "project_dir": "../models/ddpo_checkpoints",
     }
-    training_args.accelerator_kwargs = {'init_trackers': 'test_DDPO'}
+    # training_args.accelerator_kwargs = {'init_trackers': 'test_DDPO'}
 
     pipeline = DefaultDDPOStableDiffusionPipeline(
         script_args.pretrained_model,
