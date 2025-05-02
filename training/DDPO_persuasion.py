@@ -98,26 +98,18 @@ def persuasion_scorer(args):
     scorer = PersuasionScorer(
         args=args
     )
-    if is_torch_npu_available():
-        scorer = scorer.npu()
-    elif is_torch_xpu_available():
-        scorer = scorer.xpu()
-    else:
-        scorer = scorer.cuda()
+    # Move scorer to the specified device
+    scorer = scorer.to(args.device)
+    scorer.eval()  # Set to evaluation mode
 
     def _fn(images, prompts, metadata):
         # Convert images to PIL format
         from PIL import Image
         import torchvision.transforms as transforms
         
-        # Get the device of the scorer
-        scorer_device = next(scorer.parameters()).device
-        
         # Convert tensor to PIL images
         pil_images = []
         for img in images:
-            # Ensure image is on the same device as scorer
-            img = img.to(scorer_device)
             # Convert from [0, 1] to [0, 255] and to uint8
             img = (img * 255).round().clamp(0, 255).to(torch.uint8)
             # Convert to PIL Image
@@ -128,7 +120,7 @@ def persuasion_scorer(args):
         for img in pil_images:
             score, _ = scorer(img)
             scores.append(score)
-            wandb.image({'image':{img}, 'caption':{score}})
+            wandb.image({'image': img, 'caption': str(score)})
         
         # Convert scores to tensor and move to the original device
         scores_tensor = torch.tensor(scores, device=images.device)
