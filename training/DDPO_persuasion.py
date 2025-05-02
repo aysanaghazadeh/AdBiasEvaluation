@@ -116,7 +116,9 @@ def persuasion_scorer(args):
 
 
 def prompt_fn(animals):
-    return np.random.choice(animals), {}
+    def _prompt_fn():
+        return np.random.choice(animals), {}
+    return _prompt_fn
 
 
 def image_outputs_logger(image_data, global_step, accelerate_logger):
