@@ -40,6 +40,7 @@ from trl import DDPOConfig, DDPOTrainer, DefaultDDPOStableDiffusionPipeline
 from Evaluation.persuasion import PersuasionScorer
 from util.data.data_util import get_train_DDPO_persuasion_Dataset
 from configs.training_config import get_args
+import wandb
 
 class MLP(nn.Module):
     def __init__(self):
@@ -109,9 +110,14 @@ def persuasion_scorer(args):
         from PIL import Image
         import torchvision.transforms as transforms
         
+        # Get the device of the scorer
+        scorer_device = next(scorer.parameters()).device
+        
         # Convert tensor to PIL images
         pil_images = []
         for img in images:
+            # Ensure image is on the same device as scorer
+            img = img.to(scorer_device)
             # Convert from [0, 1] to [0, 255] and to uint8
             img = (img * 255).round().clamp(0, 255).to(torch.uint8)
             # Convert to PIL Image
@@ -122,8 +128,11 @@ def persuasion_scorer(args):
         for img in pil_images:
             score, _ = scorer(img)
             scores.append(score)
+            wandb.image({'image':{img}, 'caption':{score}})
         
-        return torch.tensor(scores, device=images.device), {}
+        # Convert scores to tensor and move to the original device
+        scores_tensor = torch.tensor(scores, device=images.device)
+        return scores_tensor, {}
 
     return _fn
 
