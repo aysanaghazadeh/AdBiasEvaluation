@@ -230,7 +230,7 @@ if __name__ == "__main__":
         pipeline,
         image_samples_hook=image_outputs_logger
     )
-    trainer.accelerator.init_trackers(project_name="my-project")
+    trainer.accelerator.log_with = "wandb"
     trainer.accelerator.init_trackers("test_DDPO")
     trainer.train()
 
