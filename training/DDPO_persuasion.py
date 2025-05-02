@@ -41,6 +41,9 @@ from Evaluation.persuasion import PersuasionScorer
 from util.data.data_util import get_train_DDPO_persuasion_Dataset
 from configs.training_config import get_args
 import wandb
+from accelerate import Accelerator
+
+
 
 class MLP(nn.Module):
     def __init__(self):
@@ -167,6 +170,8 @@ def train(args):
     # list of example prompts to feed stable diffusion
     animals = get_train_DDPO_persuasion_Dataset(args)
     
+    accelerator = Accelerator(project_dir=args.output_dir)
+    
     # Create output directory if it doesn't exist
     # output_dir = os.path.join(args.result_path, "ddpo_checkpoints")
     # os.makedirs(output_dir, exist_ok=True)
@@ -189,7 +194,7 @@ def train(args):
     pipeline = DefaultDDPOStableDiffusionPipeline(
         args.pretrained_model,
         pretrained_model_revision=args.pretrained_revision,
-        use_lora=args.use_lora,
+        use_lora=args.use_lora
     )
 
     trainer = DDPOTrainer(
@@ -198,6 +203,7 @@ def train(args):
         prompt_fn(animals),
         pipeline,
         image_samples_hook=image_outputs_logger,
+        accelerator=accelerator
     )
 
     trainer.train()
