@@ -183,8 +183,7 @@ def train(args):
         per_prompt_stat_tracking_buffer_size=32,
         tracker_project_name="stable_diffusion_training",
         log_with="wandb",
-        push_to_hub=False,
-        output_dir=args.output_dir
+        push_to_hub=False
     )
 
     pipeline = DefaultDDPOStableDiffusionPipeline(
@@ -199,6 +198,7 @@ def train(args):
         prompt_fn(animals),
         pipeline,
         image_samples_hook=image_outputs_logger,
+        output_dir=args.output_dir
     )
 
     trainer.train()
