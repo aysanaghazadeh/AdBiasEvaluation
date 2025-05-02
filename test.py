@@ -39,10 +39,6 @@ from transformers import CLIPModel, CLIPProcessor, HfArgumentParser, is_torch_np
 from trl import DDPOConfig, DDPOTrainer, DefaultDDPOStableDiffusionPipeline
 
 
-from accelerate import Accelerator
-
-accelerator = Accelerator(log_with="wandb")  # or "wandb", "comet", etc.
-accelerator.init_trackers("test_DDPO")
 
 
 @dataclass
@@ -80,7 +76,9 @@ class ScriptArguments:
         default="aesthetic-model.pth",
         metadata={"help": "Hugging Face model filename for aesthetic scorer model weights."},
     )
+    
     use_lora: bool = field(default=True, metadata={"help": "Whether to use LoRA."})
+    accelerator_kwargs: dict = field(default={'init_trackers': 'test_DDPO'}, metadata={"help": "Accelerator kwargs."})
 
 
 class MLP(nn.Module):
@@ -222,6 +220,7 @@ if __name__ == "__main__":
         script_args.pretrained_model,
         pretrained_model_revision=script_args.pretrained_revision,
         use_lora=script_args.use_lora,
+        
     )
 
     trainer = DDPOTrainer(
