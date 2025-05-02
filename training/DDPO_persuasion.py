@@ -105,9 +105,25 @@ def persuasion_scorer(args):
         scorer = scorer.cuda()
 
     def _fn(images, prompts, metadata):
-        images = (images * 255).round().clamp(0, 255).to(torch.uint8)
-        scores = scorer(images)
-        return scores, {}
+        # Convert images to PIL format
+        from PIL import Image
+        import torchvision.transforms as transforms
+        
+        # Convert tensor to PIL images
+        pil_images = []
+        for img in images:
+            # Convert from [0, 1] to [0, 255] and to uint8
+            img = (img * 255).round().clamp(0, 255).to(torch.uint8)
+            # Convert to PIL Image
+            pil_img = transforms.ToPILImage()(img)
+            pil_images.append(pil_img)
+        
+        scores = []
+        for img in pil_images:
+            score, _ = scorer(img)
+            scores.append(score)
+        
+        return torch.tensor(scores, device=images.device), {}
 
     return _fn
 
