@@ -38,8 +38,13 @@ from transformers import CLIPModel, CLIPProcessor, HfArgumentParser, is_torch_np
 
 from trl import DDPOConfig, DDPOTrainer, DefaultDDPOStableDiffusionPipeline
 
+from accelerate import Accelerator
 
-
+accelerator = Accelerator()
+accelerator.init_trackers(
+    project_name="ad_bias_ddpo",
+    config={"train_batch_size": 4},  # optional logging config
+)
 
 @dataclass
 class ScriptArguments:
@@ -229,7 +234,7 @@ if __name__ == "__main__":
         prompt_fn,
         pipeline,
         image_samples_hook=image_outputs_logger,
-        log_with="wandb"
+        accelerator=accelerator
     )
     trainer.accelerator.init_trackers(project_name="test_DDPO")
     trainer.train()
