@@ -194,6 +194,10 @@ def parse_args():
                         type=int,
                         default=1,
                         help='batch size for the training')
+    parser.add_argument('--output_dir',
+                        type=str,
+                        default='../models/ddpo_checkpoints',
+                        help='output directory for the training')
     
     
     return parser.parse_args()
