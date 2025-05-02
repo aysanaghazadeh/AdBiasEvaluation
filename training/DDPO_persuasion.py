@@ -188,7 +188,7 @@ def train(args):
         tracker_project_name="stable_diffusion_training",
         log_with="wandb",
         push_to_hub=False,
-        accelerator_kwargs={"output_dir": args.output_dir, "mixed_precision": "fp16"},
+        accelerator_kwargs={"output_dir": args.output_dir},
     )
 
     pipeline = DefaultDDPOStableDiffusionPipeline(
