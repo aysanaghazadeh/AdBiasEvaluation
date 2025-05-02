@@ -202,8 +202,7 @@ def train(args):
         persuasion_scorer(args),
         prompt_fn(animals),
         pipeline,
-        image_samples_hook=image_outputs_logger,
-        accelerator=accelerator
+        image_samples_hook=image_outputs_logger
     )
 
     trainer.train()
