@@ -37,7 +37,7 @@ from huggingface_hub.utils import EntryNotFoundError
 from transformers import CLIPModel, CLIPProcessor, HfArgumentParser, is_torch_npu_available, is_torch_xpu_available
 
 from trl import DDPOConfig, DDPOTrainer, DefaultDDPOStableDiffusionPipeline
-from wandb import WandbCallback
+
 
 
 
@@ -230,7 +230,7 @@ if __name__ == "__main__":
         pipeline,
         image_samples_hook=image_outputs_logger
     )
-    trainer.accelerator.trackers.append(WandbCallback(project_name="test_DDPO"))
+    trainer.accelerator.init_trackers(project_name="my-project")
     trainer.accelerator.init_trackers("test_DDPO")
     trainer.train()
 
