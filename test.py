@@ -228,9 +228,9 @@ if __name__ == "__main__":
         aesthetic_scorer(script_args.hf_hub_aesthetic_model_id, script_args.hf_hub_aesthetic_model_filename),
         prompt_fn,
         pipeline,
-        image_samples_hook=image_outputs_logger,
-        accelerator_kwargs={'init_trackers': 'test_DDPO'}
+        image_samples_hook=image_outputs_logger
     )
+    trainer.accelerator.init_trackers("test_DDPO")
 
     trainer.train()
 
