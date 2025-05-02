@@ -39,6 +39,12 @@ from transformers import CLIPModel, CLIPProcessor, HfArgumentParser, is_torch_np
 from trl import DDPOConfig, DDPOTrainer, DefaultDDPOStableDiffusionPipeline
 
 
+from accelerate import Accelerator
+
+accelerator = Accelerator(log_with="wandb")  # or "wandb", "comet", etc.
+accelerator.init_trackers("test_DDPO")
+
+
 @dataclass
 class ScriptArguments:
     r"""
