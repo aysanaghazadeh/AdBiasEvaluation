@@ -134,9 +134,7 @@ class AestheticScorer(torch.nn.Module):
 
 
 def aesthetic_scorer(hub_model_id, model_filename):
-    scorer = PersuasionScorer(
-        args=args
-    )
+    scorer = PersuasionScorer()
     if is_torch_npu_available():
         scorer = scorer.npu()
     elif is_torch_xpu_available():
