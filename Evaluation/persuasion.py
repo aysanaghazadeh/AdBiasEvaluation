@@ -47,7 +47,7 @@ class PersuasionScorer(nn.Module):
                 Your output format is only Answer: score form, no other form. Empty is not allowed.
                 ASSISTANT:
         """
-        if self.args.evaluation_model in ['LLAVA16', 'QWenVL', 'InternVL']:
+        if 'QWenVL' in ['LLAVA16', 'QWenVL', 'InternVL']:
             output = self.model(image, eval_prompt)
         else:
             output = self.model(eval_prompt)
