@@ -14,9 +14,9 @@ from VLMs.QWenVL import QWenVL
 
 
 class PersuasionScorer(nn.Module):
-    def __init__(self, args):
+    def __init__(self):
         super(PersuasionScorer, self).__init__()
-        self.args = args
+        # self.args = args
         model_map = {
             'Mistral7B': Mistral7B,
             'LLAMA3': LLAMA3,
@@ -29,7 +29,7 @@ class PersuasionScorer(nn.Module):
             'LLAVA16': LLAVA16,
             'QWenVL': QWenVL
         }
-        self.model = model_map[args.evaluation_model](args)
+        self.model = model_map['QWenVL']()
         
 
     @torch.no_grad()

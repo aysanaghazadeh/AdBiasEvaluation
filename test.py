@@ -39,7 +39,9 @@ from transformers import CLIPModel, CLIPProcessor, HfArgumentParser, is_torch_np
 from trl import DDPOConfig, DDPOTrainer, DefaultDDPOStableDiffusionPipeline
 
 from accelerate import Accelerator
-
+import json
+import pandas as pd
+from Evaluation.persuasion import PersuasionScorer
 
 @dataclass
 class ScriptArguments:
@@ -132,10 +134,8 @@ class AestheticScorer(torch.nn.Module):
 
 
 def aesthetic_scorer(hub_model_id, model_filename):
-    scorer = AestheticScorer(
-        model_id=hub_model_id,
-        model_filename=model_filename,
-        dtype=torch.float32,
+    scorer = PersuasionScorer(
+        args=args
     )
     if is_torch_npu_available():
         scorer = scorer.npu()
@@ -145,43 +145,77 @@ def aesthetic_scorer(hub_model_id, model_filename):
         scorer = scorer.cuda()
 
     def _fn(images, prompts, metadata):
-        images = (images * 255).round().clamp(0, 255).to(torch.uint8)
-        scores = scorer(images)
-        return scores, {}
+        # Convert images to PIL format
+        from PIL import Image
+        import torchvision.transforms as transforms
+        
+        # Get the device of the scorer
+        scorer_device = next(scorer.parameters()).device
+        
+        # Convert tensor to PIL images
+        pil_images = []
+        for img in images:
+            # Ensure image is on the same device as scorer
+            img = img.to(scorer_device)
+            # Convert from [0, 1] to [0, 255] and to uint8
+            img = (img * 255).round().clamp(0, 255).to(torch.uint8)
+            # Convert to PIL Image
+            pil_img = transforms.ToPILImage()(img)
+            pil_images.append(pil_img)
+        
+        scores = []
+        for img in pil_images:
+            score, _ = scorer(img)
+            scores.append(score)
+            # wandb.Image(img, caption=str(score))
+        
+        # Convert scores to tensor and move to the original device
+        scores_tensor = torch.tensor(scores, device=images.device)
+        return scores_tensor, {}
 
     return _fn
 
 
-# list of example prompts to feed stable diffusion
-animals = [
-    "cat",
-    "dog",
-    "horse",
-    "monkey",
-    "rabbit",
-    "zebra",
-    "spider",
-    "bird",
-    "sheep",
-    "deer",
-    "cow",
-    "goat",
-    "lion",
-    "frog",
-    "chicken",
-    "duck",
-    "goose",
-    "bee",
-    "pig",
-    "turkey",
-    "fly",
-    "llama",
-    "camel",
-    "bat",
-    "gorilla",
-    "hedgehog",
-    "kangaroo",
-]
+# # list of example prompts to feed stable diffusion
+# animals = [
+#     "cat",
+#     "dog",
+#     "horse",
+#     "monkey",
+#     "rabbit",
+#     "zebra",
+#     "spider",
+#     "bird",
+#     "sheep",
+#     "deer",
+#     "cow",
+#     "goat",
+#     "lion",
+#     "frog",
+#     "chicken",
+#     "duck",
+#     "goose",
+#     "bee",
+#     "pig",
+#     "turkey",
+#     "fly",
+#     "llama",
+#     "camel",
+#     "bat",
+#     "gorilla",
+#     "hedgehog",
+#     "kangaroo",
+# ]
+
+QAs = json.load(open(os.path.join('../Data/PittAd', 'train/QA_Combined_Action_Reason_train.json')))
+prompts = []
+train_file = os.path.join('../Data/PittAd', 'train/train_image_large.csv')
+image_urls = pd.read_csv(train_file).ID.values 
+for image_url in image_urls:
+    prompt = f"""Generate an advertisement image that conveys the following message in detail: \n {'\n'.join(QAs[image_url][0])}"""
+    prompts.append(prompt)
+
+animals = prompts
 
 
 def prompt_fn():

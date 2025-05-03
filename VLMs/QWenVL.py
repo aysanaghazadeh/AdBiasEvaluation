@@ -4,11 +4,10 @@ import torch
 import os
 
 class QWenVL(torch.nn.Module):
-    def __init__(self, args):
+    def __init__(self):
         super().__init__()
-        self.args = args
         self.model = Qwen2VLForConditionalGeneration.from_pretrained("Qwen/Qwen2-VL-7B-Instruct")
-        self.model = self.model.to(args.device)
+        self.model = self.model.to('cuda')
         self.processor = AutoProcessor.from_pretrained("Qwen/Qwen2-VL-7B-Instruct")
 
 
@@ -39,7 +38,7 @@ class QWenVL(torch.nn.Module):
             padding=True,
             return_tensors="pt",
         )
-        inputs = inputs.to(self.args.device)
+        inputs = inputs.to('cuda')
 
         # Inference: Generation of the output
         generated_ids = self.model.generate(**inputs,
