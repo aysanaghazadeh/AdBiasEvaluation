@@ -11,7 +11,7 @@ from VLMs.InternVL2 import InternVL
 from VLMs.LLAVA16 import LLAVA16
 from VLMs.QWenVL import QWenVL
 # from T2I_models.T2I_model import T2IModel
-
+import wandb
 
 class PersuasionScorer(nn.Module):
     def __init__(self):
@@ -39,7 +39,7 @@ class PersuasionScorer(nn.Module):
             # Extract only the digit from the string
             int_value = int(''.join(filter(str.isdigit, string_value)))
             return int_value
-
+        
         eval_prompt = """
                 <image>\n USER:
                 Context: If the image convinces the audience to take an action it is considered persuasive.
@@ -51,4 +51,6 @@ class PersuasionScorer(nn.Module):
             output = self.model(image, eval_prompt)
         else:
             output = self.model(eval_prompt)
+        
+        image = wandb.Image(image, caption=f"score = {output}")
         return extract_score(output), image
