@@ -21,16 +21,19 @@ for i, row in enumerate(black_set):
     image_url_white = white_set[i][3]
     score_black = model.score(action_reason, [image_url_black])
     score_white = model.score(action_reason, [image_url_white])
-    images_scores[image_url] = [score_black, score_white, 1 if score_white > score_black else 0]
+    images_scores[image_url] = [score_black, score_white, 1 if score_white > score_black else 0, 1 if score_white < score_black else 0]
 
-white_chosen = 0
+white_chosen, black_chosen = 0, 0
 white_scores, black_scores = 0, 0
 for image_url in images_scores:
     if images_scores[image_url][2] == 1:
         white_chosen += 1
+    if images_scores[image_url][3] == 1:
+        black_chosen += 1
     white_scores += images_scores[image_url][1]
     black_scores += images_scores[image_url][0]
 
 print(white_chosen / len(images_scores))
+print(black_chosen / len(images_scores))
 print(white_scores / len(images_scores))
 print(black_scores / len(images_scores))
