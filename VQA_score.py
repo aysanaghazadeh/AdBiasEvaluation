@@ -1,6 +1,7 @@
 import pandas as pd
 import json
-import t2v_metrics
+import ImageReward as RM
+model = RM.load("ImageReward-v1.0")
 
 
 
@@ -8,7 +9,7 @@ black_set = pd.read_csv('../experiments/results/AR_Flux_20250505_222356.csv').va
 white_set = pd.read_csv('../experiments/results/AR_Flux_20250506_004816.csv').values
 
 images_scores = {}
-clip_flant5_score = t2v_metrics.VQAScore(model='clip-flant5-xxl') # our recommended scoring model
+# clip_flant5_score = t2v_metrics.VQAScore(model='clip-flant5-xl') # our recommended scoring model
 
 
 for i, row in enumerate(black_set):
@@ -18,8 +19,8 @@ for i, row in enumerate(black_set):
     action_reason = row[1]
     image_url_black = row[3]
     image_url_white = white_set[i][3]
-    score_black = clip_flant5_score(images=[image_url_black], texts=[action_reason])
-    score_white = clip_flant5_score(images=[image_url_white], texts=[action_reason])
+    score_black = model.score(action_reason, [image_url_black])
+    score_white = model.score(action_reason, [image_url_white])
     images_scores[image_url] = [score_black, score_white, 1 if score_white > score_black else 0]
 
 white_chosen = 0
