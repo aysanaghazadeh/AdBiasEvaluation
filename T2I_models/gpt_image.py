@@ -17,7 +17,6 @@ class GPT_Image(nn.Module):
     def forward(self, prompt):
         result = self.client.images.generate(
                             model="gpt-image-1",
-                            n=1,
                             prompt=prompt
                         )
         image_base64 = result.data[0].b64_json
