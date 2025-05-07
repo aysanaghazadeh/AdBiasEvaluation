@@ -21,7 +21,6 @@ class GPT_Image(nn.Module):
                             size="512x512",
                             prompt=prompt
                         )
-        print(result)
         image_base64 = result.data[0].b64_json
         image_bytes = base64.b64decode(image_base64)
 
