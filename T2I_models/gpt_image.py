@@ -18,7 +18,6 @@ class GPT_Image(nn.Module):
         result = self.client.images.generate(
                             model="gpt-image-1",
                             n=1,
-                            size="512x512",
                             prompt=prompt
                         )
         image_base64 = result.data[0].b64_json
