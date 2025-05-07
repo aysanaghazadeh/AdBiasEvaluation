@@ -5,7 +5,7 @@ from T2I_models.DMD2 import DMD
 from T2I_models.AuraFlow import AuraFlow
 from T2I_models.DALLE3 import DALLE3
 from T2I_models.Flux import Flux
-from T2I_models.GPT_Image import GPT_Image
+from T2I_models.gpt_image import GPT_Image
 
 class T2IModel(nn.Module):
     def __init__(self, args):
