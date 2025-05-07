@@ -137,8 +137,8 @@ def generate_images(args):
             print(f'action-reason statements: {process_action_reason(action_reasons)}')
             # print(f'scores: {scores}')
             print('-' * 20)
-        except:
-            continue
+        except Exception as e:
+            print(f'Error: {e}')
     finish_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
     print(f'experiment ended at {finish_datetime}')
 
