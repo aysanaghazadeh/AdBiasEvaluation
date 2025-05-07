@@ -12,13 +12,14 @@ class GPT_Image(nn.Module):
         super(GPT_Image, self).__init__()
         os.environ["OPENAI_API_KEY"] = args.api_key
         self.client = OpenAI()
+        print(args.api_key)
 
     def forward(self, prompt):
         result = self.client.images.edit(
                             model="gpt-image-1",
                             prompt=prompt
                         )
-
+        print(result)
         image_base64 = result.data[0].b64_json
         image_bytes = base64.b64decode(image_base64)
 
