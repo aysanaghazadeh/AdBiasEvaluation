@@ -15,7 +15,7 @@ class GPT_Image(nn.Module):
         print(args.api_key)
 
     def forward(self, prompt):
-        result = self.client.images.edit(
+        result = self.client.images.generate(
                             model="gpt-image-1",
                             prompt=prompt
                         )
