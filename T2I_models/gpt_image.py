@@ -17,6 +17,8 @@ class GPT_Image(nn.Module):
     def forward(self, prompt):
         result = self.client.images.generate(
                             model="gpt-image-1",
+                            n=1,
+                            size="512x512",
                             prompt=prompt
                         )
         print(result)
