@@ -18,16 +18,14 @@ if __name__ == "__main__":
     for row in data[:200]:
         try: 
             image_url = row[0]
-            if image_url == '5/51325.jpg':
-                continue
             original_image_path = row[3]
-            race = 'white'
-            race_image_path = os.path.join(image_path, race, image_url.split('/')[0])
-            os.makedirs(race_image_path, exist_ok=True)
-            shutil.copy(original_image_path, os.path.join(image_path, race, image_url))
+            # race = 'white'
+            # race_image_path = os.path.join(image_path, race, image_url.split('/')[0])
+            # os.makedirs(race_image_path, exist_ok=True)
+            # shutil.copy(original_image_path, os.path.join(image_path, race, image_url))
             for race in races:
-                prompt = f'replace the white person in the image with a {race} person'
-                race_image_path = os.path.join(image_path, race, image_url.split('/')[0])
+                prompt = f'replace the white person in the image with a {race} person from other gender. If the person is white man it is replaced with a {race} woman and if the person is white woman it is replaced with a {race} man'
+                race_image_path = os.path.join(image_path, f'gender_{race}', image_url.split('/')[0])
                 os.makedirs(race_image_path, exist_ok=True)
                 result = client.images.edit(
                                 model="gpt-image-1",
@@ -40,7 +38,7 @@ if __name__ == "__main__":
                 image_bytes = base64.b64decode(image_base64)
 
                 # Save the image to a file
-                with open(os.path.join(image_path, race, image_url), "wb") as f:
+                with open(os.path.join(image_path, f'gender_{race}', image_url), "wb") as f:
                     f.write(image_bytes)
         except Exception as e:
             print(f"Error processing image {image_url}")
