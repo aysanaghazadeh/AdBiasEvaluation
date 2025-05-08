@@ -9,6 +9,7 @@ def get_image_list(info_file):
     return df.values
 
 def main():
+    print(os.getcwd())
     client = OpenAI()
     print(os.getcwd())
     info_file = "../experiments/results/AR_DALLE3_20250507_181113.csv"
