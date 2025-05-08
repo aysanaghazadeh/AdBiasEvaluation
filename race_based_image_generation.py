@@ -10,6 +10,7 @@ def get_image_list(info_file):
 
 def main():
     client = OpenAI()
+    print(os.getcwd())
     info_file = "../experiments/results/AR_DALLE3_20250507_181113.csv"
     data = get_image_list(info_file)
     races = ["black", "asian", "indian", "latino", "middle eastern"]
