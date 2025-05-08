@@ -5,6 +5,7 @@ from openai import OpenAI
 import base64
 def get_image_list(info_file):
     df = pd.read_csv(info_file)
+    print(df.head())
     return df.values
 
 def main():

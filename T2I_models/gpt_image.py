@@ -10,7 +10,7 @@ import base64
 class GPT_Image(nn.Module):
     def __init__(self, args):
         super(GPT_Image, self).__init__()
-        os.environ["OPENAI_API_KEY"] = args.api_key
+        os.environ["r"] = args.api_key
         self.client = OpenAI()
         print(args.api_key)
 
