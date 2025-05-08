@@ -8,10 +8,8 @@ def get_image_list(info_file):
     print(df.head())
     return df.values
 
-def main():
-    print(os.getcwd())
+if __name__ == "__main__":
     client = OpenAI()
-    print(os.getcwd())
     info_file = "../experiments/results/AR_DALLE3_20250507_181113.csv"
     data = get_image_list(info_file)
     races = ["black", "asian", "indian", "latino", "middle eastern"]
