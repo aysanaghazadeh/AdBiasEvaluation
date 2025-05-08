@@ -18,6 +18,8 @@ if __name__ == "__main__":
     for row in data[:200]:
         try: 
             image_url = row[0]
+            if image_url == '5/51325.jpg':
+                continue
             original_image_path = row[3]
             race = 'white'
             race_image_path = os.path.join(image_path, race, image_url.split('/')[0])
