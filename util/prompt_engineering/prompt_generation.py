@@ -14,12 +14,13 @@ class PromptGenerator:
         self.sentiments = None
         self.topics = None
         self.audiences = None
+        self.countries = None
         self.set_LLM(args)
         self.set_descriptions(args)
         self.set_sentiments(args)
         self.set_topics(args)
         self.set_audience(args)
-
+        self.set_countries(args)
     def set_LLM(self, args):
         if args.text_input_type == 'LLM':
             self.LLM_model = LLM(args)
@@ -39,6 +40,18 @@ class PromptGenerator:
     def set_audience(self, args):
         if args.with_audience:
             self.audiences = self.get_all_audience(args)
+    
+    def set_countries(self, args):
+        if args.with_countries:
+            self.countries = self.get_all_countries(args)
+    
+    @staticmethod
+    def get_all_countries(args):
+        if not args.with_countries:
+            return None
+        countries_file = os.path.join(args.data_path, 'train/image_country_map.json')
+        countries = json.load(open(countries_file))
+        return countries
 
     @staticmethod
     def get_all_sentiments(args):
@@ -237,6 +250,12 @@ class PromptGenerator:
                     audience = 'everyone'
             else:
                 print(f'there is no audience for image: {image_filename}')
+        country = ''
+        if args.with_countries:
+            if image_filename in self.countries:
+                country = self.countries[image_filename]
+            else:
+                print(f'there is no countries for image: {image_filename}')
         QA_path = args.test_set_QA if not args.train else args.train_set_QA
         QA_path = os.path.join(args.data_path, QA_path)
         QA = json.load(open(QA_path))
@@ -246,7 +265,7 @@ class PromptGenerator:
         #     if AR not in QA[image_filename][0]:
         #         action_reason.append(AR)
         #         break
-        data = {'action_reason': action_reason, 'sentiment': sentiment, 'topic': topic, 'audience': audience}
+        data = {'action_reason': action_reason, 'sentiment': sentiment, 'topic': topic, 'audience': audience, 'country': country}
         env = Environment(loader=FileSystemLoader(args.prompt_path))
         template = env.get_template(args.T2I_prompt)
         output = template.render(**data)
