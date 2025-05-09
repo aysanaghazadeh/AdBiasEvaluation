@@ -15,7 +15,7 @@ class SD3(nn.Module):
         #                   "extra limb, missing limb, floating limbs, (mutated hands and fingers:1.4), disconnected " \
         #                   "limbs, mutation, mutated, ugly, disgusting, blurry, amputation, NSFW "
         image = self.pipe(
-                        "A cat holding a sign that says hello world",
+                        prompt,
                         negative_prompt="",
                         num_inference_steps=28,
                         guidance_scale=7.0,
