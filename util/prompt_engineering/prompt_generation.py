@@ -42,12 +42,12 @@ class PromptGenerator:
             self.audiences = self.get_all_audience(args)
     
     def set_countries(self, args):
-        if args.with_countries:
+        if args.with_country:
             self.countries = self.get_all_countries(args)
     
     @staticmethod
     def get_all_countries(args):
-        if not args.with_countries:
+        if not args.with_country:
             return None
         countries_file = os.path.join(args.data_path, 'train/image_country_map.json')
         countries = json.load(open(countries_file))
@@ -251,11 +251,11 @@ class PromptGenerator:
             else:
                 print(f'there is no audience for image: {image_filename}')
         country = ''
-        if args.with_countries:
+        if args.with_country:
             if image_filename in self.countries:
                 country = self.countries[image_filename]
             else:
-                print(f'there is no countries for image: {image_filename}')
+                print(f'there is no country for image: {image_filename}')
         QA_path = args.test_set_QA if not args.train else args.train_set_QA
         QA_path = os.path.join(args.data_path, QA_path)
         QA = json.load(open(QA_path))
