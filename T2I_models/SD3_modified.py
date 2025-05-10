@@ -345,13 +345,15 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
 
         # 7. Denoising loop
         with self.progress_bar(total=num_inference_steps) as progress_bar:
+            original_prompt_embeds = prompt_embeds
+            original_negative_prompt_embeds = negative_prompt_embeds
             for i, t in enumerate(timesteps):
                 if self.interrupt:
                     continue
                 if i % 10 == 0:
-                    prompt_embeds_projected = self.projection_block(style_image, prompt_embeds, cultural_components_embeds, reason_embeds, i)
-                    negative_prompt_embeds_projected = self.projection_block(negative_style_image, negative_prompt_embeds, negative_components_prompt_embeds, negative_reason_prompt_embeds, i)
-                    prompt_embeds = torch.cat([negative_prompt_embeds_projected, prompt_embeds_projected], dim=0)
+                    prompt_embeds = self.projection_block(style_image, original_prompt_embeds, cultural_components_embeds, reason_embeds, i)
+                    negative_prompt_embeds = self.projection_block(negative_style_image, original_negative_prompt_embeds, negative_components_prompt_embeds, negative_reason_prompt_embeds, i)
+                    prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
                     pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0)
                 # expand the latents if we are doing classifier free guidance
                 latent_model_input = torch.cat([latents] * 2) if self.do_classifier_free_guidance else latents
