@@ -6,9 +6,12 @@ from Training.train_modifiedSD3 import ProjectionBlock
 from T2I_models.SD3_modified import CustomStableDiffusionPipeline
 from transformers import AutoProcessor, CLIPModel
 from T2I_models.SD3_modified import CustomStableDiffusionPipeline
-
+import json
+import os
+import random
+from PIL import Image
 class ProjectionBlock(torch.nn.Module):
-    def __init__(self):
+    def __init__(self, args):
         super().__init__()
         self.CLIP_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
         self.CLIP_processor = AutoProcessor.from_pretrained("openai/clip-vit-base-patch32")
@@ -17,31 +20,35 @@ class ProjectionBlock(torch.nn.Module):
         self.CLIP_model.requires_grad_(True)
         self.projection_layer.requires_grad_(True)
         self.cross_attention.requires_grad_(True)
+        self.args = args
 
-    def forward(self, image, encoded_prompt, encoded_reason, encoded_cultural_components):
+    def forward(self, image, encoded_prompt, encoded_reason, encoded_cultural_components, time_step):
+        if time_step < 10:
+            return encoded_prompt
         encoded_cultural_components = torch.cat([e for e in encoded_cultural_components], dim=0)
         cultural_components_reason = self.texts_cross_attention(
                                         query=encoded_reason,              # (1, 154, 4096)
                                         key=encoded_cultural_components,          # (1, 1, 4096)
                                         value=encoded_cultural_components         # (1, 1, 4096)
                                     )
-        
-        encoded_prompt_device = encoded_prompt.device
-        encoded_prompt = encoded_prompt.to(self.CLIP_model.device)
-        inputs = self.CLIP_processor(images=image, return_tensors="pt").to(self.CLIP_model.device)
+        if time_step < 20:
+            return torch.cat([encoded_prompt, cultural_components_reason], dim=1)
+        encoded_prompt = encoded_prompt.to(self.args.device)
+        inputs = self.CLIP_processor(images=image, return_tensors="pt").to(self.args.device)
         clip_image_features = self.CLIP_model.get_image_features(**inputs)
         clip_image_features = clip_image_features / clip_image_features.norm(p=2, dim=1, keepdim=True)
         clip_image_features = self.projection_layer(clip_image_features)
         clip_image_features = clip_image_features.unsqueeze(1) 
         # print(clip_image_features.size())
         features, _ = self.cross_attention(
-                        query=encoded_prompt,              # (1, 154, 4096)
+                        query=cultural_components_reason,              # (1, 154, 4096)
                         key=clip_image_features,          # (1, 1, 4096)
                         value=clip_image_features         # (1, 1, 4096)
                     )
         # print(features)
+        
         features = torch.cat([features, encoded_prompt], dim=1)
-        features = features.to(encoded_prompt_device)
+        features = features.to(self.args.device)
         return features
 
 class CustomeSD3(nn.Module):
@@ -57,14 +64,27 @@ class CustomeSD3(nn.Module):
             torch_dtype=torch.float32,
             load_in_8bit=True,
         ).to(self.device)
-        self.projection_block = ProjectionBlock()
-        self.projection_block.load_state_dict(torch.load("SD3_finetuned_projection_only/checkpoint-2000/projection_block.pt"))
+        self.projection_block = ProjectionBlock(args)
+        # self.projection_block.load_state_dict(torch.load("SD3_finetuned_projection_only/checkpoint-2000/projection_block.pt"))
         self.projection_block.to(self.device) 
         self.pipeline.projection_block = self.projection_block
+        self.country_image_map = json.load(open(os.path.join(args.data_path, "train/image_country_map.json")))
+        self.image_cultural_components_map = json.load(open(os.path.join(args.data_path, "train/image_cultrual_components_map.json")))
 
-    def forward(self, prompt, style_image, negative_style_image):
+    def forward(self, prompt):
+        country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
+        style_images = self.country_image_map[country]
+        style_images = random.choice(style_images, size=3)
+        if country == 'united states':
+            negative_style_image = '0/33540.jpg'
+        else:
+            negative_style_image = '4/85894.jpg'
+        style_image = Image.open(os.path.join(self.args.data_path, "train_images", style_images[0]))
+        cultural_components = ''
+        for image in style_images:
+            cultural_components += ''.join(self.image_cultural_components_map[image])
         generator = torch.Generator(device=self.device).manual_seed(0)
-        return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, generator=generator).images[0]
+        return self.pipeline(prompt=prompt, style_image=style_images, negative_style_image=negative_style_image, cultural_components=cultural_components, generator=generator).images[0]
     
     
     

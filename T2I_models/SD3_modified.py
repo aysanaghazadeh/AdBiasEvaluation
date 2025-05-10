@@ -21,6 +21,7 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
         self,
         style_image,
         negative_style_image,
+        cultural_components,
         prompt: Union[str, List[str]] = None,
         prompt_2: Optional[Union[str, List[str]]] = None,
         prompt_3: Optional[Union[str, List[str]]] = None,
@@ -208,6 +209,7 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
         lora_scale = (
             self.joint_attention_kwargs.get("scale", None) if self.joint_attention_kwargs is not None else None
         )
+        reason = prompt.lower().split('because')[-1]
         (
             prompt_embeds,
             negative_prompt_embeds,
@@ -231,14 +233,60 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
             max_sequence_length=max_sequence_length,
             lora_scale=lora_scale,
         )
-        prompt_embeds = self.projection_block(style_image, prompt_embeds)
-        negative_prompt_embeds = self.projection_block(negative_style_image, negative_prompt_embeds)
+        (
+            cultural_components_embeds,
+            negative_components_prompt_embeds,
+            pooled_cultural_components_embeds,
+            negative_pooled_cultural_components_prompt_embeds,
+        ) = self.encode_prompt(
+            prompt=cultural_components,
+            prompt_2=prompt_2,
+            prompt_3=prompt_3,
+            negative_prompt=negative_prompt,
+            negative_prompt_2=negative_prompt_2,
+            negative_prompt_3=negative_prompt_3,
+            do_classifier_free_guidance=self.do_classifier_free_guidance,
+            prompt_embeds=prompt_embeds,
+            negative_prompt_embeds=negative_prompt_embeds,
+            pooled_prompt_embeds=pooled_prompt_embeds,
+            negative_pooled_prompt_embeds=negative_pooled_prompt_embeds,
+            device=device,
+            clip_skip=self.clip_skip,
+            num_images_per_prompt=num_images_per_prompt,
+            max_sequence_length=max_sequence_length,
+            lora_scale=lora_scale,
+        )
+        (
+            reason_embeds,
+            negative_reason_prompt_embeds,
+            pooled_reason_embeds,
+            negative_pooled_reason_prompt_embeds,
+        ) = self.encode_prompt(
+            prompt=reason,
+            prompt_2=prompt_2,
+            prompt_3=prompt_3,
+            negative_prompt=negative_prompt,
+            negative_prompt_2=negative_prompt_2,
+            negative_prompt_3=negative_prompt_3,
+            do_classifier_free_guidance=self.do_classifier_free_guidance,
+            prompt_embeds=prompt_embeds,
+            negative_prompt_embeds=negative_prompt_embeds,
+            pooled_prompt_embeds=pooled_prompt_embeds,
+            negative_pooled_prompt_embeds=negative_pooled_prompt_embeds,
+            device=device,
+            clip_skip=self.clip_skip,
+            num_images_per_prompt=num_images_per_prompt,
+            max_sequence_length=max_sequence_length,
+            lora_scale=lora_scale,
+        )
+        # prompt_embeds = self.projection_block(style_image, prompt_embeds, cultural_components_embeds, reason_embeds)
+        # negative_prompt_embeds = self.projection_block(negative_style_image, negative_prompt_embeds, negative_components_prompt_embeds, negative_reason_prompt_embeds)
         if self.do_classifier_free_guidance:
             if skip_guidance_layers is not None:
                 original_prompt_embeds = prompt_embeds
                 original_pooled_prompt_embeds = pooled_prompt_embeds
-            prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
-            pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0)
+            # prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
+            # pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0)
 
         # 4. Prepare latent variables
         num_channels_latents = self.transformer.config.in_channels
@@ -300,7 +348,10 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
             for i, t in enumerate(timesteps):
                 if self.interrupt:
                     continue
-
+                prompt_embeds = self.projection_block(style_image, prompt_embeds, cultural_components_embeds, reason_embeds, i)
+                negative_prompt_embeds = self.projection_block(negative_style_image, negative_prompt_embeds, negative_components_prompt_embeds, negative_reason_prompt_embeds, i)
+                prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
+                pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0)
                 # expand the latents if we are doing classifier free guidance
                 latent_model_input = torch.cat([latents] * 2) if self.do_classifier_free_guidance else latents
                 # broadcast to batch dimension in a way that's compatible with ONNX/Core ML
