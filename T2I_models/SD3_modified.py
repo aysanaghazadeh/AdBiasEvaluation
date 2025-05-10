@@ -281,13 +281,14 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
         )
         # prompt_embeds = self.projection_block(style_image, prompt_embeds, cultural_components_embeds, reason_embeds)
         # negative_prompt_embeds = self.projection_block(negative_style_image, negative_prompt_embeds, negative_components_prompt_embeds, negative_reason_prompt_embeds)
+        pooled_prompt_embeds = pooled_cultural_components_embeds
+        negative_pooled_prompt_embeds = negative_pooled_cultural_components_prompt_embeds
         if self.do_classifier_free_guidance:
             if skip_guidance_layers is not None:
                 original_prompt_embeds = prompt_embeds
                 original_pooled_prompt_embeds = pooled_prompt_embeds
             # prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
-            pooled_prompt_embeds = pooled_cultural_components_embeds
-            negative_pooled_prompt_embeds = negative_pooled_cultural_components_prompt_embeds
+            
             pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0)
             
         # 4. Prepare latent variables
