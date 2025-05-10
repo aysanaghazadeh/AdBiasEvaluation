@@ -81,6 +81,8 @@ class CustomeSD3(nn.Module):
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
         style_images = self.country_image_map[country]
         style_images = random.sample(style_images, 3)
+        print(country)
+        print(style_images)
         if country == 'united states':
             negative_style_image = '0/33540.jpg'
         else:
@@ -90,6 +92,7 @@ class CustomeSD3(nn.Module):
         cultural_components = ''
         for image in style_images:
             cultural_components += ''.join(self.image_cultural_components_map[image])
+        print(cultural_components)
         generator = torch.Generator(device=self.device).manual_seed(0)
         return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, generator=generator).images[0]
     
