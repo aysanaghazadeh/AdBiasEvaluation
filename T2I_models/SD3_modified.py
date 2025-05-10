@@ -354,8 +354,8 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
                 if self.interrupt:
                     continue
                 if i % 10 == 0:
-                    prompt_embeds = self.projection_block(style_image, original_prompt_embeds, cultural_components_embeds, reason_embeds, i)
-                    negative_prompt_embeds = self.projection_block(negative_style_image, original_negative_prompt_embeds, negative_components_prompt_embeds, negative_reason_prompt_embeds, i)
+                    prompt_embeds = self.projection_block(style_image, original_prompt_embeds, reason_embeds, cultural_components_embeds, i)
+                    negative_prompt_embeds = self.projection_block(negative_style_image, original_negative_prompt_embeds, negative_reason_prompt_embeds, negative_components_prompt_embeds, i)
                     prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
                     
                 # expand the latents if we are doing classifier free guidance
