@@ -286,7 +286,7 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
                 original_prompt_embeds = prompt_embeds
                 original_pooled_prompt_embeds = pooled_prompt_embeds
             # prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
-            # pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0)
+            pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0)
 
         # 4. Prepare latent variables
         num_channels_latents = self.transformer.config.in_channels
@@ -354,7 +354,7 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
                     prompt_embeds = self.projection_block(style_image, original_prompt_embeds, cultural_components_embeds, reason_embeds, i)
                     negative_prompt_embeds = self.projection_block(negative_style_image, original_negative_prompt_embeds, negative_components_prompt_embeds, negative_reason_prompt_embeds, i)
                     prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
-                    pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0)
+                    
                 # expand the latents if we are doing classifier free guidance
                 latent_model_input = torch.cat([latents] * 2) if self.do_classifier_free_guidance else latents
                 # broadcast to batch dimension in a way that's compatible with ONNX/Core ML
