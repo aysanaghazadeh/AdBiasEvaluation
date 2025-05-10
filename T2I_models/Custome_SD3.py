@@ -25,12 +25,14 @@ class ProjectionBlock(torch.nn.Module):
     def forward(self, image, encoded_prompt, encoded_reason, encoded_cultural_components, time_step):
         if time_step < 10:
             return encoded_prompt
-        encoded_cultural_components = torch.cat([e for e in encoded_cultural_components], dim=0)
+        # encoded_cultural_components = torch.cat([e for e in encoded_cultural_components], dim=0)
+        
         cultural_components_reason = self.texts_cross_attention(
                                         query=encoded_reason,              # (1, 154, 4096)
                                         key=encoded_cultural_components,          # (1, 1, 4096)
                                         value=encoded_cultural_components         # (1, 1, 4096)
                                     )
+
         if time_step < 20:
             return torch.cat([encoded_prompt, cultural_components_reason], dim=1)
         encoded_prompt = encoded_prompt.to(self.args.device)
@@ -85,7 +87,7 @@ class CustomeSD3(nn.Module):
         for image in style_images:
             cultural_components += ''.join(self.image_cultural_components_map[image])
         generator = torch.Generator(device=self.device).manual_seed(0)
-        return self.pipeline(prompt=prompt, style_image=style_images, negative_style_image=negative_style_image, cultural_components=cultural_components, generator=generator).images[0]
+        return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, generator=generator).images[0]
     
     
     
