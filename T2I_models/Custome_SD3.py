@@ -17,6 +17,7 @@ class ProjectionBlock(torch.nn.Module):
         self.projection_layer = torch.nn.Linear(512, 4096)
         self.texts_cross_attention = torch.nn.MultiheadAttention(embed_dim=4096, num_heads=8, batch_first=True)
         self.CLIP_model.requires_grad_(True)
+        self.texts_cross_attention = torch.nn.MultiheadAttention(embed_dim=4096, num_heads=8, batch_first=True)
         self.projection_layer.requires_grad_(True)
         self.cross_attention.requires_grad_(True)
         self.args = args
