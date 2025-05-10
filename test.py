@@ -281,7 +281,7 @@ args = get_args()
 model = CustomeSD3(args)
 
 # model.load_state_dict(torch.load("SD3_finetuned_projection_only/checkpoint-2000/sd3_model.pt"))
-prompt = '''Generate an advertisement image that targets people from france conveying the following messages: \n
+prompt = '''Generate an advertisement image that targets people from united arab emirates conveying the following messages: \n
     - I should drink this beer because it as light as feather
 '''
 model(prompt).save("../experiments/test_images/costume_sd3.png")
