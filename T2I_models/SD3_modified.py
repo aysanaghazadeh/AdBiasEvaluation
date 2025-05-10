@@ -286,8 +286,10 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
                 original_prompt_embeds = prompt_embeds
                 original_pooled_prompt_embeds = pooled_prompt_embeds
             # prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
+            pooled_prompt_embeds = torch.cat([pooled_prompt_embeds, pooled_cultural_components_embeds], dim=0)
+            negative_pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, negative_pooled_cultural_components_prompt_embeds], dim=0)
             pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0)
-            print(pooled_prompt_embeds.size())
+            
         # 4. Prepare latent variables
         num_channels_latents = self.transformer.config.in_channels
         latents = self.prepare_latents(
