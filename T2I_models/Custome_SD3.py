@@ -69,7 +69,7 @@ class CustomeSD3(nn.Module):
         self.projection_block.to(self.device) 
         self.pipeline.projection_block = self.projection_block
         self.country_image_map = json.load(open(os.path.join(args.data_path, "train/image_country_map.json")))
-        self.image_cultural_components_map = json.load(open(os.path.join(args.data_path, "train/image_cultrual_components_map.json")))
+        self.image_cultural_components_map = json.load(open(os.path.join(args.data_path, "train/components.json")))
 
     def forward(self, prompt):
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
