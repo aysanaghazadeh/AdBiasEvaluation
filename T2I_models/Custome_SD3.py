@@ -27,7 +27,7 @@ class ProjectionBlock(torch.nn.Module):
             return encoded_prompt
         # encoded_cultural_components = torch.cat([e for e in encoded_cultural_components], dim=0)
         
-        cultural_components_reason = self.texts_cross_attention(
+        cultural_components_reason, _ = self.texts_cross_attention(
                                         query=encoded_reason,              # (1, 154, 4096)
                                         key=encoded_cultural_components,          # (1, 1, 4096)
                                         value=encoded_cultural_components         # (1, 1, 4096)
