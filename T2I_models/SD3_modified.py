@@ -286,8 +286,8 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
                 original_prompt_embeds = prompt_embeds
                 original_pooled_prompt_embeds = pooled_prompt_embeds
             # prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
-            
-
+            pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0)
+            print(pooled_prompt_embeds.size())
         # 4. Prepare latent variables
         num_channels_latents = self.transformer.config.in_channels
         latents = self.prepare_latents(
@@ -347,18 +347,14 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
         with self.progress_bar(total=num_inference_steps) as progress_bar:
             original_prompt_embeds = prompt_embeds
             original_negative_prompt_embeds = negative_prompt_embeds
-            original_pooled_prompt_embeds = pooled_prompt_embeds
-            original_negative_pooled_prompt_embeds = negative_pooled_prompt_embeds
             for i, t in enumerate(timesteps):
                 if self.interrupt:
                     continue
                 if i % 10 == 0:
                     prompt_embeds = self.projection_block(style_image, original_prompt_embeds, cultural_components_embeds, reason_embeds, i)
-                    pooled_prompt_embeds = self.projection_block(style_image, original_pooled_prompt_embeds, pooled_cultural_components_embeds, pooled_reason_embeds, i)
                     negative_prompt_embeds = self.projection_block(negative_style_image, original_negative_prompt_embeds, negative_components_prompt_embeds, negative_reason_prompt_embeds, i)
-                    negative_pooled_prompt_embeds = self.projection_block(negative_style_image, original_negative_pooled_prompt_embeds, negative_components_prompt_embeds, negative_reason_prompt_embeds, i)
-                    pooled_prompt_embeds = torch.cat([negative_pooled_prompt_embeds, pooled_prompt_embeds], dim=0)
                     prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
+                    
                 # expand the latents if we are doing classifier free guidance
                 latent_model_input = torch.cat([latents] * 2) if self.do_classifier_free_guidance else latents
                 # broadcast to batch dimension in a way that's compatible with ONNX/Core ML
