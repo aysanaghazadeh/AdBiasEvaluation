@@ -2,14 +2,13 @@ import torch
 from torch import nn
 from transformers import BitsAndBytesConfig
 import torch
-from Training.train_modifiedSD3 import ProjectionBlock
 from T2I_models.SD3_modified import CustomStableDiffusionPipeline
 from transformers import AutoProcessor, CLIPModel
-from T2I_models.SD3_modified import CustomStableDiffusionPipeline
 import json
 import os
 import random
 from PIL import Image
+
 class ProjectionBlock(torch.nn.Module):
     def __init__(self, args):
         super().__init__()
