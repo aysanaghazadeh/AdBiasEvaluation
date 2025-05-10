@@ -284,4 +284,4 @@ model = CustomeSD3(args)
 prompt = '''Generate an advertisement image that targets people from france conveying the following messages: \n
     - I should drink this beer because it as light as feather
 '''
-model(prompt)
+model(prompt).save("../experiments/test_images/costume_sd3.png")
