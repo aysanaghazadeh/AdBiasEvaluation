@@ -59,6 +59,7 @@ class CustomeSD3(nn.Module):
             load_in_8bit=True,
             bnb_8bit_compute_dtype=torch.float16
         )
+        self.args = args
         self.pipeline = CustomStableDiffusionPipeline.from_pretrained(
             'stabilityai/stable-diffusion-3-medium-diffusers',
             torch_dtype=torch.float32,
