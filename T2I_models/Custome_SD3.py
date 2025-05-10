@@ -80,7 +80,7 @@ class CustomeSD3(nn.Module):
             negative_style_image = '0/33540.jpg'
         else:
             negative_style_image = '4/85894.jpg'
-        style_image = Image.open(os.path.join(self.args.data_path, "train_images", style_images[0]))
+        style_image = Image.open(os.path.join(self.args.data_path, "train_images_total", style_images[0]))
         cultural_components = ''
         for image in style_images:
             cultural_components += ''.join(self.image_cultural_components_map[image])
