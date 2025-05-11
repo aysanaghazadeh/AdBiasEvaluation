@@ -291,12 +291,17 @@ prompt = '''Generate an advertisement image that targets people from france conv
 '''
 model(prompt).save("../experiments/test_images/fr_costume_sd3.png")
 
-prompt = '''Generate an advertisement image that targets people from china conveying the following messages: \n
-    - I should drink this beer because it as light as feather
-'''
-model(prompt).save("../experiments/test_images/cn_costume_sd3.png")
+# prompt = '''Generate an advertisement image that targets people from china conveying the following messages: \n
+#     - I should drink this beer because it as light as feather
+# '''
+# model(prompt).save("../experiments/test_images/cn_costume_sd3.png")
 
 prompt = '''Generate an advertisement image that targets people from saudi arabia conveying the following messages: \n
     - I should drink this beer because it as light as feather
 '''
 model(prompt).save("../experiments/test_images/sa_costume_sd3.png")
+
+prompt = '''Generate an advertisement image that targets people from united arab emirates conveying the following messages: \n
+    - I should drink this beer because it as light as feather
+'''
+model(prompt).save("../experiments/test_images/uae_costume_sd3.png")
