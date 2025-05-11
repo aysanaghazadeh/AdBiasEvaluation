@@ -279,30 +279,30 @@ from configs.inference_config import get_args
 
 args = get_args()
 
-model = SD3(args)
+model = CustomeSD3(args)
 
 # model.load_state_dict(torch.load("SD3_finetuned_projection_only/checkpoint-2000/sd3_model.pt"))
 prompt = '''Generate an advertisement image that targets people from united states conveying the following messages: \n
     - I should drink this beer because it as light as feather
 '''
-model(prompt).save("../experiments/test_images/us_sd3.png")
+model(prompt).save("../experiments/test_images/us_custom_sd3.png")
 
 prompt = '''Generate an advertisement image that targets people from france conveying the following messages: \n
     - I should drink this beer because it as light as feather
 '''
-model(prompt).save("../experiments/test_images/fr_sd3.png")
+model(prompt).save("../experiments/test_images/fr_custom_sd3.png")
 
-prompt = '''Generate an advertisement image that targets people from china conveying the following messages: \n
-    - I should drink this beer because it as light as feather
-'''
-model(prompt).save("../experiments/test_images/cn_sd3.png")
+# prompt = '''Generate an advertisement image that targets people from china conveying the following messages: \n
+#     - I should drink this beer because it as light as feather
+# '''
+# model(prompt).save("../experiments/test_images/cn_custom_sd3.png")
 
-prompt = '''Generate an advertisement image that targets people from saudi arabia conveying the following messages: \n
-    - I should drink this beer because it as light as feather
-'''
-model(prompt).save("../experiments/test_images/sa_sd3.png")
+# prompt = '''Generate an advertisement image that targets people from saudi arabia conveying the following messages: \n
+#     - I should drink this beer because it as light as feather
+# '''
+# model(prompt).save("../experiments/test_images/sa_custom_sd3.png")
 
 prompt = '''Generate an advertisement image that targets people from united arab emirates conveying the following messages: \n
     - I should drink this beer because it as light as feather
 '''
-model(prompt).save("../experiments/test_images/uae_sd3.png")
+model(prompt).save("../experiments/test_images/uae_custom_sd3.png")
