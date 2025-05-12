@@ -543,7 +543,7 @@ def train(args):
     transformer = SD3Transformer2DModel.from_pretrained(
         args.pretrained_model_name_or_path, subfolder="transformer", revision=args.revision, variant=args.variant
     )
-    projection_block = ProjectionBlock()
+    projection_block = ProjectionBlock(args)
     
     transformer.requires_grad_(False)
     vae.requires_grad_(False)
