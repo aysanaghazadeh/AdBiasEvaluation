@@ -764,7 +764,7 @@ class DreamBoothDataset_modified(Dataset):
             print(f"Total training images available: {len(train_set_images)}")
             QAs = json.load(open(os.path.join(args.data_path, args.test_set_QA)))
             image_country_map = json.load(open(os.path.join(args.data_path, 'train/image_country_map.json')))
-            image_cultural_components_map = json.load(open(os.path.join(args.data_path, 'train/image_cultrual_components_map.json')))
+            image_cultural_components_map = json.load(open(os.path.join(args.data_path, 'train/components.json')))
             country_image_map = json.load(open(os.path.join(args.data_path, 'train/countries_image_map.json')))
             
             dataset = {
