@@ -1182,8 +1182,8 @@ def train(args):
                 # zt = (1 - texp) * x + texp * z1
                 sigmas = get_sigmas(timesteps, n_dim=model_input.ndim, dtype=model_input.dtype)
                 noisy_model_input = (1.0 - sigmas) * model_input + sigmas * noise
-                style_image = Image.open(batch['style_image'])
-                prompt_embeds = projection_block(style_image, prompt_embeds, reason_embeds, cultural_embeds, 28)
+                style_images = [Image.open(style_image) for style_image in batch['style_images']]
+                prompt_embeds = projection_block(style_images, prompt_embeds, reason_embeds, cultural_embeds, 28)
                 # Predict the noise residual
                 model_pred = transformer(
                     hidden_states=noisy_model_input,
