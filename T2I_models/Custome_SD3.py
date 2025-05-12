@@ -38,8 +38,8 @@ class ProjectionBlock(torch.nn.Module):
             # print(encoded_prompt.size(), cultural_components_reason.size())
             # print(torch.cat([encoded_prompt, cultural_components_reason], dim=1).size())
             return torch.cat([encoded_prompt, encoded_cultural_components], dim=1)
-        encoded_prompt = encoded_prompt.to(self.args.device)
-        inputs = self.CLIP_processor(images=image, return_tensors="pt").to(self.args.device)
+        encoded_prompt = encoded_prompt.to('cuda:1')
+        inputs = self.CLIP_processor(images=image, return_tensors="pt").to('cuda:1')
         clip_image_features = self.CLIP_model.get_image_features(**inputs)
         clip_image_features = clip_image_features / clip_image_features.norm(p=2, dim=1, keepdim=True)
         clip_image_features = self.projection_layer(clip_image_features)
@@ -53,7 +53,7 @@ class ProjectionBlock(torch.nn.Module):
         # print(features)
         
         features = torch.cat([features, encoded_prompt], dim=1)
-        features = features.to(self.args.device)
+        features = features.to('cuda:1')
         return features
 
 class CustomeSD3(nn.Module):
