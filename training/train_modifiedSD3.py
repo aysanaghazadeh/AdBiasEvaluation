@@ -204,7 +204,7 @@ def log_validation(
         #     generator = torch.Generator(device='cuda:1').manual_seed(i) #if args.seed is not None else None
         prompts = []
         countries = ['united states', 'china', 'india', 'saudi arabia', 'mexico', 'france']
-        for country in countries[:1]:
+        for country in countries:
             prompt = f'''
             Generate an advertisement image that targets people from {country} conveying the following messages:
                 - I should drink Carlings Because it's light
