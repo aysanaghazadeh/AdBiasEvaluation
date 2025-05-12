@@ -1338,7 +1338,7 @@ def train(args):
                     #     torch_dtype=weight_dtype,
                     #     load_in_8bit=True,
                     # ) 
-                    if step == 0:
+                    if step == 0 and epoch == 0:
                         pipeline = CustomeSD3(args)
                     pipeline.projection_block = projection_block
                     pipeline_args = [{"prompt": p} for p in args.validation_prompts]
