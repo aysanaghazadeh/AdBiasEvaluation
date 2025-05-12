@@ -14,6 +14,13 @@ import numpy as np
 import cv2
 # import mediapipe as mp
 from PIL import Image, ImageDraw
+from pathlib import Path
+
+from PIL import Image
+from PIL.ImageOps import exif_transpose
+import itertools
+
+from util.data.mapping import *
 
 
 def get_SD_training_data(args, image_urls, pipe):
