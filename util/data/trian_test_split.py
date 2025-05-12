@@ -8,9 +8,27 @@ from util.data.mapping import TOPIC_MAP as topic_map
 
 
 def get_train_data(args):
-    train_file = os.path.join(args.data_path, 'train/train_image_large.csv')
+    train_file = os.path.join(args.data_path, 'train/country_train_image_large.csv')
+    
     if os.path.exists(train_file):
         return pd.read_csv(train_file).ID.values
+    if 'country' in train_file:
+        train_image_urls = []
+        country_image_map = json.load(open(os.path.join(args.data_path, 'train/country_image_map.json')))
+        for country in country_image_map:
+            if len(country_image_map[country]) > 5:
+                train_image_urls += random.sample(country_image_map[country], 5)
+            else:
+                train_image_urls += random.sample(country_image_map[country], 2)
+        train_image_urls = train_image_urls[:300]
+        with open(train_file, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['ID'])
+            for i in train_image_urls:
+                writer.writerow([i])
+        return train_image_urls
+    else:
+        train_image_urls = pd.read_csv(train_file).ID.values
     if os.path.exists(os.path.join(args.data_path, 'Action_Reason_statements.json')):
         QA_base = json.load(open(os.path.join(args.data_path, 'Action_Reason_statements.json')))
     else:
