@@ -1105,6 +1105,12 @@ def train(args):
                         prompt_embeds, pooled_prompt_embeds = compute_text_embeddings(
                             prompts, text_encoders, tokenizers
                         )
+                        reason_embeds, reason_pooled_prompt_embeds = compute_text_embeddings(
+                            reasons, text_encoders, tokenizers
+                        )
+                        cultural_embeds, cultural_pooled_prompt_embeds = compute_text_embeddings(
+                            cultural_components, text_encoders, tokenizers
+                        )
                         negative_prompt_embeds, negative_pooled_prompt_embeds = compute_text_embeddings(
                             negative_prompts, text_encoders, tokenizers
                         )
