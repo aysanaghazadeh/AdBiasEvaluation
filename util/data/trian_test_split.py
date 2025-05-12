@@ -19,7 +19,7 @@ def get_train_data(args):
             if len(country_image_map[country]) > 5:
                 train_image_urls += random.sample(country_image_map[country], 5)
             else:
-                train_image_urls += random.sample(country_image_map[country], 2)
+                train_image_urls += list(country_image_map[country])
         with open(train_file, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['ID'])
