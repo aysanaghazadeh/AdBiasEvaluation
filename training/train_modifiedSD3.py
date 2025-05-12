@@ -211,7 +211,7 @@ def log_validation(
                 - I should drink beer more often Because it would make me feel good
                 - i should drink carling's black label beer because it is as light as a Carling
             '''
-            images.append(pipeline(prompt=prompt).images[0])
+            images.append(pipeline(prompt=prompt))
             prompts.append(prompt)
             prompt = f'''
             Generate an advertisement image that targets people from {country} conveying the following messages:
@@ -219,7 +219,7 @@ def log_validation(
                 - I should drink Heineken Because it will associate me with refreshment
                 - I should drink Heineken beer Because it is refreshing
             '''
-            images.append(pipeline(prompt=prompt).images[0])
+            images.append(pipeline(prompt=prompt))
             prompts.append(prompt)
             prompt = f'''
             Generate an advertisement image that targets people from {country} conveying the following messages:
@@ -227,7 +227,7 @@ def log_validation(
                 - GO TO THIS STORE BECASUE THEY HAVE A LOT OF COLOR
                 - I should do somersaults Because it will be fun
             '''
-            images.append(pipeline(prompt=prompt).images[0])
+            images.append(pipeline(prompt=prompt))
             prompts.append(prompt)
     for tracker in accelerator.trackers:
         phase_name = "test" if is_final_validation else "validation"
