@@ -786,7 +786,7 @@ class DreamBoothDataset_modified(Dataset):
                 cultural_components = ''
                 for i in style_images:
                     cultural_components += ' ' + ' '.join(image_cultural_components_map[i])
-                style_image = style_images[random.choice(range(len(style_images)))]
+                style_image = style_images[0]
                 dataset['style_images'].append(Image.open(os.path.join(args.data_path, args.train_set_images, style_image)))
                 dataset['country'].append(country)
                 dataset['cultural_components'].append(cultural_components)
