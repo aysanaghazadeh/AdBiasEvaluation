@@ -735,3 +735,334 @@ def get_train_DDPO_persuasion_Dataset(args):
         prompts.append(prompt)
     
     return prompts
+
+
+
+class DreamBoothDataset_modified(Dataset):
+    """
+    A dataset to prepare the instance and class images with the prompts for fine-tuning the model.
+    It pre-processes the images.
+    """
+
+    def __init__(
+        self,
+        args,
+        size=1024,
+        repeats=1,
+        center_crop=False,
+    ):
+        def load_train_data(args):
+            train_set_images = get_train_data(args)
+            
+            print(f"Total training images available: {len(train_set_images)}")
+            QAs = json.load(open(os.path.join(args.data_path, args.test_set_QA)))
+            image_country_map = json.load(open(os.path.join(args.data_path, 'train/image_country_map.json')))
+            image_cultural_components_map = json.load(open(os.path.join(args.data_path, 'train/image_cultrual_components_map.json')))
+            country_image_map = json.load(open(os.path.join(args.data_path, 'train/countries_image_map.json')))
+            
+            dataset = {
+                'image': [], 
+                'positive_text': [], 
+                'reasons': [],
+                'cultural_components': [],
+                'style_images': [],
+                'country': []
+            }
+            
+            for image_url in train_set_images:
+                # Get atypicality information for this image
+                country = image_country_map[image_url]
+                style_images = random.sample(country_image_map[country], 5)
+                cultural_components = ''
+                for i in style_images:
+                    cultural_components += ' ' + ' '.join(image_cultural_components_map[i])
+                style_image = style_images[random.choice(range(len(style_images)))]
+                dataset['style_images'].append(Image.open(os.path.join(args.data_path, args.train_set_images, style_image)))
+                dataset['country'].append(country)
+                dataset['cultural_components'].append(cultural_components)
+                dataset['reasons'].append(QAs[image_url][0][-1].lower().split('because')[-1])
+                dataset['image'].append(Image.open(os.path.join(args.data_path, args.train_set_images, image_url)))
+                prompt = f"""Generate an advertisement image that targets the people from {country} and conveys the following message in detail: \n -{'\n-'.join(QAs[image_url][0])}"""
+                dataset['positive_text'].append(prompt)
+            
+            print(f"Final dataset size: {len(dataset['image'])} samples")
+            return dataset
+            
+        self.size = size
+        self.center_crop = center_crop
+
+        self.args = args
+        self.custom_instance_prompts = None
+
+        # if --dataset_name is provided or a metadata jsonl file is provided in the local --instance_data directory,
+        # we load the training data using load_dataset
+        
+        self.instance_data_root = Path(args.data_path)
+        if not self.instance_data_root.exists():
+            raise ValueError("Instance images root doesn't exists.")
+        dataset = load_train_data(args)
+        self.custom_instance_prompts = dataset['positive_text']
+        self.instance_positive_text = dataset['positive_text']
+        self.country = dataset['country']
+        self.cultural_components = dataset['cultural_components']
+        self.reasons = dataset['reasons']
+        self.style_images = dataset['style_images']
+        self.instance_images = []
+        for img in dataset['image']:
+            self.instance_images.extend(itertools.repeat(img, repeats))
+
+        self.pixel_values = []
+        train_resize = transforms.Resize(size, interpolation=transforms.InterpolationMode.BILINEAR)
+        train_crop = transforms.CenterCrop(size) if center_crop else transforms.RandomCrop(size)
+        train_flip = transforms.RandomHorizontalFlip(p=1.0)
+        train_transforms = transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.Normalize([0.5], [0.5]),
+            ]
+        )
+        for image in self.instance_images:
+            image = exif_transpose(image)
+            if not image.mode == "RGB":
+                image = image.convert("RGB")
+            image = train_resize(image)
+            if args.random_flip and random.random() < 0.5:
+                # flip
+                image = train_flip(image)
+            if args.center_crop:
+                y1 = max(0, int(round((image.height - args.resolution) / 2.0)))
+                x1 = max(0, int(round((image.width - args.resolution) / 2.0)))
+                image = train_crop(image)
+            else:
+                y1, x1, h, w = train_crop.get_params(image, (args.resolution, args.resolution))
+                image = crop(image, y1, x1, h, w)
+            image = train_transforms(image)
+            self.pixel_values.append(image)
+
+        self.num_instance_images = len(self.instance_images)
+        self._length = self.num_instance_images
+        
+        self.image_transforms = transforms.Compose(
+            [
+                # transforms.Resize(size, interpolation=transforms.InterpolationMode.BILINEAR),
+                # transforms.CenterCrop(size) if center_crop else transforms.RandomCrop(size),
+                transforms.ToTensor(),
+                # transforms.Normalize([0.5], [0.5]),
+            ]
+        )
+
+    def __len__(self):
+        return self._length
+
+    def __getitem__(self, index):
+        example = {}
+        # Handle both single index and list of indices
+        if isinstance(index, (list, tuple)):
+            instance_images = [self.pixel_values[i] for i in index]
+            instance_prompts = [self.instance_positive_text[i] for i in index]
+            style_images = [self.style_images[i] for i in index]
+            country = [self.country[i] for i in index]
+            cultural_components = [self.cultural_components[i] for i in index]
+            reasons = [self.reasons[i] for i in index]
+            # print(atypicality_image)
+            # print(len(index))
+            example["instance_images"] = torch.stack(instance_images)
+            example["instance_prompt"] = instance_prompts
+            example["style_images"] = [self.image_transforms(style_images[i]) for i in range(len(style_images))]
+            example["country"] = country
+            example["cultural_components"] = cultural_components
+            example["reasons"] = reasons
+        else:
+            instance_image = self.pixel_values[index]
+            example["instance_images"] = instance_image
+            example["instance_prompt"] = self.instance_positive_text[index]
+            example["style_image"] = self.image_transforms(self.style_images[index])
+            example["country"] = self.country[index]
+            example["cultural_components"] = self.cultural_components[index]
+            example["reasons"] = self.reasons[index]
+        return example
+
+
+def collate_fn_modified(examples, with_prior_preservation=False):
+    pixel_values = [example["instance_images"] for example in examples]
+    prompts = [example["instance_prompt"] for example in examples]
+    style_images = [example["style_images"] for example in examples]
+    country = [example["country"] for example in examples]
+    cultural_components = [example["cultural_components"] for example in examples]
+    reasons = [example["reasons"] for example in examples]
+    # Concat class and instance examples for prior preservation.
+    # We do this to avoid doing two forward passes.
+    if with_prior_preservation:
+        pixel_values += [example["class_images"] for example in examples]
+        prompts += [example["class_prompt"] for example in examples]
+        country += [example["country"] for example in examples]
+        cultural_components += [example["cultural_components"] for example in examples]
+        reasons += [example["reasons"] for example in examples]
+        style_images += [example["style_images"] for example in examples]
+    pixel_values = torch.stack(pixel_values)
+    pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
+    style_images = torch.stack(style_images)
+    style_images = style_images.to(memory_format=torch.contiguous_format).float()
+    batch = {"pixel_values": pixel_values, "prompts": prompts, "country": country, "cultural_components": cultural_components, "reasons": reasons, "style_images": style_images}
+    return batch
+
+
+class PromptDataset_modified(Dataset):
+    "A simple dataset to prepare the prompts to generate class images on multiple GPUs."
+
+    def __init__(self, prompt, num_samples):
+        self.prompt = prompt
+        self.num_samples = num_samples
+
+    def __len__(self):
+        return self.num_samples
+
+    def __getitem__(self, index):
+        example = {}
+        example["prompt"] = self.prompt
+        example["country"] = self.country
+        example["cultural_components"] = self.cultural_components
+        example["reasons"] = self.reasons
+        example["index"] = index
+        return example
+
+def tokenize_prompt_modified(tokenizer, prompt):
+    text_inputs = tokenizer(
+        prompt,
+        padding="max_length",
+        max_length=77,
+        truncation=True,
+        return_tensors="pt",
+    )
+    text_input_ids = text_inputs.input_ids
+    return text_input_ids
+
+
+def _encode_prompt_with_t5_modified(
+    text_encoder,
+    tokenizer,
+    max_sequence_length,
+    prompt=None,
+    num_images_per_prompt=1,
+    device=None,
+    text_input_ids=None,
+):
+    prompt = [prompt] if isinstance(prompt, str) else prompt
+    batch_size = len(prompt)
+
+    if tokenizer is not None:
+        text_inputs = tokenizer(
+            prompt,
+            padding="max_length",
+            max_length=max_sequence_length,
+            truncation=True,
+            add_special_tokens=True,
+            return_tensors="pt",
+        )
+        
+        text_input_ids = text_inputs.input_ids
+    else:
+        if text_input_ids is None:
+            raise ValueError("text_input_ids must be provided when the tokenizer is not specified")
+
+    prompt_embeds = text_encoder(text_input_ids.to(device))[0]
+    
+
+    dtype = text_encoder.dtype
+    prompt_embeds = prompt_embeds.to(dtype=dtype, device=device)
+
+    _, seq_len, _ = prompt_embeds.shape
+
+    # duplicate text embeddings and attention mask for each generation per prompt, using mps friendly method
+    prompt_embeds = prompt_embeds.repeat(1, num_images_per_prompt, 1)
+    prompt_embeds = prompt_embeds.view(batch_size * num_images_per_prompt, seq_len, -1)
+
+    return prompt_embeds
+
+
+def _encode_prompt_with_clip_modified(
+    text_encoder,
+    tokenizer,
+    prompt: str,
+    device=None,
+    text_input_ids=None,
+    num_images_per_prompt: int = 1,
+):
+    prompt = [prompt] if isinstance(prompt, str) else prompt
+    batch_size = len(prompt)
+
+    if tokenizer is not None:
+        text_inputs = tokenizer(
+            prompt,
+            padding="max_length",
+            max_length=77,
+            truncation=True,
+            return_tensors="pt",
+        )
+
+        text_input_ids = text_inputs.input_ids
+    else:
+        if text_input_ids is None:
+            raise ValueError("text_input_ids must be provided when the tokenizer is not specified")
+
+    prompt_embeds = text_encoder(text_input_ids.to(device), output_hidden_states=True)
+
+    pooled_prompt_embeds = prompt_embeds[0]
+    prompt_embeds = prompt_embeds.hidden_states[-2]
+    prompt_embeds = prompt_embeds.to(dtype=text_encoder.dtype, device=device)
+
+    _, seq_len, _ = prompt_embeds.shape
+    # duplicate text embeddings for each generation per prompt, using mps friendly method
+    prompt_embeds = prompt_embeds.repeat(1, num_images_per_prompt, 1)
+    prompt_embeds = prompt_embeds.view(batch_size * num_images_per_prompt, seq_len, -1)
+
+    return prompt_embeds, pooled_prompt_embeds
+
+
+def encode_prompt_modified(
+    text_encoders,
+    tokenizers,
+    prompt: str,
+    max_sequence_length,
+    device=None,
+    num_images_per_prompt: int = 1,
+    text_input_ids_list=None,
+):
+    prompt = [prompt] if isinstance(prompt, str) else prompt
+
+    clip_tokenizers = tokenizers[:2]
+    clip_text_encoders = text_encoders[:2]
+
+    clip_prompt_embeds_list = []
+    clip_pooled_prompt_embeds_list = []
+    for i, (tokenizer, text_encoder) in enumerate(zip(clip_tokenizers, clip_text_encoders)):
+        prompt_embeds, pooled_prompt_embeds = _encode_prompt_with_clip_modified(
+            text_encoder=text_encoder,
+            tokenizer=tokenizer,
+            prompt=prompt,
+            device=device if device is not None else text_encoder.device,
+            num_images_per_prompt=num_images_per_prompt,
+            text_input_ids=text_input_ids_list[i] if text_input_ids_list else None,
+        )
+        clip_prompt_embeds_list.append(prompt_embeds)
+        clip_pooled_prompt_embeds_list.append(pooled_prompt_embeds)
+
+    clip_prompt_embeds = torch.cat(clip_prompt_embeds_list, dim=-1)
+    pooled_prompt_embeds = torch.cat(clip_pooled_prompt_embeds_list, dim=-1)
+
+    t5_prompt_embed = _encode_prompt_with_t5_modified(
+        text_encoders[-1],
+        tokenizers[-1],
+        max_sequence_length,
+        prompt=prompt,
+        num_images_per_prompt=num_images_per_prompt,
+        text_input_ids=text_input_ids_list[-1] if text_input_ids_list else None,
+        device=device if device is not None else text_encoders[-1].device,
+    )
+
+    clip_prompt_embeds = torch.nn.functional.pad(
+        clip_prompt_embeds, (0, t5_prompt_embed.shape[-1] - clip_prompt_embeds.shape[-1])
+    )
+    prompt_embeds = torch.cat([clip_prompt_embeds, t5_prompt_embed], dim=-2)
+
+    return prompt_embeds, pooled_prompt_embeds
