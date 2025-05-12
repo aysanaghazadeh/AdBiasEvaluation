@@ -67,7 +67,7 @@ from diffusers.utils.torch_utils import is_compiled_module
 
 from util.data.data_util import DreamBoothDataset_modified, collate_fn_modified, PromptDataset_modified
 from transformers import AutoProcessor, CLIPModel
-from T2I_models.SD3_modified import CustomStableDiffusionPipeline
+from T2I_models.Custome_SD3 import CustomeSD3
 from PIL import Image
 from T2I_models.Custome_SD3 import ProjectionBlock
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
@@ -198,17 +198,37 @@ def log_validation(
     
     # autocast_ctx = torch.autocast(accelerator.device.type) if not is_final_validation else nullcontext()
     autocast_ctx = nullcontext()
-    style_images = ['0/10150.jpg', '0/10000.jpg', '0/154830.jpg', '0/21260.jpg', '0/10150.jpg', '0/10000.jpg']
     with autocast_ctx:
         images = []
-        for i, pa in enumerate(pipeline_args):
-            generator = torch.Generator(device='cuda:1').manual_seed(i) #if args.seed is not None else None
-            file_path = os.path.join(args.data_path,args.test_set_images, style_images[i])
-            negative_file_path = os.path.join(args.data_path,args.test_set_images, style_images[(i+1) % len(style_images)])
-            style_image = Image.open(file_path)
-            negative_style_image = Image.open(negative_file_path)
-            images.append(pipeline(**pa, style_image=style_image, negative_style_image=negative_style_image, generator=generator).images[0])
-
+        # for i, pa in enumerate(pipeline_args):
+        #     generator = torch.Generator(device='cuda:1').manual_seed(i) #if args.seed is not None else None
+        prompts = []
+        countries = ['united states', 'china', 'india', 'saudi arabia', 'united arab emirates', 'mexico', 'italy']
+        for country in countries:
+            prompt = f'''
+            Generate an advertisement image that targets people from {country} and conveys:
+                - I should drink Carlings Because it's light
+                - I should drink beer more often Because it would make me feel good
+                - i should drink carling's black label beer because it is as light as a Carling
+            '''
+            images.append(pipeline(prompt=prompt).images[0])
+            prompts.append(prompt)
+            prompt = f'''
+            Generate an advertisement image that targets people from {country} and conveys:
+                - I should try Heineken Because it will fill your drink
+                - I should drink Heineken Because it will associate me with refreshment
+                - I should drink Heineken beer Because it is refreshing
+            '''
+            images.append(pipeline(prompt=prompt).images[0])
+            prompts.append(prompt)
+            prompt = f'''
+            Generate an advertisement image that targets people from {country} and conveys:
+                - I should buy this makeup Because it has beautiful color
+                - GO TO THIS STORE BECASUE THEY HAVE A LOT OF COLOR
+                - I should do somersaults Because it will be fun
+            '''
+            images.append(pipeline(prompt=prompt).images[0])
+            prompts.append(prompt)
     for tracker in accelerator.trackers:
         phase_name = "test" if is_final_validation else "validation"
         if tracker.name == "tensorboard":
@@ -218,7 +238,7 @@ def log_validation(
             tracker.log(
                 {
                     phase_name: [
-                        wandb.Image(image, caption=f"{i}: {args.validation_prompts[i]}") for i, image in enumerate(images)
+                        wandb.Image(image, caption=f"{i}: {prompts[i]}") for i, image in enumerate(images)
                     ]
                 }
             )
@@ -1162,7 +1182,8 @@ def train(args):
                 # zt = (1 - texp) * x + texp * z1
                 sigmas = get_sigmas(timesteps, n_dim=model_input.ndim, dtype=model_input.dtype)
                 noisy_model_input = (1.0 - sigmas) * model_input + sigmas * noise
-                prompt_embeds = projection_block(batch['style_image'], prompt_embeds, reason_embeds, cultural_embeds, 28)
+                style_image = Image.open(batch['style_image'])
+                prompt_embeds = projection_block(style_image, prompt_embeds, reason_embeds, cultural_embeds, 28)
                 # Predict the noise residual
                 model_pred = transformer(
                     hidden_states=noisy_model_input,
@@ -1300,18 +1321,19 @@ def train(args):
                         )
                         text_encoder_one.to(weight_dtype)
                         text_encoder_two.to(weight_dtype)
-                    pipeline = CustomStableDiffusionPipeline.from_pretrained(
-                        args.pretrained_model_name_or_path,
-                        vae=vae,
-                        text_encoder=accelerator.unwrap_model(text_encoder_one),
-                        text_encoder_2=accelerator.unwrap_model(text_encoder_two),
-                        text_encoder_3=accelerator.unwrap_model(text_encoder_three),
-                        transformer=accelerator.unwrap_model(transformer),
-                        revision=args.revision,
-                        variant=args.variant,
-                        torch_dtype=weight_dtype,
-                        load_in_8bit=True,
-                    )
+                    # pipeline = CustomeSD3.from_pretrained(
+                    #     args.pretrained_model_name_or_path,
+                    #     vae=vae,
+                    #     text_encoder=accelerator.unwrap_model(text_encoder_one),
+                    #     text_encoder_2=accelerator.unwrap_model(text_encoder_two),
+                    #     text_encoder_3=accelerator.unwrap_model(text_encoder_three),
+                    #     transformer=accelerator.unwrap_model(transformer),
+                    #     revision=args.revision,
+                    #     variant=args.variant,
+                    #     torch_dtype=weight_dtype,
+                    #     load_in_8bit=True,
+                    # ) 
+                    pipeline = CustomeSD3(args)
                     pipeline.projection_block = projection_block
                     pipeline_args = [{"prompt": p} for p in args.validation_prompts]
                     images = log_validation(
@@ -1358,17 +1380,19 @@ def train(args):
             )
             text_encoder_one.to(weight_dtype)
             text_encoder_two.to(weight_dtype)
-            pipeline = StableDiffusion3Pipeline.from_pretrained(
-                    args.pretrained_model_name_or_path,
-                    vae=vae,
-                    text_encoder=accelerator.unwrap_model(text_encoder_one),
-                    text_encoder_2=accelerator.unwrap_model(text_encoder_two),
-                    text_encoder_3=accelerator.unwrap_model(text_encoder_three),
-                    transformer=accelerator.unwrap_model(transformer),
-                    revision=args.revision,
-                    variant=args.variant,
-                    torch_dtype=weight_dtype,
-                )
+            # pipeline = StableDiffusion3Pipeline.from_pretrained(
+            #         args.pretrained_model_name_or_path,
+            #         vae=vae,
+            #         text_encoder=accelerator.unwrap_model(text_encoder_one),
+            #         text_encoder_2=accelerator.unwrap_model(text_encoder_two),
+            #         text_encoder_3=accelerator.unwrap_model(text_encoder_three),
+            #         transformer=accelerator.unwrap_model(transformer),
+            #         revision=args.revision,
+            #         variant=args.variant,
+            #         torch_dtype=weight_dtype,
+            #     )
+            pipeline = CustomeSD3(args)
+            pipeline.projection_block = projection_block
             pipeline_args = {"prompt": args.validation_prompts[0]}
             images = log_validation(
                     pipeline=pipeline,

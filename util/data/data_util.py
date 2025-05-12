@@ -787,7 +787,7 @@ class DreamBoothDataset_modified(Dataset):
                 for i in style_images:
                     cultural_components += ' ' + ' '.join(image_cultural_components_map[i])
                 style_image = style_images[0]
-                dataset['style_images'].append(Image.open(os.path.join(args.data_path, args.train_set_images, style_image)))
+                dataset['style_images'].append(style_image)
                 dataset['country'].append(country)
                 dataset['cultural_components'].append(cultural_components)
                 dataset['reasons'].append(QAs[image_url][0][-1].lower().split('because')[-1])
@@ -878,7 +878,7 @@ class DreamBoothDataset_modified(Dataset):
             # print(len(index))
             example["instance_images"] = torch.stack(instance_images)
             example["instance_prompt"] = instance_prompts
-            example["style_images"] = [self.image_transforms(style_images[i]) for i in range(len(style_images))]
+            example["style_images"] = style_images
             example["country"] = country
             example["cultural_components"] = cultural_components
             example["reasons"] = reasons
@@ -886,7 +886,7 @@ class DreamBoothDataset_modified(Dataset):
             instance_image = self.pixel_values[index]
             example["instance_images"] = instance_image
             example["instance_prompt"] = self.instance_positive_text[index]
-            example["style_image"] = self.image_transforms(self.style_images[index])
+            example["style_image"] = self.style_images[index]
             example["country"] = self.country[index]
             example["cultural_components"] = self.cultural_components[index]
             example["reasons"] = self.reasons[index]
