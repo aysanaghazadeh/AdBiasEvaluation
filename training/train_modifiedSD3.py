@@ -1090,6 +1090,7 @@ def train(args):
             
             vae.to(accelerator.device, dtype=torch.float32)
             transformer.to(accelerator.device, dtype=weight_dtype)
+            projection_block.to(accelerator.device, dtype=weight_dtype)
             models_to_accumulate = [transformer]
             if args.train_text_encoder:
                 models_to_accumulate.extend([text_encoder_one, text_encoder_two])
