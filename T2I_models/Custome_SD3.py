@@ -40,6 +40,8 @@ class ProjectionBlock(torch.nn.Module):
             return torch.cat([encoded_prompt, encoded_cultural_components], dim=1)
         encoded_prompt = encoded_prompt.to('cuda:1')
         inputs = self.CLIP_processor(images=image, return_tensors="pt").to('cuda:1')
+        print(self.CLIP_model.device)
+        print(inputs.device)
         clip_image_features = self.CLIP_model.get_image_features(**inputs)
         clip_image_features = clip_image_features / clip_image_features.norm(p=2, dim=1, keepdim=True)
         clip_image_features = self.projection_layer(clip_image_features)
