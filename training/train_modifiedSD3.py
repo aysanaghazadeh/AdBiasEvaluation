@@ -204,7 +204,7 @@ def log_validation(
         #     generator = torch.Generator(device='cuda:1').manual_seed(i) #if args.seed is not None else None
         prompts = []
         countries = ['united states', 'china', 'india', 'saudi arabia', 'mexico', 'france']
-        for country in countries:
+        for country in countries[:1]:
             prompt = f'''
             Generate an advertisement image that targets people from {country} conveying the following messages:
                 - I should drink Carlings Because it's light
@@ -213,22 +213,22 @@ def log_validation(
             '''
             images.append(pipeline(prompt=prompt))
             prompts.append(prompt)
-            prompt = f'''
-            Generate an advertisement image that targets people from {country} conveying the following messages:
-                - I should try Heineken Because it will fill your drink
-                - I should drink Heineken Because it will associate me with refreshment
-                - I should drink Heineken beer Because it is refreshing
-            '''
-            images.append(pipeline(prompt=prompt))
-            prompts.append(prompt)
-            prompt = f'''
-            Generate an advertisement image that targets people from {country} conveying the following messages:
-                - I should buy this makeup Because it has beautiful color
-                - GO TO THIS STORE BECASUE THEY HAVE A LOT OF COLOR
-                - I should do somersaults Because it will be fun
-            '''
-            images.append(pipeline(prompt=prompt))
-            prompts.append(prompt)
+            # prompt = f'''
+            # Generate an advertisement image that targets people from {country} conveying the following messages:
+            #     - I should try Heineken Because it will fill your drink
+            #     - I should drink Heineken Because it will associate me with refreshment
+            #     - I should drink Heineken beer Because it is refreshing
+            # '''
+            # images.append(pipeline(prompt=prompt))
+            # prompts.append(prompt)
+            # prompt = f'''
+            # Generate an advertisement image that targets people from {country} conveying the following messages:
+            #     - I should buy this makeup Because it has beautiful color
+            #     - GO TO THIS STORE BECASUE THEY HAVE A LOT OF COLOR
+            #     - I should do somersaults Because it will be fun
+            # '''
+            # images.append(pipeline(prompt=prompt))
+            # prompts.append(prompt)
     for tracker in accelerator.trackers:
         phase_name = "test" if is_final_validation else "validation"
         if tracker.name == "tensorboard":
