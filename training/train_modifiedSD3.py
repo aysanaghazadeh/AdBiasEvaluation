@@ -1097,7 +1097,7 @@ def train(args):
                 prompts = batch["prompts"]
                 reasons = batch["reasons"]
                 cultural_components = batch["cultural_components"]
-                negative_prompts = batch["negative_prompts"]
+                negative_prompts = 'low quality images'
                 
                 # encode batch prompts when custom prompts are provided for each image -
                 if train_dataset.custom_instance_prompts:
