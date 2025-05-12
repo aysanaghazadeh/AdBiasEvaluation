@@ -69,10 +69,10 @@ class CustomeSD3(nn.Module):
             'stabilityai/stable-diffusion-3-medium-diffusers',
             torch_dtype=torch.float32,
             load_in_8bit=True,
-        ).to(self.device)
+        ).to('cuda:2')
         self.projection_block = ProjectionBlock(args)
         # self.projection_block.load_state_dict(torch.load("SD3_finetuned_projection_only/checkpoint-2000/projection_block.pt"))
-        self.projection_block.to(self.device) 
+        self.projection_block.to('cuda:2') 
         self.pipeline.projection_block = self.projection_block
         self.country_image_map = json.load(open(os.path.join(args.data_path, "train/countries_image_map.json")))
         self.image_cultural_components_map = json.load(open(os.path.join(args.data_path, "train/components.json")))
