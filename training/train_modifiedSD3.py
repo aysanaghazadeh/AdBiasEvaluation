@@ -206,7 +206,7 @@ def log_validation(
         countries = ['united states', 'china', 'india', 'saudi arabia', 'united arab emirates', 'mexico', 'italy']
         for country in countries:
             prompt = f'''
-            Generate an advertisement image that targets people from {country} and conveys:
+            Generate an advertisement image that targets people from {country} conveying the following messages:
                 - I should drink Carlings Because it's light
                 - I should drink beer more often Because it would make me feel good
                 - i should drink carling's black label beer because it is as light as a Carling
@@ -214,7 +214,7 @@ def log_validation(
             images.append(pipeline(prompt=prompt).images[0])
             prompts.append(prompt)
             prompt = f'''
-            Generate an advertisement image that targets people from {country} and conveys:
+            Generate an advertisement image that targets people from {country} conveying the following messages:
                 - I should try Heineken Because it will fill your drink
                 - I should drink Heineken Because it will associate me with refreshment
                 - I should drink Heineken beer Because it is refreshing
@@ -222,7 +222,7 @@ def log_validation(
             images.append(pipeline(prompt=prompt).images[0])
             prompts.append(prompt)
             prompt = f'''
-            Generate an advertisement image that targets people from {country} and conveys:
+            Generate an advertisement image that targets people from {country} conveying the following messages:
                 - I should buy this makeup Because it has beautiful color
                 - GO TO THIS STORE BECASUE THEY HAVE A LOT OF COLOR
                 - I should do somersaults Because it will be fun
