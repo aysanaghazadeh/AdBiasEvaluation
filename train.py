@@ -13,7 +13,7 @@
 #     training_map[args.training_type](args)
 
 
-from Training.train_modifiedSD3 import train
+from training.train_modifiedSD3 import train
 from configs.training_config import get_args
 
 
