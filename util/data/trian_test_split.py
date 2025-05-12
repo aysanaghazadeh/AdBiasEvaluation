@@ -20,7 +20,6 @@ def get_train_data(args):
                 train_image_urls += random.sample(country_image_map[country], 5)
             else:
                 train_image_urls += random.sample(country_image_map[country], 2)
-        train_image_urls = train_image_urls[:300]
         with open(train_file, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['ID'])
