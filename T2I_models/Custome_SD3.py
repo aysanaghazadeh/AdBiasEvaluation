@@ -33,7 +33,6 @@ class ProjectionBlock(torch.nn.Module):
         print(encoded_cultural_components.device)
         print(encoded_reason.device)
         print(encoded_prompt.device)
-        print(self.texts_cross_attention.device)
         cultural_components_reason, _ = self.texts_cross_attention(
                                         query=encoded_reason,              # (1, 154, 4096)
                                         key=encoded_cultural_components,          # (1, 1, 4096)
