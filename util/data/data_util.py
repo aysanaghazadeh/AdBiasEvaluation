@@ -779,7 +779,10 @@ class DreamBoothDataset_modified(Dataset):
             for image_url in train_set_images:
                 # Get atypicality information for this image
                 country = image_country_map[image_url]
-                style_images = random.sample(country_image_map[country], 5)
+                if len(country_image_map[country]) > 5:
+                    style_images = random.sample(country_image_map[country], 5)
+                else:
+                    style_images = country_image_map[country]
                 cultural_components = ''
                 for i in style_images:
                     cultural_components += ' ' + ' '.join(image_cultural_components_map[i])
