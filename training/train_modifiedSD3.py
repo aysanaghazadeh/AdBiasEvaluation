@@ -192,7 +192,7 @@ def log_validation(
         f" {args.validation_prompts[0]}."
     )
     pipeline = pipeline.to('cuda:1')
-    pipeline.set_progress_bar_config(disable=True)
+    # pipeline.set_progress_bar_config(disable=True)
 
     # run inference
     
