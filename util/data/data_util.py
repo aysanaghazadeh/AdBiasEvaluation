@@ -911,8 +911,8 @@ def collate_fn_modified(examples, with_prior_preservation=False):
         style_images += [example["style_images"] for example in examples]
     pixel_values = torch.stack(pixel_values)
     pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
-    style_images = torch.stack(style_images)
-    style_images = style_images.to(memory_format=torch.contiguous_format).float()
+    # style_images = torch.stack(style_images)
+    # style_images = style_images.to(memory_format=torch.contiguous_format).float()
     batch = {"pixel_values": pixel_values, "prompts": prompts, "country": country, "cultural_components": cultural_components, "reasons": reasons, "style_images": style_images}
     return batch
 
