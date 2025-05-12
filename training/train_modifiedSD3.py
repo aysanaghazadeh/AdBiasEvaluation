@@ -208,8 +208,6 @@ def log_validation(
             prompt = f'''
             Generate an advertisement image that targets people from {country} conveying the following messages:
                 - I should drink Carlings Because it's light
-                - I should drink beer more often Because it would make me feel good
-                - i should drink carling's black label beer because it is as light as a Carling
             '''
             images.append(pipeline(prompt=prompt))
             prompts.append(prompt)

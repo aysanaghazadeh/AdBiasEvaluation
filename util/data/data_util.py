@@ -792,7 +792,7 @@ class DreamBoothDataset_modified(Dataset):
                 dataset['cultural_components'].append(cultural_components)
                 dataset['reasons'].append(QAs[image_url][0][-1].lower().split('because')[-1])
                 dataset['image'].append(Image.open(os.path.join(args.data_path, args.train_set_images, image_url)))
-                prompt = f"""Generate an advertisement image that targets the people from {country} and conveys the following message in detail: \n -{'\n-'.join(QAs[image_url][0])}"""
+                prompt = f"""Generate an advertisement image that targets the people from {country} and conveys the following message in detail: \n -{'\n-'.join(QAs[image_url][0][0])}"""
                 dataset['positive_text'].append(prompt)
             
             print(f"Final dataset size: {len(dataset['image'])} samples")
