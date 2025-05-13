@@ -25,9 +25,9 @@ class GPT4_o(nn.Module):
             })
         response = self.client.responses.create(
             model="gpt-4o-mini",
-            messages=input,
+            input=input,
             max_tokens=1000,
-            temperature=0.5
+            temperature=0
         )
         return response.output_text
         
