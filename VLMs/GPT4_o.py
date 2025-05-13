@@ -4,7 +4,7 @@ import requests
 from torch import nn
 
 class GPT4_o(nn.Module):
-    def __init__(self):
+    def __init__(self, args):
         super(GPT4_o, self).__init__()
         self.client = OpenAI()
 
