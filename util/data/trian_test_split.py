@@ -16,7 +16,7 @@ def get_train_data(args):
         train_image_urls = []
         country_image_map = json.load(open(os.path.join(args.data_path, 'train/countries_image_map.json')))
         for country in country_image_map:
-            if len(country_image_map[country]) > 5:
+            if len(country_image_map[country]) > 10:
                 train_image_urls += random.sample(country_image_map[country], 5)
             # else:
             #     train_image_urls += list(country_image_map[country])
