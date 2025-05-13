@@ -1,29 +1,32 @@
+import math
 import numpy as np
 import torch
 import torchvision.transforms as T
+from decord import VideoReader, cpu
 from PIL import Image
 from torchvision.transforms.functional import InterpolationMode
 from transformers import AutoModel, AutoTokenizer
-from torch import nn
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 
-
 class InternVL2_5(nn.Module):
-    def __init__(self, args):
+
+    def __init__(self):
         super(InternVL2_5, self).__init__()
-        self.args = args
-        path = 'OpenGVLab/InternVL3-8B'
+        # If you set `load_in_8bit=True`, you will need two 80GB GPUs.
+        # If you set `load_in_8bit=False`, you will need at least three 80GB GPUs.
+        self.path = 'OpenGVLab/InternVL3-8B'
+        self.device_map = self.split_model('InternVL3-8B')
         self.model = AutoModel.from_pretrained(
-            path,
+            self.path,
             torch_dtype=torch.bfloat16,
-            load_in_8bit=True,
+            load_in_8bit=False,
             low_cpu_mem_usage=True,
-            device_map='auto',
             use_flash_attn=True,
-            trust_remote_code=True).eval()
-        self.tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True, use_fast=False)
+            trust_remote_code=True,
+            device_map=self.device_map).eval()
+        self.tokenizer = AutoTokenizer.from_pretrained(self.path, trust_remote_code=True, use_fast=False)
 
     def build_transform(self, input_size):
         MEAN, STD = IMAGENET_MEAN, IMAGENET_STD
@@ -35,7 +38,7 @@ class InternVL2_5(nn.Module):
         ])
         return transform
 
-    def find_closest_aspect_ratio(slef, aspect_ratio, target_ratios, width, height, image_size):
+    def find_closest_aspect_ratio(self, aspect_ratio, target_ratios, width, height, image_size):
         best_ratio_diff = float('inf')
         best_ratio = (1, 1)
         area = width * height
@@ -88,33 +91,76 @@ class InternVL2_5(nn.Module):
             processed_images.append(thumbnail_img)
         return processed_images
 
-    def load_image(self, image, input_size=448, max_num=12):
-        image = Image.open(image)
-        image = image.convert('RGB')
+    def load_image(self,image_file, input_size=448, max_num=12):
+        image = Image.open(image_file).convert('RGB')
         transform = self.build_transform(input_size=input_size)
         images = self.dynamic_preprocess(image, image_size=input_size, use_thumbnail=True, max_num=max_num)
         pixel_values = [transform(image) for image in images]
         pixel_values = torch.stack(pixel_values)
         return pixel_values
 
-    def forward(self, images, prompt, generate_kwargs={'max_new_tokens': 250}):
-        image1 = images[0]
-        image2 = images[1]
-        pixel_values1 = self.load_image(image1, max_num=12).to(torch.bfloat16).cuda()
-        pixel_values2 = self.load_image(image2, max_num=12).to(torch.bfloat16).cuda()
+    def split_model(self, model_name):
+        device_map = {}
+        world_size = torch.cuda.device_count()
+        config = self.AutoConfig.from_pretrained(model_name, trust_remote_code=True)
+        num_layers = config.llm_config.num_hidden_layers
+        # Since the first GPU will be used for ViT, treat it as half a GPU.
+        num_layers_per_gpu = math.ceil(num_layers / (world_size - 0.5))
+        num_layers_per_gpu = [num_layers_per_gpu] * world_size
+        num_layers_per_gpu[0] = math.ceil(num_layers_per_gpu[0] * 0.5)
+        layer_cnt = 0
+        for i, num_layer in enumerate(num_layers_per_gpu):
+            for j in range(num_layer):
+                device_map[f'language_model.model.layers.{layer_cnt}'] = i
+                layer_cnt += 1
+        device_map['vision_model'] = 0
+        device_map['mlp1'] = 0
+        device_map['language_model.model.tok_embeddings'] = 0
+        device_map['language_model.model.embed_tokens'] = 0
+        device_map['language_model.output'] = 0
+        device_map['language_model.model.norm'] = 0
+        device_map['language_model.model.rotary_emb'] = 0
+        device_map['language_model.lm_head'] = 0
+        device_map[f'language_model.model.layers.{num_layers - 1}'] = 0
+
+        return device_map
+
+    def forward(self, images, prompt):
+        image_1 = images[0]
+        image_2 = images[1]
+        generation_config = dict(max_new_tokens=512, do_sample=True)
+
+        # multi-image multi-round conversation, separate images (多图多轮对话，独立图像)
+        pixel_values1 = self.load_image(image_1, max_num=12).to(torch.bfloat16).cuda()
+        pixel_values2 = self.load_image(image_2, max_num=12).to(torch.bfloat16).cuda()
         pixel_values = torch.cat((pixel_values1, pixel_values2), dim=0)
         num_patches_list = [pixel_values1.size(0), pixel_values2.size(0)]
-        generation_config = dict(
-            num_beams=1,
-            max_new_tokens=generate_kwargs['max_new_tokens'],
-            do_sample=False,
-        )
-        response, history = self.model.chat(self.tokenizer,
-                                       pixel_values,
-                                       prompt,
-                                       generation_config,
-                                       num_patches_list=num_patches_list,
-                                       history=None, return_history=True)
-        print(f'User: {prompt}\nAssistant: {response}')
-        print('*' * 10)
-        return response
+
+        question = 'Image-1: <image>\nImage-2: <image>\nDescribe the two images in detail.'
+        response, history = self.model.chat(self.tokenizer, pixel_values, question, generation_config,
+                                    num_patches_list=num_patches_list,
+                                    history=None, return_history=True)
+        print(f'User: {question}\nAssistant: {response}')
+
+        question = 'What are the similarities and differences between these two images.'
+        response, history = self.model.chat(self.tokenizer, pixel_values, question, generation_config,
+                                    num_patches_list=num_patches_list,
+                                    history=history, return_history=True)
+        print(f'User: {question}\nAssistant: {response}')
+
+
+
+
+
+        pixel_values = pixel_values.to(torch.bfloat16).cuda()
+        video_prefix = ''.join([f'Frame{i+1}: <image>\n' for i in range(len(num_patches_list))])
+        question = video_prefix + 'What is the red panda doing?'
+        # Frame1: <image>\nFrame2: <image>\n...\nFrame8: <image>\n{question}
+        response, history = model.chat(tokenizer, pixel_values, question, generation_config,
+                                    num_patches_list=num_patches_list, history=None, return_history=True)
+        print(f'User: {question}\nAssistant: {response}')
+
+        question = 'Describe this video in detail.'
+        response, history = model.chat(tokenizer, pixel_values, question, generation_config,
+                                    num_patches_list=num_patches_list, history=history, return_history=True)
+        print(f'User: {question}\nAssistant: {response}')
