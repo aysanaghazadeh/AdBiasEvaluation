@@ -25,7 +25,7 @@ def image_exists(image_dir, image_url):
 
 def compare_all_images(args):
     images = pd.read_csv(os.path.join(args.result_path, 'results', 'AR_DALLE3_20250507_181113.csv'))
-    image_dir = '/'.join(images.generated_image_url.values[0].split('/')[:-2])
+    image_dir = '/'.join(images.generated_image_url.values[0].split('/')[:-3])
     
     images = images.image_url.values
     pipeline = VLM(args)
