@@ -5,7 +5,7 @@ import torchvision.transforms as T
 from decord import VideoReader, cpu
 from PIL import Image
 from torchvision.transforms.functional import InterpolationMode
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModel, AutoTokenizer, AutoConfig
 from torch import nn
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
@@ -103,7 +103,7 @@ class InternVL2_5(nn.Module):
     def split_model(self, model_name):
         device_map = {}
         world_size = torch.cuda.device_count()
-        config = self.AutoConfig.from_pretrained(model_name, trust_remote_code=True)
+        config = AutoConfig.from_pretrained(model_name, trust_remote_code=True)
         num_layers = config.llm_config.num_hidden_layers
         # Since the first GPU will be used for ViT, treat it as half a GPU.
         num_layers_per_gpu = math.ceil(num_layers / (world_size - 0.5))
