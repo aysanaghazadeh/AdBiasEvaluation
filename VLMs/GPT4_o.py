@@ -15,13 +15,13 @@ class GPT4_o(nn.Module):
         input = [{
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": prompt},
+                        {"type": "input_text", "text": prompt},
                     ]
                 }]
         for image in images:
             input[0]["content"].append({
                 "type": "image_url",
-                "image_url": {"url": f"data:image/jpeg;base64,{encode_image(image)}"}
+                "image_url": f"data:image/jpeg;base64,{encode_image(image)}"
             })
         response = self.client.responses.create(
             model="gpt-4o-mini",
