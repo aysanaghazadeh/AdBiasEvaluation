@@ -23,7 +23,7 @@ class GPT4_o(nn.Module):
                 "type": "image_url",
                 "image_url": {"url": f"data:image/jpeg;base64,{encode_image(image)}"}
             })
-        response = self.client.chat.completions.create(
+        response = self.client.responses.create(
             model="gpt-4o-mini",
             messages=input,
             max_tokens=1000,
