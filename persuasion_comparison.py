@@ -18,16 +18,15 @@ def image_exists(image_dir, image_url):
     image_exits = True
     races = ['white', 'black', 'asian', 'indian', 'latino', 'middle_eastern']
     for race in races:
-        if os.path.exists(os.path.join(image_dir, race, image_url)):
-            continue
-        else:
+        if not os.path.exists(os.path.join(image_dir, race, image_url)):
+            print(os.path.join(image_dir, race, image_url))
             image_exists = False
     return image_exists
 
 def compare_all_images(args):
     images = pd.read_csv(os.path.join(args.result_path, 'results', 'AR_DALLE3_20250507_181113.csv'))
     image_dir = '/'.join(images.generated_image_url.values[0].split('/')[:-2])
-    print(image_dir)
+    
     images = images.image_url.values
     pipeline = VLM(args)
     races = ['white', 'black', 'asian', 'indian', 'latino', 'middle_eastern']
