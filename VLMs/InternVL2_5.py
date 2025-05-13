@@ -6,7 +6,7 @@ import requests
 class InternVL2_5(nn.Module):
     def __init__(self, args):
         super(InternVL2_5, self).__init__()
-        self.pipe = pipeline("image-text-to-text", model="OpenGVLab/InternVL2_5-38B", trust_remote_code=True)
+        self.pipe = pipeline("image-text-to-text", model="OpenGVLab/InternVL2_5-38B", trust_remote_code=True, device_map="auto")
 
     def forward(self, images, prompt):
         def encode_image(image_path):
