@@ -5,7 +5,6 @@ import os
 from jinja2 import Environment, FileSystemLoader
 
 def compare_persuasion(pipeline, images, prompt):
-    output = pipeline(images, prompt)
     print(output)
     output = output.lower().split('answer')[-1]
     print('-'* 100)
