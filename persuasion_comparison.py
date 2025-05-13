@@ -46,7 +46,8 @@ def compare_all_images(args):
                         continue
                     env = Environment(loader=FileSystemLoader(args.prompt_path))
                     template = env.get_template(args.VLM_prompt)
-                    output = template.render()
+                    prompt = template.render()
+                    image1 = os.path.join(image_dir, race1, image_url)
                     image2 = os.path.join(image_dir, race2, image_url)
                     comparison = compare_persuasion(pipeline, [image1, image2], prompt)
                     if comparison == 1:
