@@ -24,7 +24,7 @@ class GPT4_o(nn.Module):
                 "image_url": f"data:image/jpeg;base64,{encode_image(image)}"
             })
         response = self.client.responses.create(
-            model="gpt-4o-mini",
+            model="gpt-4o-2024-08-06",
             input=input,
             temperature=0.5
         )
