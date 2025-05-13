@@ -10,7 +10,8 @@ class QWenVL(torch.nn.Module):
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained("Qwen/Qwen2.5-VL-7B-Instruct", 
                                                                         torch_dtype="auto", 
                                                                         device_map="auto",
-                                                                        load_in_8bit=True)
+                                                                        load_in_8bit=True,
+                                                                        flash_attn=True)
         # self.model = self.model.to('cuda')
         self.processor = AutoProcessor.from_pretrained("Qwen/Qwen2.5-VL-7B-Instruct")
 
@@ -59,5 +60,4 @@ class QWenVL(torch.nn.Module):
         output_text = self.processor.batch_decode(
             generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
         )
-        print(output_text)
         return output_text[0]
