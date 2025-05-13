@@ -10,8 +10,7 @@ class QWenVL(torch.nn.Module):
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained("Qwen/Qwen2.5-VL-32B-Instruct", 
                                                                         torch_dtype="auto", 
                                                                         device_map="auto",
-                                                                        load_in_8bit=True,
-                                                                        attn_implementation="flash_attention_2")
+                                                                        load_in_8bit=True)
         self.model = self.model.to('cuda')
         self.processor = AutoProcessor.from_pretrained("Qwen/Qwen2.5-VL-32B-Instruct")
 
