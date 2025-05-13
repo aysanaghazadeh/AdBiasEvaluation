@@ -9,6 +9,7 @@ class GPT4_o(nn.Module):
         self.client = OpenAI()
 
     def forward(self, images, prompt):
+        print(prompt)
         def encode_image(image_path):
             with open(image_path, "rb") as image_file:
                 return base64.b64encode(image_file.read()).decode('utf-8')
