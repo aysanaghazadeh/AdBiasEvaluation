@@ -15,7 +15,6 @@ class InternVL(nn.Module):
             torch_dtype=torch.bfloat16,
             # load_in_8bit=True,
             low_cpu_mem_usage=True,
-            device_map={'': 2},
             trust_remote_code=True).eval()
         self.tokenizer = AutoTokenizer.from_pretrained("OpenGVLab/InternVL2_5-38B",
                                                        trust_remote_code=True)
@@ -104,7 +103,7 @@ class InternVL(nn.Module):
         return pixel_values
 
     def forward(self, image, prompt, generate_kwargs={'max_new_tokens': 20}):
-        pixel_values = self.load_image(image, max_num=6).to(torch.bfloat16).cuda("cuda:2")
+        pixel_values = self.load_image(image, max_num=6).to(torch.bfloat16).cuda("cuda")
         generation_config = dict(
             num_beams=1,
             max_new_tokens=generate_kwargs['max_new_tokens'],
