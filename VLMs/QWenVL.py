@@ -15,7 +15,7 @@ class QWenVL(torch.nn.Module):
         self.processor = AutoProcessor.from_pretrained("Qwen/Qwen2.5-VL-32B-Instruct")
 
 
-    def forward(self, images, prompt, generate_kwargs={'max_new_tokens': 512}):
+    def forward(self, images, prompt, generate_kwargs={'max_new_tokens': 128}):
 
         messages = [
             {
