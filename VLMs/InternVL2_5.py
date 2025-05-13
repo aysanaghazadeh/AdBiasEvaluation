@@ -13,7 +13,7 @@ IMAGENET_STD = (0.229, 0.224, 0.225)
 
 class InternVL2_5(nn.Module):
 
-    def __init__(self):
+    def __init__(self, args):
         super(InternVL2_5, self).__init__()
         # If you set `load_in_8bit=True`, you will need two 80GB GPUs.
         # If you set `load_in_8bit=False`, you will need at least three 80GB GPUs.
