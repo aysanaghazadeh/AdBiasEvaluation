@@ -10,9 +10,9 @@ IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 
 
-class MultiInternVL(nn.Module):
+class InternVL2_5(nn.Module):
     def __init__(self, args):
-        super(MultiInternVL, self).__init__()
+        super(InternVL2_5, self).__init__()
         self.args = args
         path = 'OpenGVLab/InternVL-Chat-V2-5'
         self.model = AutoModel.from_pretrained(
