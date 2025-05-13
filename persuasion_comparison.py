@@ -44,8 +44,8 @@ def compare_all_images(args):
                     if race1 == race2:
                         continue
                     prompt = jinja2.Template(args.VLM_prompt).render(race1=race1, race2=race2)
-                    image1 = os.path.join(args.image_dir, race1, image_url)
-                    image2 = os.path.join(args.image_dir, race2, image_url)
+                    image1 = os.path.join(image_dir, race1, image_url)
+                    image2 = os.path.join(image_dir, race2, image_url)
                     comparison = compare_persuasion(pipeline, [image1, image2], prompt)
                     if comparison == 1:
                         comparisons_win[f'{race1}{race2}'] += 1
