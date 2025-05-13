@@ -26,6 +26,7 @@ class InternVL2_5(nn.Module):
             low_cpu_mem_usage=True,
             use_flash_attn=True,
             trust_remote_code=True,
+            token='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',
             device_map=self.device_map).eval()
         self.tokenizer = AutoTokenizer.from_pretrained(self.path, trust_remote_code=True, use_fast=False)
 
