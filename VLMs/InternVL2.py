@@ -12,8 +12,9 @@ class InternVL(nn.Module):
         self.args = args
         self.model = AutoModel.from_pretrained(
             "OpenGVLab/InternVL2-4B",
-            torch_dtype=torch.bfloat16,
+            # torch_dtype=torch.bfloat16,
             # load_in_8bit=True,
+            # torch_dtype=torch.bfloat16,
             low_cpu_mem_usage=True,
             trust_remote_code=True).eval()
         self.tokenizer = AutoTokenizer.from_pretrained("OpenGVLab/InternVL2_5-38B",
