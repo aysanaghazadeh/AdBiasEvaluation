@@ -31,7 +31,7 @@ def analyze_image(image_path, image_url):
         image_analysis[image_url] = faces
     except Exception as e:
         print(f"Error analyzing image: {e}")
-    print(image_analysis)
+    # print(image_analysis)
 
 # Example usage
 
