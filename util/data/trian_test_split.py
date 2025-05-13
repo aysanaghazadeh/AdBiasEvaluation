@@ -18,8 +18,8 @@ def get_train_data(args):
         for country in country_image_map:
             if len(country_image_map[country]) > 5:
                 train_image_urls += random.sample(country_image_map[country], 5)
-            else:
-                train_image_urls += list(country_image_map[country])
+            # else:
+            #     train_image_urls += list(country_image_map[country])
         with open(train_file, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['ID'])
@@ -67,7 +67,7 @@ def get_test_data(args):
     test_file = os.path.join(args.data_path, f'train/test_set_images_country.csv')
     if os.path.exists(test_file):
         return pd.read_csv(test_file)
-    if 'country' in train_file:
+    if 'country' in test_file:
         train_image_urls = pd.read_csv(os.path.join(args.data_path, 'train/country_train_image_large.csv')).ID.values
         test_image_urls = []
         country_image_map = json.load(open(os.path.join(args.data_path, 'train/countries_image_map.json')))
@@ -87,12 +87,12 @@ def get_test_data(args):
                     country_image_urls.add(image_url)
             else:
                 test_image_urls += list(country_image_map[country])
-        with open(train_file, 'w', newline='') as file:
+        with open(test_file, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['ID'])
-            for i in train_image_urls:
+            for i in test_image_urls:
                 writer.writerow([i])
-        return train_image_urls
+        return test_image_urls
         
     if args.AD_type == 'all':
         # Take exactly 290 samples from each dataset (PSA and Commercial)
