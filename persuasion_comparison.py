@@ -1,8 +1,9 @@
 from configs.inference_config import get_args
 from VLMs.VLM import VLM
 import pandas as pd
-import jinja2
 import os
+from jinja2 import Environment, FileSystemLoader
+
 def compare_persuasion(pipeline, images, prompt):
     output = pipeline(images, prompt)
     print(output)
@@ -43,8 +44,9 @@ def compare_all_images(args):
                 for race2 in races:
                     if race1 == race2:
                         continue
-                    prompt = jinja2.Template(args.VLM_prompt).render(race1=race1, race2=race2)
-                    image1 = os.path.join(image_dir, race1, image_url)
+                    env = Environment(loader=FileSystemLoader(args.prompt_path))
+                    template = env.get_template(args.VLM_prompt)
+                    output = template.render()
                     image2 = os.path.join(image_dir, race2, image_url)
                     comparison = compare_persuasion(pipeline, [image1, image2], prompt)
                     if comparison == 1:
