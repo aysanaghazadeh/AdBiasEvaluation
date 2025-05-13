@@ -3,6 +3,7 @@ from VLMs.InternVL2 import InternVL
 from VLMs.LLAVA16 import LLAVA16
 from VLMs.QWenVL import QWenVL
 from VLMs.GPT4_o import GPT4_o
+from VLMs.InternVL2_5 import InternVL2_5
 
 class VLM(nn.Module):
     def __init__(self, args):
@@ -11,7 +12,8 @@ class VLM(nn.Module):
             'QWenVL': QWenVL,
             'LLAVA16': LLAVA16,
             'InternVL': InternVL,
-            'GPT4_o': GPT4_o
+            'GPT4_o': GPT4_o,
+            'InternVL2_5': InternVL2_5
         }
         self.model = model_map[args.VLM](args)
 
