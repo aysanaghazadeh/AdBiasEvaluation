@@ -11,7 +11,7 @@ class QWenVL(torch.nn.Module):
                                                                         torch_dtype="auto", 
                                                                         device_map="auto",
                                                                         load_in_8bit=True,
-                                                                        flash_attn=True)
+                                                                        attn_implementation="flash_attention_2")
         # self.model = self.model.to('cuda')
         self.processor = AutoProcessor.from_pretrained("Qwen/Qwen2.5-VL-7B-Instruct")
 
