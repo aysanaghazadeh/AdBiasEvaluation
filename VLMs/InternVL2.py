@@ -94,34 +94,30 @@ class InternVL(nn.Module):
             processed_images.append(thumbnail_img)
         return processed_images
 
-    def load_image(self, image, input_size=448, max_num=6):
-        image = image.convert('RGB')
+    def load_image(self,image_file, input_size=448, max_num=12):
+        image = Image.open(image_file).convert('RGB')
         transform = self.build_transform(input_size=input_size)
         images = self.dynamic_preprocess(image, image_size=input_size, use_thumbnail=True, max_num=max_num)
         pixel_values = [transform(image) for image in images]
         pixel_values = torch.stack(pixel_values)
         return pixel_values
+    
+    def forward(self, images, prompt):
+        image_1 = images[0]
+        image_2 = images[1]
+        generation_config = dict(max_new_tokens=512, do_sample=True)
 
-    def forward(self, image, prompt, generate_kwargs={'max_new_tokens': 20}):
-        pixel_values = self.load_image(image, max_num=6).to(torch.bfloat16).cuda("cuda")
-        generation_config = dict(
-            num_beams=1,
-            max_new_tokens=generate_kwargs['max_new_tokens'],
-            do_sample=False,
-        )
-        response = self.model.chat(self.tokenizer, pixel_values, prompt, generation_config)
-        print(f'User: {prompt}')
-        print(f'Assistant: {response}')
-        print('*' * 10)
+        # multi-image multi-round conversation, separate images (多图多轮对话，独立图像)
+        pixel_values1 = self.load_image(image_1, max_num=12).to(torch.bfloat16).cuda()
+        pixel_values2 = self.load_image(image_2, max_num=12).to(torch.bfloat16).cuda()
+        pixel_values = torch.cat((pixel_values1, pixel_values2), dim=0)
+        num_patches_list = [pixel_values1.size(0), pixel_values2.size(0)]
+
+        question = f'Image-1: <image>\nImage-2: <image>\n{prompt}'
+        response, history = self.model.chat(self.tokenizer, pixel_values, question, generation_config,
+                                    num_patches_list=num_patches_list,
+                                    history=None, return_history=True)
+        print(f'User: {question}\nAssistant: {response}')
         return response
-        # path = "OpenGVLab/InternVL-Chat-V1-1"
-        # image_processor = CLIPImageProcessor.from_pretrained(path)
-        # image = image.resize((448, 448))
-        # pixel_values = image_processor(images=image, return_tensors='pt').pixel_values.to(torch.bfloat16).cuda()
-        #
-        # generation_config = dict(max_new_tokens=200, do_sample=True)
-        # question = prompt
-        # response = self.model.chat(self.tokenizer, pixel_values, question, generation_config)
-        # print(f'User: {question}')
-        # print(f'Assistant: {response}')
-        # return response
+
+        
