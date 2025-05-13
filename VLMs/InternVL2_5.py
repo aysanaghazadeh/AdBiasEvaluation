@@ -89,6 +89,7 @@ class InternVL2_5(nn.Module):
         return processed_images
 
     def load_image(self, image, input_size=448, max_num=12):
+        image = Image.open(image)
         image = image.convert('RGB')
         transform = self.build_transform(input_size=input_size)
         images = self.dynamic_preprocess(image, image_size=input_size, use_thumbnail=True, max_num=max_num)
