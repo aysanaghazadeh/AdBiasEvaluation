@@ -15,7 +15,7 @@ def compare_persuasion(pipeline, images, prompt):
         return 0
 
 def image_exists(image_dir, image_url):
-    image_exits = True
+    image_exists = True
     races = ['white', 'black', 'asian', 'indian', 'latino', 'middle_eastern']
     for race in races:
         if not os.path.exists(os.path.join(image_dir, race, image_url)):
