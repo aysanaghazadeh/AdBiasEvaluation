@@ -14,7 +14,7 @@ class InternVL2_5(nn.Module):
     def __init__(self, args):
         super(InternVL2_5, self).__init__()
         self.args = args
-        path = 'OpenGVLab/InternVL-Chat-V2-5'
+        path = 'OpenGVLab/InternVL3-8B'
         self.model = AutoModel.from_pretrained(
             path,
             torch_dtype=torch.bfloat16,
