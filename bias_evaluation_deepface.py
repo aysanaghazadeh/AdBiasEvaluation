@@ -39,13 +39,13 @@ def analyze_image(image_path, image_url):
 
 
 if __name__ == "__main__":
-    image_path_list = pd.read_csv(os.path.join('../experiments/results', 'AR_Flux_20250508_202121.csv')).generated_image_url.values
-    ref_path_list = pd.read_csv(os.path.join('../experiments/results', 'AR_Flux_20250508_202121.csv')).generated_image_url.values
+    image_path_list = pd.read_csv(os.path.join('../experiments/results', 'AR_Flux_20250508_202121.csv')).values
+    ref_path_list = pd.read_csv(os.path.join('../experiments/results', 'AR_Flux_20250508_202121.csv')).values
     for row in image_path_list:
         image_url = row[0]
         if image_url not in ref_path_list:
             continue
-        image_path = row[1]
+        image_path = row[3]
         analyze_image(image_path, image_url)
         with open(os.path.join('../experiments/results', 'deepface_analysis_FLUX.json'), "w") as f:
             json.dump(image_analysis, f)
