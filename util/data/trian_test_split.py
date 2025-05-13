@@ -74,7 +74,6 @@ def get_test_data(args):
         for country in country_image_map:
             country_image_urls = set([])
             if len(country_image_map[country]) > 14:
-                print(len(country_image_map[country]))
                 while len(country_image_urls) < 5:
                     random_idx = random.randint(0, len(country_image_map[country]) - 1)
                     image_url = country_image_map[country][random_idx]
