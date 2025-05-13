@@ -39,7 +39,6 @@ def analyze_image(image_path, image_url):
 
 
 if __name__ == "__main__":
-    analyze_image(args)
     image_path_list = pd.read_csv(os.path.join('../experiments/results', 'AR_Flux_20250508_202121.csv')).generated_image_url.values
     ref_path_list = pd.read_csv(os.path.join('../experiments/results', 'AR_Flux_20250508_202121.csv')).generated_image_url.values
     for row in image_path_list:
