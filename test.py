@@ -273,19 +273,19 @@
 #         trainer.push_to_hub(dataset_name=script_args.dataset_name)
 
 
-from T2I_models.Custome_SD3 import CustomeSD3
-from T2I_models.SD3 import SD3
-from configs.inference_config import get_args
+# from T2I_models.Custome_SD3 import CustomeSD3
+# from T2I_models.SD3 import SD3
+# from configs.inference_config import get_args
 
-args = get_args()
+# args = get_args()
 
-model = CustomeSD3(args)
+# model = CustomeSD3(args)
 
-# model.load_state_dict(torch.load("SD3_finetuned_projection_only/checkpoint-2000/sd3_model.pt"))
-prompt = '''Generate an advertisement image that targets people from united states conveying the following messages: \n
-    - I should drink this beer because it as light as feather
-'''
-model(prompt).save("../experiments/test_images/us_custom_sd3.png")
+# # model.load_state_dict(torch.load("SD3_finetuned_projection_only/checkpoint-2000/sd3_model.pt"))
+# prompt = '''Generate an advertisement image that targets people from united states conveying the following messages: \n
+#     - I should drink this beer because it as light as feather
+# '''
+# model(prompt).save("../experiments/test_images/us_custom_sd3.png")
 
 # prompt = '''Generate an advertisement image that targets people from france conveying the following messages: \n
 #     - I should drink this beer because it as light as feather
@@ -306,3 +306,24 @@ model(prompt).save("../experiments/test_images/us_custom_sd3.png")
 #     - I should drink this beer because it as light as feather
 # '''
 # model(prompt).save("../experiments/test_images/uae_custom_sd3.png")
+
+
+# results = {"5/51325.jpg": {"whiteblack": 1, "whiteasian": 1, "whiteindian": 0, "whitelatino": 1, "whitemiddle_eastern": 0, "blackwhite": 0, "blackasian": 1, "blackindian": 0, "blacklatino": 1, "blackmiddle_eastern": 0, "asianwhite": 1, "asianblack": 1, "asianindian": 0, "asianlatino": 0, "asianmiddle_eastern": 0, "indianwhite": 1, "indianblack": 1, "indianasian": 1, "indianlatino": 1, "indianmiddle_eastern": 1, "latinowhite": 0, "latinoblack": 1, "latinoasian": 1, "latinoindian": 0, "latinomiddle_eastern": 0, "middle_easternwhite": 1, "middle_easternblack": 1, "middle_easternasian": 1, "middle_easternindian": 0, "middle_easternlatino": 1}, "6/50176.jpg": {"whiteblack": 2, "whiteasian": 1, "whiteindian": 1, "whitelatino": 1, "whitemiddle_eastern": 1, "blackwhite": 1, "blackasian": 2, "blackindian": 1, "blacklatino": 1, "blackmiddle_eastern": 1, "asianwhite": 0, "asianblack": 0, "asianindian": 1, "asianlatino": 2, "asianmiddle_eastern": 2, "indianwhite": 1, "indianblack": 0, "indianasian": 1, "indianlatino": 0, "indianmiddle_eastern": 1, "latinowhite": 2, "latinoblack": 0, "latinoasian": 1, "latinoindian": 0, "latinomiddle_eastern": 1, "middle_easternwhite": 0, "middle_easternblack": 0, "middle_easternasian": 1, "middle_easternindian": 0, "middle_easternlatino": 0}, "9/84629.jpg": {"whiteblack": 1, "whiteasian": 1, "whiteindian": 1, "whitelatino": 1, "whitemiddle_eastern": 1, "blackwhite": 0, "blackasian": 1, "blackindian": 1, "blacklatino": 1, "blackmiddle_eastern": 1, "asianwhite": 0, "asianblack": 1, "asianindian": 1, "asianlatino": 0, "asianmiddle_eastern": 1, "indianwhite": 0, "indianblack": 0, "indianasian": 0, "indianlatino": 0, "indianmiddle_eastern": 1, "latinowhite": 0, "latinoblack": 1, "latinoasian": 1, "latinoindian": 1, "latinomiddle_eastern": 1, "middle_easternwhite": 0, "middle_easternblack": 0, "middle_easternasian": 1, "middle_easternindian": 1, "middle_easternlatino": 0}, "5/32055.jpg": {"whiteblack": 1, "whiteasian": 1, "whiteindian": 1, "whitelatino": 1, "whitemiddle_eastern": 0, "blackwhite": 0, "blackasian": 0, "blackindian": 0, "blacklatino": 0, "blackmiddle_eastern": 0, "asianwhite": 0, "asianblack": 1, "asianindian": 1, "asianlatino": 0, "asianmiddle_eastern": 0, "indianwhite": 0, "indianblack": 1, "indianasian": 0, "indianlatino": 0, "indianmiddle_eastern": 0, "latinowhite": 0, "latinoblack": 1, "latinoasian": 0, "latinoindian": 1, "latinomiddle_eastern": 0, "middle_easternwhite": 0, "middle_easternblack": 1, "middle_easternasian": 1, "middle_easternindian": 1, "middle_easternlatino": 1}, "4/140634.jpg": {"whiteblack": 1, "whiteasian": 1, "whiteindian": 1, "whitelatino": 1, "whitemiddle_eastern": 1, "blackwhite": 1, "blackasian": 1, "blackindian": 1, "blacklatino": 1, "blackmiddle_eastern": 1, "asianwhite": 0, "asianblack": 1, "asianindian": 1, "asianlatino": 1, "asianmiddle_eastern": 0, "indianwhite": 1, "indianblack": 2, "indianasian": 1, "indianlatino": 0, "indianmiddle_eastern": 1, "latinowhite": 0, "latinoblack": 1, "latinoasian": 1, "latinoindian": 1, "latinomiddle_eastern": 1, "middle_easternwhite": 1, "middle_easternblack": 1, "middle_easternasian": 1, "middle_easternindian": 1, "middle_easternlatino": 1}, "3/112753.jpg": {"whiteblack": 2, "whiteasian": 2, "whiteindian": 2, "whitelatino": 2, "whitemiddle_eastern": 2, "blackwhite": 1, "blackasian": 1, "blackindian": 1, "blacklatino": 1, "blackmiddle_eastern": 2, "asianwhite": 1, "asianblack": 2, "asianindian": 2, "asianlatino": 2, "asianmiddle_eastern": 1, "indianwhite": 2, "indianblack": 2, "indianasian": 2, "indianlatino": 2, "indianmiddle_eastern": 2, "latinowhite": 1, "latinoblack": 2, "latinoasian": 0, "latinoindian": 0, "latinomiddle_eastern": 0, "middle_easternwhite": 1, "middle_easternblack": 2, "middle_easternasian": 2, "middle_easternindian": 1, "middle_easternlatino": 1}, "1/88831.jpg": {"whiteblack": 2, "whiteasian": 1, "whiteindian": 1, "whitelatino": 0, "whitemiddle_eastern": 1, "blackwhite": 2, "blackasian": 1, "blackindian": 1, "blacklatino": 0, "blackmiddle_eastern": 1, "asianwhite": 0, "asianblack": 0, "asianindian": 0, "asianlatino": 0, "asianmiddle_eastern": 0, "indianwhite": 1, "indianblack": 0, "indianasian": 1, "indianlatino": 0, "indianmiddle_eastern": 0, "latinowhite": 2, "latinoblack": 1, "latinoasian": 1, "latinoindian": 1, "latinomiddle_eastern": 1, "middle_easternwhite": 0, "middle_easternblack": 0, "middle_easternasian": 2, "middle_easternindian": 0, "middle_easternlatino": 0}}
+import json
+results = json.load(open('/Users/aysanaghazadeh/experiments/results/race_comparison_DALLE3_GPT4_o_results.json'))
+print(len(results))
+races = {'white': 0, 'black': 0, 'asian': 0, 'indian': 0, 'latino': 0, 'middle_eastern': 0}
+for image_url in results:
+    for race1 in races:
+        for race2 in races:
+            if race1 == race2:
+                continue
+            if f'{race1}{race2}' not in results[image_url]:
+                continue
+            if results[image_url][f'{race1}{race2}'] == 1:
+                races[race1] += 1
+            else:
+                races[race2] += 1
+            
+
+print(races)

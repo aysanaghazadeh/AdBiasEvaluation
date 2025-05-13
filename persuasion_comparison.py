@@ -28,7 +28,10 @@ def image_exists(image_dir, image_url):
 def compare_all_images(args):
     images = pd.read_csv(os.path.join(args.result_path, 'results', 'AR_DALLE3_20250507_181113.csv'))
     image_dir = '/'.join(images.generated_image_url.values[0].split('/')[:-3])
-    image_results = {}
+    if os.path.exists(os.path.join(args.result_path, 'results', f'race_comparison_DALLE3_{args.VLM}_results.json')):
+        image_results = json.load(open(os.path.join(args.result_path, 'results', f'race_comparison_DALLE3_{args.VLM}_results.json')))
+    else:
+        image_results = {}
     images = images.image_url.values
     pipeline = VLM(args)
     races = ['white', 'black', 'asian', 'indian', 'latino', 'middle_eastern']
@@ -39,6 +42,8 @@ def compare_all_images(args):
                 continue
             comparisons_win[f'{race1}{race2}'] = 0
     for image_url in images:
+        if image_url in image_results:
+            continue
         image_results[image_url] = {}
         if image_exists(image_dir, image_url):
             

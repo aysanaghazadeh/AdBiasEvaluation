@@ -26,7 +26,7 @@ class GPT4_o(nn.Module):
         response = self.client.responses.create(
             model="gpt-4o-2024-08-06",
             input=input,
-            temperature=0.5
+            temperature=0
         )
         return response.output_text
         
