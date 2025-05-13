@@ -2,7 +2,7 @@ from torch import nn
 from VLMs.InternVL2 import InternVL
 from VLMs.LLAVA16 import LLAVA16
 from VLMs.QWenVL import QWenVL
-
+from VLMs.GPT4_o import GPT4_o
 
 class VLM(nn.Module):
     def __init__(self, args):
@@ -10,11 +10,15 @@ class VLM(nn.Module):
         model_map = {
             'QWenVL': QWenVL,
             'LLAVA16': LLAVA16,
-            'InternVL': InternVL
+            'InternVL': InternVL,
+            'GPT4_o': GPT4_o
         }
         self.model = model_map[args.VLM](args)
 
-    def forward(self, image, prompt, generate_kwargs):
-        output = self.model(image, prompt, generate_kwargs)
+    def forward(self, image, prompt, generate_kwargs=None):
+        if generate_kwargs is None:
+            output = self.model(image, prompt)
+        else:
+            output = self.model(image, prompt, generate_kwargs)
         return output
 
