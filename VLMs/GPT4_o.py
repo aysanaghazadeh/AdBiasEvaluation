@@ -20,7 +20,7 @@ class GPT4_o(nn.Module):
                 }]
         for image in images:
             input[0]["content"].append({
-                "type": "image_url",
+                "type": "input_image",
                 "image_url": f"data:image/jpeg;base64,{encode_image(image)}"
             })
         response = self.client.responses.create(
