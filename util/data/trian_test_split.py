@@ -74,11 +74,11 @@ def get_test_data(args):
         for country in country_image_map:
             country_image_urls = set([])
             if len(country_image_map[country]) > 10:
+                print(len(country_image_map[country]))
                 while len(country_image_urls) < 5:
                     random_idx = random.randint(0, len(country_image_map[country]) - 1)
                     image_url = country_image_map[country][random_idx]
                     if image_url not in train_image_urls:
-                        print(image_url)
                         country_image_urls.add(image_url)
                 test_image_urls += list(country_image_urls)
             elif len(country_image_map[country]) > 5:
