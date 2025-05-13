@@ -36,7 +36,6 @@ def compare_all_images(args):
             if race1 == race2:
                 continue
             comparisons_win[f'{race1}{race2}'] = 0
-    print(images)
     for image_url in images:
         if image_exists(image_dir, image_url):
             for race1 in races:
