@@ -26,7 +26,6 @@ class GPT4_o(nn.Module):
         response = self.client.responses.create(
             model="gpt-4o-mini",
             input=input,
-            max_tokens=1000,
             temperature=0
         )
         return response.output_text
