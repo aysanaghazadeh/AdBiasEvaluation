@@ -5,8 +5,9 @@ import jinja2
 import os
 def compare_persuasion(pipeline, images, prompt):
     output = pipeline(images, prompt)
-    output = output.lower().split('answer')[-1]
     print(output)
+    output = output.lower().split('answer')[-1]
+    print('-'* 100)
     if '1' in output:
         return 1
     elif '2' in output:
