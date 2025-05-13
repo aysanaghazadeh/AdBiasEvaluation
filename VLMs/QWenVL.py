@@ -7,7 +7,7 @@ class QWenVL(torch.nn.Module):
     def __init__(self, args):
         super().__init__()
         self.args = args
-        self.model = Qwen2VLForConditionalGeneration.from_pretrained("Qwen/Qwen2-VL-7B-Instruct")
+        self.model = Qwen2VLForConditionalGeneration.from_pretrained("Qwen/Qwen2.5-VL-32B-Instruct")
         self.model = self.model.to('cuda')
         self.processor = AutoProcessor.from_pretrained("Qwen/Qwen2-VL-7B-Instruct")
 
