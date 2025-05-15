@@ -105,9 +105,9 @@ class CustomeSD3(nn.Module):
                     same_topic_images.append(image)
                     break
         if len(same_topic_images) < 5:
-            style_images = random.sample(style_images, 5)
+            style_images = random.sample(style_images, 3)
         else:
-            style_images = random.sample(same_topic_images, 5)
+            style_images = random.sample(same_topic_images, 3)
             
         print(country)
         print(style_images)
