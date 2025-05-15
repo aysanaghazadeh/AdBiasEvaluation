@@ -8,7 +8,7 @@ import json
 import os
 import random
 from PIL import Image
-from util.data.mapping import TOPIC_MAP
+from util.data.mapping import country_to_demonym
 import ast
 
 class ProjectionBlock(torch.nn.Module):
@@ -90,6 +90,7 @@ class CustomeSD3(nn.Module):
         #     prompt = prompt.split("Prompt:")[1]
         
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
+        demonym = country_to_demonym[country]
         style_images = self.country_image_map[country]
         
         if len(style_images) > 5:
@@ -123,15 +124,16 @@ class CustomeSD3(nn.Module):
             image_components = self.image_cultural_components_map[image]
             for component in image_components:
                 if component[-4:] != 'text':
-                    components.add(component)
+                    components.add(demonym + ' ' + component)
         components = list(components)
         cultural_components = ', '.join(components)
+        
         # cultural_components = ', '.join(self.image_cultural_components_map[style_images[0]])
         # for image in style_images[1:]:
         #     cultural_components += ', ' + ', '.join(self.image_cultural_components_map[image])
         print(cultural_components)
         generator = torch.Generator(device=self.args.device).manual_seed(0)
-        return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, generator=generator, negative_prompt='human').images[0]
+        return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, generator=generator).images[0]
     
     
     
