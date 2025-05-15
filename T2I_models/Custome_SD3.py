@@ -85,30 +85,30 @@ class CustomeSD3(nn.Module):
         
 
     def forward(self, prompt, topic=None):
-        if topic is None and "Topic: " in prompt:
-            topic = ast.literal_eval(prompt.split("Topic: ")[-1].split("Prompt:")[0].strip())[0]
-            prompt = prompt.split("Prompt:")[1]
+        # if topic is None and "Topic: " in prompt:
+        #     topic = ast.literal_eval(prompt.split("Topic: ")[-1].split("Prompt:")[0].strip())[0]
+        #     prompt = prompt.split("Prompt:")[1]
         
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
         style_images = self.country_image_map[country]
         
-        if len(style_images) > 50:
-            style_images = random.sample(style_images, 50)
+        if len(style_images) > 20:
+            style_images = random.sample(style_images, 20)
         same_topic_images = []
-        for image in style_images:
-            for topic_id in self.topics[image]:
-                if topic_id in TOPIC_MAP:
-                    image_topic = TOPIC_MAP[topic_id]
-                else:
-                    image_topic = topic_id
-                if topic in image_topic:
-                    same_topic_images.append(image)
-                    break
-        print(same_topic_images[:5])
-        if len(same_topic_images) < 5:
-            style_images = random.sample(style_images, 3)
-        else:
-            style_images = random.sample(same_topic_images, 3)
+        # for image in style_images:
+        #     for topic_id in self.topics[image]:
+        #         if topic_id in TOPIC_MAP:
+        #             image_topic = TOPIC_MAP[topic_id]
+        #         else:
+        #             image_topic = topic_id
+        #         if topic in image_topic:
+        #             same_topic_images.append(image)
+        #             break
+        
+        # if len(same_topic_images) < 5:
+        #     style_images = random.sample(style_images, 3)
+        # else:
+        #     style_images = random.sample(same_topic_images, 3)
             
         print(country)
         print(style_images)
