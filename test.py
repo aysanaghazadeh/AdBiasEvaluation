@@ -283,27 +283,27 @@ args = get_args()
 model = CustomeSD3(args)
 
 prompt = '''Generate an advertisement image that targets people from united states conveying the following messages: \n
-    - I should drink Pepsi Because it is fun
+    - I should buy body shop products Because they smell like real fruit
 '''
-model(prompt).save("../experiments/test_images/us_custom_sd3_visual_pepsi.png")
+model(prompt).save("../experiments/test_images/us_custom_sd3_visual_body_shop.png")
 
 prompt = '''Generate an advertisement image that targets people from france conveying the following messages: \n
-    - I should drink Pepsi Because it is fun
+    - I should buy body shop products Because they smell like real fruit
 '''
-model(prompt).save("../experiments/test_images/fr_custom_sd3_visual_pepsi.png")
+model(prompt).save("../experiments/test_images/fr_custom_sd3_visual_body_shop.png")
 
 prompt = '''Generate an advertisement image that targets people from china conveying the following messages: \n
-    - I should drink Pepsi Because it is fun
+    - I should buy body shop products Because they smell like real fruit
 '''
-model(prompt).save("../experiments/test_images/cn_custom_sd3_visual_pepsi.png")
+model(prompt).save("../experiments/test_images/cn_custom_sd3_visual_body_shop.png")
 
 prompt = '''Generate an advertisement image that targets people from saudi arabia conveying the following messages: \n
-    - I should drink Pepsi Because it is fun
+    - I should buy body shop products Because they smell like real fruit
 '''
-model(prompt).save("../experiments/test_images/sa_custom_sd3_visual_pepsi.png")
+model(prompt).save("../experiments/test_images/sa_custom_sd3_visual_body_shop.png")
 
 prompt = '''Generate an advertisement image that targets people from united arab emirates conveying the following messages: \n
-    - I should drink Pepsi Because it is fun
+    - I should buy body shop products Because they smell like real fruit
 '''
 model(prompt).save("../experiments/test_images/uae_custom_sd3_visual_pepsi.png")
 
