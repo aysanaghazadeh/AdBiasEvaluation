@@ -112,7 +112,7 @@ class CustomeSD3(nn.Module):
         
         print(cultural_components)
         generator = torch.Generator(device=self.args.device).manual_seed(0)
-        return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, country=country, generator=generator).images[0]
+        return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, country=country).images[0]#, generator=generator).images[0]
     
     
     
