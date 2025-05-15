@@ -288,12 +288,12 @@ ARs = json.load(open('util/data/AR_statements.json'))
 countries = ['united states', 'france', 'china', 'saudi arabia', 'united arab emirates', 'turkey', 'no country']
 country_short = ['us', 'fr', 'cn', 'sa', 'uae', 'tr', 'nc']
 for i, AR in ARs.items():
-    for country, country_short in zip(countries, country_short):
+    for country, ct in zip(countries, country_short):
         prompt = f'''Generate an advertisement image that targets people from {country} conveying the following messages: \n
             - {AR}
         '''
         if not os.path.exists(f'../experiments/test_images/sample100/custom_SD3/{country_short}'):
-            os.makedirs(f'../experiments/test_images/sample100/custom_SD3/{country_short}')
+            os.makedirs(f'../experiments/test_images/sample100/custom_SD3/{country_short}', exist_ok=True)
         model(prompt).save(f"../experiments/test_images/sample100/custom_SD3/{country_short}/{i}.png")
 
 model = SD3(args)
