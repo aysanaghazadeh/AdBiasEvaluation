@@ -55,7 +55,7 @@ class ProjectionBlock(torch.nn.Module):
                     )
         # print(features)
         
-        features = torch.cat([encoded_cultural_components,features], dim=1)
+        features = torch.cat([encoded_prompt, features], dim=1)
         features = features.to(self.args.device)
         return features
 
@@ -126,7 +126,7 @@ class CustomeSD3(nn.Module):
                     components.add(component)
                 
         components = list(components)
-        cultural_components = f'{visual_element}, ' + ', '.join(components) 
+        cultural_components = f'{visual_element}, ' #+ ', '.join(components) 
         
         print(cultural_components)
         generator = torch.Generator(device=self.args.device).manual_seed(0)
