@@ -9,6 +9,7 @@ import os
 import random
 from PIL import Image
 from util.data.mapping import TOPIC_MAP
+import ast
 
 class ProjectionBlock(torch.nn.Module):
     def __init__(self, args):
@@ -84,7 +85,7 @@ class CustomeSD3(nn.Module):
         
 
     def forward(self, prompt):
-        topic = prompt.split("Topic: ")[-1].split("Prompt:")[0].strip()
+        topic = ast.literal_eval(prompt.split("Topic: ")[-1].split("Prompt:")[0].strip())[0]
         prompt = prompt.split("Prompt:")[1]
         print(topic)
         print(prompt)
