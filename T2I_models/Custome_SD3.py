@@ -55,7 +55,7 @@ class ProjectionBlock(torch.nn.Module):
                     )
         # print(features)
         
-        features = torch.cat([encoded_prompt, encoded_cultural_components, features], dim=1)
+        features = torch.cat([encoded_prompt, features], dim=1)
         features = features.to(self.args.device)
         return features
 
