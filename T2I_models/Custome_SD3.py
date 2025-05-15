@@ -100,7 +100,7 @@ class CustomeSD3(nn.Module):
                     same_topic_images.append(image)
                     break
         if len(same_topic_images) < 3:
-            style_images = style_images
+            style_images = random.sample(style_images, 3)
         else:
             style_images = random.sample(same_topic_images, 3)
             
