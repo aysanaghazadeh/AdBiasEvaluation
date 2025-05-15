@@ -98,8 +98,8 @@ class CustomeSD3(nn.Module):
         demonym = country_to_demonym[country]
         style_images = self.country_image_map[country]
         
-        if len(style_images) > 4:
-            style_images = random.sample(style_images, 4)
+        if len(style_images) > 3:
+            style_images = random.sample(style_images, 3)
         # same_topic_images = []
         # for image in style_images:
         #     for topic_id in self.topics[image]:
