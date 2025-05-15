@@ -284,7 +284,7 @@ model = CustomeSD3(args)
 
 # model.load_state_dict(torch.load("SD3_finetuned_projection_only/checkpoint-2000/sd3_model.pt"))
 prompt = '''Generate an advertisement image that targets people from united states conveying the following messages: \n
-    - I should drink Pepsi Because it is as sweet as a candy
+    - I should drink Pepsi Because it is fun
 '''
 model(prompt, 'Smoking').save("../experiments/test_images/us_custom_sd3_pepsi.png")
 
@@ -304,7 +304,7 @@ model(prompt, 'Smoking').save("../experiments/test_images/us_custom_sd3_pepsi.pn
 # model(prompt, 'Smoking').save("../experiments/test_images/sa_custom_sd3_pepsi.png")
 
 prompt = '''Generate an advertisement image that targets people from united arab emirates conveying the following messages: \n
-    - I should drink Pepsi Because it is as sweet as a candy
+    - I should drink Pepsi Because it is fun
 '''
 model(prompt, 'Smoking').save("../experiments/test_images/uae_custom_sd3_pepsi.png")
 
