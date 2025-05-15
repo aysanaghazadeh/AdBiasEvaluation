@@ -8,7 +8,7 @@ import json
 import os
 import random
 from PIL import Image
-from util.data.mapping import country_to_demonym
+from util.data.mapping import COUNTRY_TO_VISUAL
 import ast
 
 class ProjectionBlock(torch.nn.Module):
@@ -89,7 +89,7 @@ class CustomeSD3(nn.Module):
         #     prompt = prompt.split("Prompt:")[1]
         
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
-        demonym = country_to_demonym[country]
+        visual_element = COUNTRY_TO_VISUAL[country]
         style_images = self.country_image_map[country]
         
         if len(style_images) > 3:
@@ -126,7 +126,7 @@ class CustomeSD3(nn.Module):
                     components.add(component)
                 
         components = list(components)
-        cultural_components = ', '.join(components)
+        cultural_components = f'{visual_element}, ' + ', '.join(components) 
         prompt = prompt.lower().split('because')[0]
         print(cultural_components)
         generator = torch.Generator(device=self.args.device).manual_seed(0)
