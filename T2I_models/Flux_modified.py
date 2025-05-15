@@ -4,7 +4,7 @@ from PIL import Image
 import torch
 import numpy as np
 PipelineImageInput = Union[torch.Tensor, Image.Image, np.ndarray, List[Image.Image]]
-from diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3 import (
+from diffusers.pipelines.flux.pipeline_output import (
     retrieve_timesteps,
     calculate_shift,
     FluxPipelineOutput,
