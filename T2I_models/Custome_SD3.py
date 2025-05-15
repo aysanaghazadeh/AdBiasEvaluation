@@ -118,9 +118,17 @@ class CustomeSD3(nn.Module):
             negative_style_image = '4/85894.jpg'
         style_image = Image.open(os.path.join(self.args.data_path, "train_images_total", style_images[0]))
         negative_style_image = Image.open(os.path.join(self.args.data_path, "train_images_total", negative_style_image))
-        cultural_components = ', '.join(self.image_cultural_components_map[style_images[0]])
-        for image in style_images[1:]:
-            cultural_components += ', ' + ', '.join(self.image_cultural_components_map[image])
+        components = set()
+        for image in style_images:
+            image_components = self.image_cultural_components_map[image]
+            for component in image_components:
+                if component[-4:] != 'text':
+                    components.add(component)
+        components = list(components)
+        cultural_components = ', '.join(components)
+        # cultural_components = ', '.join(self.image_cultural_components_map[style_images[0]])
+        # for image in style_images[1:]:
+        #     cultural_components += ', ' + ', '.join(self.image_cultural_components_map[image])
         print(cultural_components)
         generator = torch.Generator(device=self.args.device).manual_seed(0)
         return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, generator=generator).images[0]
