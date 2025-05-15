@@ -76,7 +76,7 @@ class CustomeSD3(nn.Module):
         ).to(self.args.device)
         self.projection_block = ProjectionBlock(args)
         if not args.train and args.fine_tuned:
-            self.projection_block.load_state_dict(torch.load(os.path.join(args.model_path, "SD3_modified/checkpoint-500/projection_block.pt")))
+            self.projection_block.load_state_dict(torch.load(os.path.join(args.model_path, "SD3_modified/checkpoint-1000/projection_block.pt")))
         self.projection_block.to(self.args.device) 
         self.pipeline.projection_block = self.projection_block
         self.country_image_map = json.load(open(os.path.join(args.data_path, "train/countries_image_map.json")))
@@ -94,7 +94,7 @@ class CustomeSD3(nn.Module):
         
         if len(style_images) > 3:
             style_images = random.sample(style_images, 3)
-        same_topic_images = []
+        # same_topic_images = []
         # for image in style_images:
         #     for topic_id in self.topics[image]:
         #         if topic_id in TOPIC_MAP:
