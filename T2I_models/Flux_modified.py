@@ -12,6 +12,7 @@ from diffusers.pipelines.stable_diffusion.pipeline_stable_diffusion import (
     XLA_AVAILABLE
     
 )
+from diffusers.pipelines.flux.pipeline_flux import *
 if is_torch_xla_available():
     import torch_xla.core.xla_model as xm
 
