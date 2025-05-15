@@ -91,7 +91,6 @@ class CustomeSD3(nn.Module):
             style_images = random.sample(style_images, 50)
         same_topic_images = []
         for image in style_images:
-            print(image)
             for topic_id in self.topics[image]:
                 if topic_id in TOPIC_MAP:
                     image_topic = TOPIC_MAP[topic_id]
@@ -101,7 +100,7 @@ class CustomeSD3(nn.Module):
                     same_topic_images.append(image)
                     break
         if len(same_topic_images) < 3:
-            style_images = style_images.sample(3)
+            style_images = style_images
         else:
             style_images = random.sample(same_topic_images, 3)
             
