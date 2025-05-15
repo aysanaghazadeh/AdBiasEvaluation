@@ -86,7 +86,7 @@ class CustomeSD3(nn.Module):
     def forward(self, prompt):
         
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
-        visual_element = COUNTRY_TO_VISUAL[country]
+        # visual_element = COUNTRY_TO_VISUAL[country]
         style_images = self.country_image_map[country]
         
         if len(style_images) > 3:
