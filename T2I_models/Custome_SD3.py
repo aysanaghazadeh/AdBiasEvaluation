@@ -32,15 +32,15 @@ class ProjectionBlock(torch.nn.Module):
         encoded_cultural_components = encoded_cultural_components.to(self.args.device)
         encoded_reason = encoded_reason.to(self.args.device)
         encoded_prompt = encoded_prompt.to(self.args.device)
-        cultural_components_country, _ = self.texts_cross_attention(
-                                        query=encoded_country,              # (1, 154, 4096)
-                                        key=encoded_cultural_components,          # (1, 1, 4096)
-                                        value=encoded_cultural_components         # (1, 1, 4096)
-                                    )
+        # cultural_components_country, _ = self.texts_cross_attention(
+        #                                 query=encoded_country,              # (1, 154, 4096)
+        #                                 key=encoded_cultural_components,          # (1, 1, 4096)
+        #                                 value=encoded_cultural_components         # (1, 1, 4096)
+        #                             )
         cultural_components_reason, _ = self.texts_cross_attention(
                                         query=encoded_reason,              # (1, 154, 4096)
-                                        key=cultural_components_country,          # (1, 1, 4096)
-                                        value=cultural_components_country         # (1, 1, 4096)
+                                        key=encoded_cultural_components,          # (1, 1, 4096)
+                                        value=encoded_cultural_components         # (1, 1, 4096)
                                     )
 
         if time_step < 20:
@@ -55,7 +55,7 @@ class ProjectionBlock(torch.nn.Module):
         clip_image_features = clip_image_features.unsqueeze(1) 
         # print(clip_image_features.size())
         features, _ = self.cross_attention(
-                        query=cultural_components_reason,              # (1, 154, 4096)
+                        query=encoded_cultural_components,              # (1, 154, 4096)
                         key=clip_image_features,          # (1, 1, 4096)
                         value=clip_image_features         # (1, 1, 4096)
                     )
