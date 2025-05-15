@@ -86,11 +86,14 @@ class CustomeSD3(nn.Module):
     def forward(self, prompt, topic=None):
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
         style_images = self.country_image_map[country]
-        if len(style_images) > 20:
-            style_images = random.sample(style_images, 20)
+        if len(style_images) > 50:
+            style_images = random.sample(style_images, 50)
         same_topic_images = []
         for image in style_images:
-            image_topic = TOPIC_MAP[self.topics[image]]
+            if self.topics[image] in TOPIC_MAP:
+                image_topic = TOPIC_MAP[self.topics[image]]
+            else:
+                image_topic = self.topics[image]
             if topic in image_topic:
                 same_topic_images.append(image)
         if len(same_topic_images) < 3:
