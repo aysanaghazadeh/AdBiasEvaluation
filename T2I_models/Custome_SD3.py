@@ -124,7 +124,11 @@ class CustomeSD3(nn.Module):
             image_components = self.image_cultural_components_map[image]
             for component in image_components:
                 if component[-4:] != 'text':
-                    components.add(demonym + ' ' + component)
+                    if demonym.lower() not in component.lower():
+                        components.add(demonym + ' ' + component.replace('text', ''))
+                    else:
+                        components.add(component.replace('text', ''))
+                
         components = list(components)
         cultural_components = ', '.join(components)
         
