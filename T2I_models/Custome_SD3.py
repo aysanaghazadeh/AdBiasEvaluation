@@ -28,33 +28,26 @@ class ProjectionBlock(torch.nn.Module):
         
         if time_step < 10:
             return encoded_prompt
-        # encoded_cultural_components = torch.cat([e for e in encoded_cultural_components], dim=0)
+        
         encoded_cultural_components = encoded_cultural_components.to(self.args.device)
         encoded_reason = encoded_reason.to(self.args.device)
         encoded_prompt = encoded_prompt.to(self.args.device)
-        # cultural_components_country, _ = self.texts_cross_attention(
-        #                                 query=encoded_country,              # (1, 154, 4096)
-        #                                 key=encoded_cultural_components,          # (1, 1, 4096)
-        #                                 value=encoded_cultural_components         # (1, 1, 4096)
-        #                             )
-        cultural_components_reason, _ = self.texts_cross_attention(
-                                        query=encoded_reason,              # (1, 154, 4096)
-                                        key=encoded_cultural_components,          # (1, 1, 4096)
-                                        value=encoded_cultural_components         # (1, 1, 4096)
-                                    )
-
+        
         if time_step < 20:
-            # print(encoded_prompt.size(), cultural_components_reason.size())
-            # print(torch.cat([encoded_prompt, cultural_components_reason], dim=1).size())
-            # return encoded_cultural_components
-            return torch.cat([encoded_cultural_components, encoded_prompt], dim=1)
-        encoded_prompt = encoded_prompt.to(self.args.device)
+            return torch.cat([encoded_prompt, encoded_cultural_components], dim=1)
+        
         inputs = self.CLIP_processor(images=image, return_tensors="pt").to(self.args.device)
         clip_image_features = self.CLIP_model.get_image_features(**inputs)
         clip_image_features = clip_image_features / clip_image_features.norm(p=2, dim=1, keepdim=True)
         clip_image_features = self.projection_layer(clip_image_features)
         clip_image_features = clip_image_features.unsqueeze(1) 
         # print(clip_image_features.size())
+        cultural_components_reason, _ = self.texts_cross_attention(
+                                        query=encoded_reason,              # (1, 154, 4096)
+                                        key=encoded_cultural_components,          # (1, 1, 4096)
+                                        value=encoded_cultural_components         # (1, 1, 4096)
+                                    )
+
         features, _ = self.cross_attention(
                         query=cultural_components_reason,              # (1, 154, 4096)
                         key=clip_image_features,          # (1, 1, 4096)
@@ -62,7 +55,7 @@ class ProjectionBlock(torch.nn.Module):
                     )
         # print(features)
         
-        features = torch.cat([features, encoded_prompt], dim=1)
+        features = torch.cat([encoded_prompt, encoded_cultural_components,features], dim=1)
         features = features.to(self.args.device)
         return features
 
