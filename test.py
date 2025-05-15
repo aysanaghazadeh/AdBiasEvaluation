@@ -283,7 +283,7 @@ import json
 args = get_args()
 
 model = CustomeSD3(args)
-ARs = json.load(open('../util/data/AR_statements.json'))
+ARs = json.load(open('util/data/AR_statements.json'))
 
 countries = ['united states', 'france', 'china', 'saudi arabia', 'united arab emirates', 'Turkey', 'no country']
 country_short = ['us', 'fr', 'cn', 'sa', 'uae', 'tr', 'nc']
