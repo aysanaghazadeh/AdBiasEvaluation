@@ -86,6 +86,8 @@ class CustomeSD3(nn.Module):
     def forward(self, prompt):
         topic = prompt.split("Topic: ")[-1].split("Prompt:")[0].strip()
         prompt = prompt.split("Prompt:")[1]
+        print(topic)
+        print(prompt)
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
         style_images = self.country_image_map[country]
         
