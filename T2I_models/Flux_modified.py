@@ -5,11 +5,11 @@ import torch
 import numpy as np
 PipelineImageInput = Union[torch.Tensor, Image.Image, np.ndarray, List[Image.Image]]
 from diffusers.pipelines.flux.pipeline_output import (
-    FluxPipelineOutput,
-    XLA_AVAILABLE
+    FluxPipelineOutput
 )
 from diffusers.pipelines.stable_diffusion.pipeline_stable_diffusion import (
     retrieve_timesteps, 
+    XLA_AVAILABLE
     
 )
 if is_torch_xla_available():

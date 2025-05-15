@@ -69,7 +69,7 @@ class CustomFlux(nn.Module):
         )
         self.args = args
         self.pipeline = CustomFluxPipeline.from_pretrained(
-            'stabilityai/stable-diffusion-3-medium-diffusers',
+            'black-forest-labs/FLUX.1-dev',
             torch_dtype=torch.float32,
             load_in_8bit=True,
         ).to(self.args.device)
