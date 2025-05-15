@@ -24,7 +24,7 @@ class ProjectionBlock(torch.nn.Module):
         self.cross_attention.requires_grad_(True)
         self.args = args
 
-    def forward(self, image, encoded_prompt, encoded_reason, encoded_cultural_components, time_step):
+    def forward(self, image, encoded_prompt, encoded_reason, encoded_cultural_components, encoded_country, time_step):
         
         if time_step < 10:
             return encoded_prompt
@@ -32,10 +32,15 @@ class ProjectionBlock(torch.nn.Module):
         encoded_cultural_components = encoded_cultural_components.to(self.args.device)
         encoded_reason = encoded_reason.to(self.args.device)
         encoded_prompt = encoded_prompt.to(self.args.device)
-        cultural_components_reason, _ = self.texts_cross_attention(
-                                        query=encoded_reason,              # (1, 154, 4096)
+        cultural_components_country, _ = self.texts_cross_attention(
+                                        query=encoded_country,              # (1, 154, 4096)
                                         key=encoded_cultural_components,          # (1, 1, 4096)
                                         value=encoded_cultural_components         # (1, 1, 4096)
+                                    )
+        cultural_components_reason, _ = self.texts_cross_attention(
+                                        query=encoded_reason,              # (1, 154, 4096)
+                                        key=cultural_components_country,          # (1, 1, 4096)
+                                        value=cultural_components_country         # (1, 1, 4096)
                                     )
 
         if time_step < 20:
