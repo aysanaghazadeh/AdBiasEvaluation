@@ -71,7 +71,10 @@ def get_test_data(args):
         train_image_urls = pd.read_csv(os.path.join(args.data_path, 'train/country_train_image_large.csv')).ID.values
         test_image_urls = []
         country_image_map = json.load(open(os.path.join(args.data_path, 'train/countries_image_map.json')))
+        target_countries = ['india', 'china', 'united states', 'united arab emirates', 'france', 'saudi arabia', 'japan', 'south korea', 'south africa', 'mexico', 'Turkey']
         for country in country_image_map:
+            if country not in target_countries:
+                continue
             country_image_urls = set([])
             if len(country_image_map[country]) > 14:
                 while len(country_image_urls) < 5:
