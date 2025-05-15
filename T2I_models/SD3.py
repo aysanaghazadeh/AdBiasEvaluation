@@ -5,6 +5,7 @@ from diffusers import StableDiffusion3Pipeline
 class SD3(nn.Module):
     def __init__(self, args):
         super(SD3, self).__init__()
+        self.args = args
         self.device = args.device
         if not args.train:
             self.pipe = StableDiffusion3Pipeline.from_pretrained("stabilityai/stable-diffusion-3-medium-diffusers", torch_dtype=torch.float16).to(device=args.device)

@@ -7,6 +7,7 @@ from transformers import BitsAndBytesConfig
 class Flux(nn.Module):
     def __init__(self, args):
         super(Flux, self).__init__()
+        self.args = args
         self.device = args.device
         quantization_config = BitsAndBytesConfig(
             load_in_8bit=True,
