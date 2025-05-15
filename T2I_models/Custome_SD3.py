@@ -127,7 +127,7 @@ class CustomeSD3(nn.Module):
                 
         components = list(components)
         cultural_components = f'{visual_element}, ' + ', '.join(components) 
-        prompt = prompt.lower().split('because')[0]
+        
         print(cultural_components)
         generator = torch.Generator(device=self.args.device).manual_seed(0)
         return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, country=country, generator=generator).images[0]
