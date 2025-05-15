@@ -46,7 +46,7 @@ class ProjectionBlock(torch.nn.Module):
         if time_step < 20:
             # print(encoded_prompt.size(), cultural_components_reason.size())
             # print(torch.cat([encoded_prompt, cultural_components_reason], dim=1).size())
-            return torch.cat([encoded_prompt, encoded_cultural_components], dim=1)
+            return torch.cat([encoded_prompt, cultural_components_reason], dim=1)
         encoded_prompt = encoded_prompt.to(self.args.device)
         inputs = self.CLIP_processor(images=image, return_tensors="pt").to(self.args.device)
         clip_image_features = self.CLIP_model.get_image_features(**inputs)
@@ -55,7 +55,7 @@ class ProjectionBlock(torch.nn.Module):
         clip_image_features = clip_image_features.unsqueeze(1) 
         # print(clip_image_features.size())
         features, _ = self.cross_attention(
-                        query=encoded_cultural_components,              # (1, 154, 4096)
+                        query=cultural_components_reason,              # (1, 154, 4096)
                         key=clip_image_features,          # (1, 1, 4096)
                         value=clip_image_features         # (1, 1, 4096)
                     )
@@ -98,8 +98,8 @@ class CustomeSD3(nn.Module):
         demonym = country_to_demonym[country]
         style_images = self.country_image_map[country]
         
-        if len(style_images) > 5:
-            style_images = random.sample(style_images, 5)
+        if len(style_images) > 4:
+            style_images = random.sample(style_images, 4)
         # same_topic_images = []
         # for image in style_images:
         #     for topic_id in self.topics[image]:
