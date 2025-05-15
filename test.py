@@ -279,7 +279,7 @@ from configs.inference_config import get_args
 from T2I_models.Flux import Flux
 from T2I_models.Custom_Flux import CustomFlux
 import json
-
+import os
 args = get_args()
 
 model = CustomeSD3(args)
@@ -292,6 +292,8 @@ for i, AR in ARs.items():
         prompt = f'''Generate an advertisement image that targets people from {country} conveying the following messages: \n
             - {AR}
         '''
+        if not os.path.exists(f'../experiments/test_images/sample100/custom_SD3/{country_short}'):
+            os.makedirs(f'../experiments/test_images/sample100/custom_SD3/{country_short}')
         model(prompt).save(f"../experiments/test_images/sample100/custom_SD3/{country_short}/{i}.png")
 
 model = SD3(args)
