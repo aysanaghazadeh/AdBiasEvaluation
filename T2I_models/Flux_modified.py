@@ -330,7 +330,13 @@ class CustomFluxPipeline(DiffusionPipeline):
             for i, t in enumerate(timesteps):
                 if self.interrupt:
                     continue
-
+                if i % 10 == 0:
+                    prompt_embeds = self.projection_block(style_image, original_prompt_embeds, reason_embeds, cultural_components_embeds, i)
+                    # prompt_embeds = prompt_embeds.to()
+                    negative_prompt_embeds = self.projection_block(negative_style_image, original_negative_prompt_embeds, negative_reason_prompt_embeds, negative_components_prompt_embeds, i)
+                    # negative_prompt_embeds = negative_prompt_embeds.to(self.args.device)
+                    prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
+                
                 self._current_timestep = t
                 if image_embeds is not None:
                     self._joint_attention_kwargs["ip_adapter_image_embeds"] = image_embeds
