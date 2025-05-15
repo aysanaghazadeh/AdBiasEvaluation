@@ -298,10 +298,10 @@ prompt = '''Generate an advertisement image that targets people from china conve
 '''
 model(prompt, 'Smoking').save("../experiments/test_images/cn_custom_sd3_pepsi.png")
 
-prompt = '''Generate an advertisement image that targets people from saudi arabia conveying the following messages: \n
-    - I should drink Pepsi Because it is as sweet as a candy
-'''
-model(prompt, 'Smoking').save("../experiments/test_images/sa_custom_sd3_pepsi.png")
+# prompt = '''Generate an advertisement image that targets people from saudi arabia conveying the following messages: \n
+#     - I should drink Pepsi Because it is as sweet as a candy
+# '''
+# model(prompt, 'Smoking').save("../experiments/test_images/sa_custom_sd3_pepsi.png")
 
 prompt = '''Generate an advertisement image that targets people from united arab emirates conveying the following messages: \n
     - I should drink Pepsi Because it is as sweet as a candy
