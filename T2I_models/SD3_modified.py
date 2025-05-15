@@ -377,7 +377,11 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
             for i, t in enumerate(timesteps):
                 if self.interrupt:
                     continue
-                if i % 5 == 0:
+                if i < 5:
+                    mod = i % 1
+                else:
+                    mod = i % 5
+                if mod == 0:
                     prompt_embeds = self.projection_block(style_image, original_prompt_embeds, reason_embeds, cultural_components_embeds, i)
                     # prompt_embeds = prompt_embeds.to()
                     negative_prompt_embeds = self.projection_block(negative_style_image, original_negative_prompt_embeds, negative_reason_prompt_embeds, negative_components_prompt_embeds, i)
