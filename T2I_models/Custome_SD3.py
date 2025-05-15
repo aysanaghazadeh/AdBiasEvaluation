@@ -8,6 +8,7 @@ import json
 import os
 import random
 from PIL import Image
+from util.data.mapping import TOPIC_MAP
 
 class ProjectionBlock(torch.nn.Module):
     def __init__(self, args):
@@ -79,11 +80,24 @@ class CustomeSD3(nn.Module):
         self.pipeline.projection_block = self.projection_block
         self.country_image_map = json.load(open(os.path.join(args.data_path, "train/countries_image_map.json")))
         self.image_cultural_components_map = json.load(open(os.path.join(args.data_path, "train/components.json")))
+        self.topics = json.load(open(os.path.join(args.data_path, "train/Topics_train.json")))
+        
 
-    def forward(self, prompt):
+    def forward(self, prompt, topic=None):
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
         style_images = self.country_image_map[country]
-        style_images = random.sample(style_images, 3)
+        if len(style_images) > 20:
+            style_images = random.sample(style_images, 20)
+        same_topic_images = []
+        for image in style_images:
+            image_topic = TOPIC_MAP[self.topics[image]]
+            if topic in image_topic:
+                same_topic_images.append(image)
+        if len(same_topic_images) < 3:
+            style_images = style_images.sample(3)
+        else:
+            style_images = random.sample(same_topic_images, 3)
+            
         print(country)
         print(style_images)
         if country == 'united states':
