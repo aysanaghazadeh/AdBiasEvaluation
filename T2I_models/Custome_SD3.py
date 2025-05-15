@@ -8,8 +8,6 @@ import json
 import os
 import random
 from PIL import Image
-from util.data.mapping import COUNTRY_TO_VISUAL
-import ast
 
 class ProjectionBlock(torch.nn.Module):
     def __init__(self, args):
@@ -25,31 +23,28 @@ class ProjectionBlock(torch.nn.Module):
         self.args = args
 
     def forward(self, image, encoded_prompt, encoded_reason, encoded_cultural_components, time_step):
-        
-        if time_step < 5:
+        print(encoded_reason.size())
+        if time_step < 10:
             return encoded_prompt
-        # if time_step < 5:
-        #     return torch.cat([encoded_prompt, encoded_cultural_components], dim=1)
+        # encoded_cultural_components = torch.cat([e for e in encoded_cultural_components], dim=0)
         
-        encoded_cultural_components = encoded_cultural_components.to(self.args.device)
-        encoded_reason = encoded_reason.to(self.args.device)
-        encoded_prompt = encoded_prompt.to(self.args.device)
-        
-        if time_step < 20:
-            return torch.cat([encoded_prompt, encoded_cultural_components], dim=1)
-        
-        inputs = self.CLIP_processor(images=image, return_tensors="pt").to(self.args.device)
-        clip_image_features = self.CLIP_model.get_image_features(**inputs)
-        clip_image_features = clip_image_features / clip_image_features.norm(p=2, dim=1, keepdim=True)
-        clip_image_features = self.projection_layer(clip_image_features)
-        clip_image_features = clip_image_features.unsqueeze(1) 
-        # print(clip_image_features.size())
         cultural_components_reason, _ = self.texts_cross_attention(
                                         query=encoded_reason,              # (1, 154, 4096)
                                         key=encoded_cultural_components,          # (1, 1, 4096)
                                         value=encoded_cultural_components         # (1, 1, 4096)
                                     )
 
+        if time_step < 20:
+            # print(encoded_prompt.size(), cultural_components_reason.size())
+            # print(torch.cat([encoded_prompt, cultural_components_reason], dim=1).size())
+            return torch.cat([encoded_prompt, encoded_cultural_components], dim=1)
+        encoded_prompt = encoded_prompt.to(self.args.device)
+        inputs = self.CLIP_processor(images=image, return_tensors="pt").to(self.args.device)
+        clip_image_features = self.CLIP_model.get_image_features(**inputs)
+        clip_image_features = clip_image_features / clip_image_features.norm(p=2, dim=1, keepdim=True)
+        clip_image_features = self.projection_layer(clip_image_features)
+        clip_image_features = clip_image_features.unsqueeze(1) 
+        # print(clip_image_features.size())
         features, _ = self.cross_attention(
                         query=cultural_components_reason,              # (1, 154, 4096)
                         key=clip_image_features,          # (1, 1, 4096)
@@ -57,7 +52,7 @@ class ProjectionBlock(torch.nn.Module):
                     )
         # print(features)
         
-        features = torch.cat([encoded_prompt, features], dim=1)
+        features = torch.cat([features, encoded_prompt], dim=1)
         features = features.to(self.args.device)
         return features
 
@@ -74,26 +69,18 @@ class CustomeSD3(nn.Module):
             'stabilityai/stable-diffusion-3-medium-diffusers',
             torch_dtype=torch.float32,
             load_in_8bit=True,
-        ).to(self.args.device)
+        ).to(self.device)
         self.projection_block = ProjectionBlock(args)
-        if not args.train and args.fine_tuned:
-            self.projection_block.load_state_dict(torch.load(os.path.join(args.model_path, "SD3_modified/checkpoint-500/projection_block.pt")))
-        self.projection_block.to(self.args.device) 
+        # self.projection_block.load_state_dict(torch.load("SD3_finetuned_projection_only/checkpoint-2000/projection_block.pt"))
+        self.projection_block.to(self.device) 
         self.pipeline.projection_block = self.projection_block
         self.country_image_map = json.load(open(os.path.join(args.data_path, "train/countries_image_map.json")))
         self.image_cultural_components_map = json.load(open(os.path.join(args.data_path, "train/components.json")))
-        self.topics = json.load(open(os.path.join(args.data_path, "train/Topics_train.json")))
-        
 
     def forward(self, prompt):
-        
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
-        # visual_element = COUNTRY_TO_VISUAL[country]
         style_images = self.country_image_map[country]
-        
-        if len(style_images) > 3:
-            style_images = random.sample(style_images, 3)
-        
+        style_images = random.sample(style_images, 3)
         print(country)
         print(style_images)
         if country == 'united states':
@@ -102,19 +89,12 @@ class CustomeSD3(nn.Module):
             negative_style_image = '4/85894.jpg'
         style_image = Image.open(os.path.join(self.args.data_path, "train_images_total", style_images[0]))
         negative_style_image = Image.open(os.path.join(self.args.data_path, "train_images_total", negative_style_image))
-        components = set()
+        cultural_components = ''
         for image in style_images:
-            image_components = self.image_cultural_components_map[image]
-            for component in image_components:
-                if component[-4:] != 'text':
-                    components.add(component)
-                
-        components = list(components)
-        cultural_components = ', '.join(components) 
-        
+            cultural_components += ' ' + ''.join(self.image_cultural_components_map[image])
         print(cultural_components)
-        generator = torch.Generator(device=self.args.device).manual_seed(0)
-        return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, country=country, generator=generator).images[0]
+        generator = torch.Generator(device=self.device).manual_seed(0)
+        return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, generator=generator).images[0]
     
     
     

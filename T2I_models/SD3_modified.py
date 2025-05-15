@@ -22,7 +22,6 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
         style_image,
         negative_style_image,
         cultural_components,
-        country,
         prompt: Union[str, List[str]] = None,
         prompt_2: Optional[Union[str, List[str]]] = None,
         prompt_3: Optional[Union[str, List[str]]] = None,
