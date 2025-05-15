@@ -84,8 +84,9 @@ class CustomeSD3(nn.Module):
         self.topics = json.load(open(os.path.join(args.data_path, "train/Topics_train.json")))
         
 
-    def forward(self, prompt):
-        topic = ast.literal_eval(prompt.split("Topic: ")[-1].split("Prompt:")[0].strip())[0]
+    def forward(self, prompt, topic=None):
+        if topic is None and "Topic: " in prompt:
+            topic = ast.literal_eval(prompt.split("Topic: ")[-1].split("Prompt:")[0].strip())[0]
         prompt = prompt.split("Prompt:")[1]
         print(topic)
         print(prompt)
