@@ -237,21 +237,21 @@ class CustomFluxPipeline(DiffusionPipeline):
         )
         
         
-        if do_true_cfg:
-            (
-                negative_prompt_embeds,
-                negative_pooled_prompt_embeds,
-                negative_text_ids,
-            ) = self.encode_prompt(
-                prompt=negative_prompt,
-                prompt_2=negative_prompt_2,
-                prompt_embeds=negative_prompt_embeds,
-                pooled_prompt_embeds=negative_pooled_prompt_embeds,
-                device=device,
-                num_images_per_prompt=num_images_per_prompt,
-                max_sequence_length=max_sequence_length,
-                lora_scale=lora_scale,
-            )
+        # if do_true_cfg:
+        (
+            negative_prompt_embeds,
+            negative_pooled_prompt_embeds,
+            negative_text_ids,
+        ) = self.encode_prompt(
+            prompt=negative_prompt,
+            prompt_2=negative_prompt_2,
+            prompt_embeds=negative_prompt_embeds,
+            pooled_prompt_embeds=negative_pooled_prompt_embeds,
+            device=device,
+            num_images_per_prompt=num_images_per_prompt,
+            max_sequence_length=max_sequence_length,
+            lora_scale=lora_scale,
+        )
 
         # 4. Prepare latent variables
         num_channels_latents = self.transformer.config.in_channels // 4
@@ -327,13 +327,15 @@ class CustomFluxPipeline(DiffusionPipeline):
 
         # 6. Denoising loop
         with self.progress_bar(total=num_inference_steps) as progress_bar:
+            original_prompt_embeds = prompt_embeds
+            original_negative_prompt_embeds = negative_prompt_embeds
             for i, t in enumerate(timesteps):
                 if self.interrupt:
                     continue
                 if i % 10 == 0:
-                    prompt_embeds = self.projection_block(style_image, original_prompt_embeds, reason_embeds, cultural_components_embeds, i)
+                    prompt_embeds = self.projection_block(style_image, original_prompt_embeds, reason_prompt_embeds, cultural_prompt_embeds, i)
                     # prompt_embeds = prompt_embeds.to()
-                    negative_prompt_embeds = self.projection_block(negative_style_image, original_negative_prompt_embeds, negative_reason_prompt_embeds, negative_components_prompt_embeds, i)
+                    negative_prompt_embeds = self.projection_block(negative_style_image, original_negative_prompt_embeds, negative_reason_prompt_embeds, negative_cultural_prompt_embeds, i)
                     # negative_prompt_embeds = negative_prompt_embeds.to(self.args.device)
                     prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
                 
