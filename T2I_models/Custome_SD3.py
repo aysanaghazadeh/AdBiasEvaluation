@@ -129,10 +129,7 @@ class CustomeSD3(nn.Module):
             image_components = self.image_cultural_components_map[image]
             for component in image_components:
                 if component[-4:] != 'text':
-                    if demonym.lower() not in component.lower():
-                        components.add(demonym + ' ' + component.replace('text', ''))
-                    else:
-                        components.add(component.replace('text', ''))
+                    components.add(component.replace('text', ''))
                 
         components = list(components)
         cultural_components = ', '.join(components)
@@ -142,7 +139,7 @@ class CustomeSD3(nn.Module):
         #     cultural_components += ', ' + ', '.join(self.image_cultural_components_map[image])
         print(cultural_components)
         generator = torch.Generator(device=self.args.device).manual_seed(0)
-        return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, generator=generator).images[0]
+        return self.pipeline(prompt=prompt, style_image=style_image, negative_style_image=negative_style_image, cultural_components=cultural_components, country=demonym, generator=generator).images[0]
     
     
     
