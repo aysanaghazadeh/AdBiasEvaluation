@@ -14,10 +14,12 @@ class SD3(nn.Module):
         # negative_prompt = "typical,(deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, " \
         #                   "extra limb, missing limb, floating limbs, (mutated hands and fingers:1.4), disconnected " \
         #                   "limbs, mutation, mutated, ugly, disgusting, blurry, amputation, NSFW "
+        generator = torch.Generator(device=self.args.device).manual_seed(42)
         image = self.pipe(
                         prompt,
                         negative_prompt="",
                         num_inference_steps=28,
                         guidance_scale=7.0,
+                        generator=generator
                     ).images[0]
         return image
