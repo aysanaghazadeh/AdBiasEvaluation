@@ -87,7 +87,7 @@ class CustomeSD3(nn.Module):
     def forward(self, prompt, topic=None):
         if topic is None and "Topic: " in prompt:
             topic = ast.literal_eval(prompt.split("Topic: ")[-1].split("Prompt:")[0].strip())[0]
-        prompt = prompt.split("Prompt:")[1]
+            prompt = prompt.split("Prompt:")[1]
         print(topic)
         print(prompt)
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
