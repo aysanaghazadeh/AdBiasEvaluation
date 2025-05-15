@@ -280,29 +280,29 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
             max_sequence_length=max_sequence_length,
             lora_scale=lora_scale,
         )
-        (
-            country_embeds,
-            negative_country_prompt_embeds,
-            pooled_country_embeds,
-            negative_pooled_country_prompt_embeds,
-        ) = self.encode_prompt(
-            prompt=country,
-            prompt_2=prompt_2,
-            prompt_3=prompt_3,
-            negative_prompt=negative_prompt,
-            negative_prompt_2=negative_prompt_2,
-            negative_prompt_3=negative_prompt_3,
-            do_classifier_free_guidance=self.do_classifier_free_guidance,
-            prompt_embeds=None,
-            negative_prompt_embeds=None,
-            pooled_prompt_embeds=None,
-            negative_pooled_prompt_embeds=None,
-            device=device,
-            clip_skip=self.clip_skip,
-            num_images_per_prompt=num_images_per_prompt,
-            max_sequence_length=max_sequence_length,
-            lora_scale=lora_scale,
-        )
+        # (
+        #     country_embeds,
+        #     negative_country_prompt_embeds,
+        #     pooled_country_embeds,
+        #     negative_pooled_country_prompt_embeds,
+        # ) = self.encode_prompt(
+        #     prompt=country,
+        #     prompt_2=prompt_2,
+        #     prompt_3=prompt_3,
+        #     negative_prompt=negative_prompt,
+        #     negative_prompt_2=negative_prompt_2,
+        #     negative_prompt_3=negative_prompt_3,
+        #     do_classifier_free_guidance=self.do_classifier_free_guidance,
+        #     prompt_embeds=None,
+        #     negative_prompt_embeds=None,
+        #     pooled_prompt_embeds=None,
+        #     negative_pooled_prompt_embeds=None,
+        #     device=device,
+        #     clip_skip=self.clip_skip,
+        #     num_images_per_prompt=num_images_per_prompt,
+        #     max_sequence_length=max_sequence_length,
+        #     lora_scale=lora_scale,
+        # )
         # prompt_embeds = self.projection_block(style_image, prompt_embeds, cultural_components_embeds, reason_embeds)
         # negative_prompt_embeds = self.projection_block(negative_style_image, negative_prompt_embeds, negative_components_prompt_embeds, negative_reason_prompt_embeds)
         pooled_prompt_embeds = pooled_cultural_components_embeds
@@ -378,9 +378,9 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
                 if self.interrupt:
                     continue
                 if i % 10 == 0:
-                    prompt_embeds = self.projection_block(style_image, original_prompt_embeds, reason_embeds, cultural_components_embeds, country_embeds, i)
+                    prompt_embeds = self.projection_block(style_image, original_prompt_embeds, reason_embeds, cultural_components_embeds, i)
                     # prompt_embeds = prompt_embeds.to()
-                    negative_prompt_embeds = self.projection_block(negative_style_image, original_negative_prompt_embeds, negative_reason_prompt_embeds, negative_components_prompt_embeds, negative_country_prompt_embeds, i)
+                    negative_prompt_embeds = self.projection_block(negative_style_image, original_negative_prompt_embeds, negative_reason_prompt_embeds, negative_components_prompt_embeds, i)
                     # negative_prompt_embeds = negative_prompt_embeds.to(self.args.device)
                     prompt_embeds = torch.cat([negative_prompt_embeds, prompt_embeds], dim=0)
                     
