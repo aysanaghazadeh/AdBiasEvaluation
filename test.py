@@ -288,30 +288,33 @@ ARs = json.load(open('util/data/AR_statements.json'))
 countries = ['united states', 'france', 'china', 'saudi arabia', 'united arab emirates', 'turkey', 'no country']
 country_short = ['us', 'fr', 'cn', 'sa', 'uae', 'tr', 'nc']
 for i, AR in ARs.items():
-    for country, ct in zip(countries, country_short):
+    for j, country in enumerate(countries):
+        ct = country_short[j]
         prompt = f'''Generate an advertisement image that targets people from {country} conveying the following messages: \n
             - {AR}
         '''
-        os.makedirs(f'../experiments/test_images/sample100/custom_SD3/{country_short}', exist_ok=True)
-        model(prompt).save(f"../experiments/test_images/sample100/custom_SD3/{country_short}/{i}.png")
+        os.makedirs(f'../experiments/test_images/sample100/custom_SD3/{ct}', exist_ok=True)
+        model(prompt).save(f"../experiments/test_images/sample100/custom_SD3/{ct}/{i}.png")
 
 model = SD3(args)
 for i, AR in ARs.items():
-    for country, country_short in zip(countries, country_short):
+    for j, country in enumerate(countries):
+        ct = country_short[j]
         prompt = f'''Generate an advertisement image that targets people from {country} conveying the following messages: \n
             - {AR}
         '''
-        os.makedirs(f'../experiments/test_images/sample100/SD3/{country_short}', exist_ok=True)
-        model(prompt).save(f"../experiments/test_images/sample100/SD3/{country_short}/{i}.png")
+        os.makedirs(f'../experiments/test_images/sample100/SD3/{ct}', exist_ok=True)
+        model(prompt).save(f"../experiments/test_images/sample100/SD3/{ct}/{i}.png")
 
 model = Flux(args)
 for i, AR in ARs.items():
-    for country, country_short in zip(countries, country_short):
+    for j, country in enumerate(countries):
+        ct = country_short[j]
         prompt = f'''Generate an advertisement image that targets people from {country} conveying the following messages: \n
             - {AR}
         '''
-        os.makedirs(f'../experiments/test_images/sample100/Flux/{country_short}', exist_ok=True)
-        model(prompt).save(f"../experiments/test_images/sample100/Flux/{country_short}/{i}.png")
+        os.makedirs(f'../experiments/test_images/sample100/Flux/{ct}', exist_ok=True)
+        model(prompt).save(f"../experiments/test_images/sample100/Flux/{ct}/{i}.png")
 
     # prompt = '''Generate an advertisement image that targets people from france conveying the following messages: \n
     #     - I should drink Heineken beer because it is refreshing
