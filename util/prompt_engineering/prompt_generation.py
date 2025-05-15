@@ -34,7 +34,7 @@ class PromptGenerator:
             self.sentiments = self.get_all_sentiments(args)
 
     def set_topics(self, args):
-        if args.with_sentiment:
+        if args.with_topic:
             self.topics = self.get_all_topics(args)
 
     def set_audience(self, args):
