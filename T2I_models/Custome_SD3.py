@@ -88,8 +88,7 @@ class CustomeSD3(nn.Module):
         if topic is None and "Topic: " in prompt:
             topic = ast.literal_eval(prompt.split("Topic: ")[-1].split("Prompt:")[0].strip())[0]
             prompt = prompt.split("Prompt:")[1]
-        print(topic)
-        print(prompt)
+        
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
         style_images = self.country_image_map[country]
         
@@ -105,6 +104,7 @@ class CustomeSD3(nn.Module):
                 if topic in image_topic:
                     same_topic_images.append(image)
                     break
+        print(same_topic_images[:5])
         if len(same_topic_images) < 5:
             style_images = random.sample(style_images, 3)
         else:
