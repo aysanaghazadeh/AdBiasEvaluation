@@ -290,6 +290,7 @@ country_short = ['us', 'fr', 'cn', 'sa', 'uae', 'tr', 'nc']
 for i, AR in ARs.items():
     for j, country in enumerate(countries):
         ct = country_short[j]
+        print('prompt:', AR)
         prompt = f'''Generate an advertisement image that targets people from {country} conveying the following messages: \n
             - {AR}
         '''
