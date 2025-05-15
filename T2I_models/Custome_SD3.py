@@ -26,8 +26,8 @@ class ProjectionBlock(torch.nn.Module):
 
     def forward(self, image, encoded_prompt, encoded_reason, encoded_cultural_components, time_step):
         
-        # if time_step < 10:
-        #     return encoded_prompt
+        if time_step < 5:
+            return encoded_prompt
         
         encoded_cultural_components = encoded_cultural_components.to(self.args.device)
         encoded_reason = encoded_reason.to(self.args.device)
@@ -83,10 +83,7 @@ class CustomeSD3(nn.Module):
         self.topics = json.load(open(os.path.join(args.data_path, "train/Topics_train.json")))
         
 
-    def forward(self, prompt, topic=None):
-        # if topic is None and "Topic: " in prompt:
-        #     topic = ast.literal_eval(prompt.split("Topic: ")[-1].split("Prompt:")[0].strip())[0]
-        #     prompt = prompt.split("Prompt:")[1]
+    def forward(self, prompt):
         
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
         visual_element = COUNTRY_TO_VISUAL[country]
@@ -94,22 +91,7 @@ class CustomeSD3(nn.Module):
         
         if len(style_images) > 3:
             style_images = random.sample(style_images, 3)
-        # same_topic_images = []
-        # for image in style_images:
-        #     for topic_id in self.topics[image]:
-        #         if topic_id in TOPIC_MAP:
-        #             image_topic = TOPIC_MAP[topic_id]
-        #         else:
-        #             image_topic = topic_id
-        #         if topic in image_topic:
-        #             same_topic_images.append(image)
-        #             break
         
-        # if len(same_topic_images) < 5:
-        #     style_images = random.sample(style_images, 3)
-        # else:
-        #     style_images = random.sample(same_topic_images, 3)
-            
         print(country)
         print(style_images)
         if country == 'united states':
