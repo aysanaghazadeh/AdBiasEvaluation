@@ -259,7 +259,7 @@ class PromptGenerator:
         QA_path = args.test_set_QA if not args.train else args.train_set_QA
         QA_path = os.path.join(args.data_path, QA_path)
         QA = json.load(open(QA_path))
-        action_reason = [QA[image_filename][0][0]]
+        action_reason = [QA[image_filename][0][1]]
         # action_reason = []
         # for AR in QA[image_filename][1]:
         #     if AR not in QA[image_filename][0]:
