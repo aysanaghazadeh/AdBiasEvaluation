@@ -38,7 +38,6 @@ if __name__ == "__main__":
                                     open(original_image_path, "rb"),
                                 ],
                             )
-                print(result.output_text)
                 image_base64 = result.data[0].b64_json
                 image_bytes = base64.b64decode(image_base64)
 
