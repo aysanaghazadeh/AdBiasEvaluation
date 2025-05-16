@@ -158,6 +158,11 @@ def parse_args():
                         type=str,
                         default=None,
                         help='api key for openai')
+    parser.add_argument('--bias_type',
+                        type=str,
+                        default='gender',
+                        choices=['gender', 'race'],
+                        help='which demographich characterestic do you want to analyze?')
     return parser.parse_args()
 
 
