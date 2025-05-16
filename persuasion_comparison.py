@@ -80,6 +80,7 @@ def compare_all_images_gender(args):
     image_dir = '/'.join(images.generated_image_url.values[0].split('/')[:-3])
     if os.path.exists(os.path.join(args.result_path, 'results', f'gender_comparison_DALLE3_{args.VLM}_results.json')):
         image_results = json.load(open(os.path.join(args.result_path, 'results', f'gender_comparison_DALLE3_{args.VLM}_results.json')))
+        print(len(image_results))
     else:
         image_results = {}
     images = images.image_url.values
