@@ -13,7 +13,7 @@ if __name__ == "__main__":
     client = OpenAI()
     info_file = "../experiments/results/AR_DALLE3_20250507_181113.csv"
     data = get_image_list(info_file)
-    races = ["black", "asian", "indian", "latino", "middle_eastern"]
+    races = ["white", "black", "asian", "indian", "latino", "middle_eastern"]
     image_path = '../experiments/generated_images/20250507_181113'
     for row in data[:200]:
         try: 
@@ -27,6 +27,8 @@ if __name__ == "__main__":
                 prompt = f'replace the white person in the image with a {race} person from other gender. If the person is white man it is replaced with a {race} woman and if the person is white woman it is replaced with a {race} man'
                 race_image_path = os.path.join(image_path, f'gender_{race}', image_url.split('/')[0])
                 os.makedirs(race_image_path, exist_ok=True)
+                if os.path.exists(os.path.join(image_path, f'gender_{race}', image_url)):
+                    continue
                 result = client.images.edit(
                                 model="gpt-image-1",
                                 prompt=prompt,
