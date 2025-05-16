@@ -11,6 +11,7 @@ def get_image_list(info_file):
 
 if __name__ == "__main__":
     client = OpenAI()
+    print(client)
     info_file = "../experiments/results/AR_DALLE3_20250507_181113.csv"
     data = get_image_list(info_file)
     races = ["white", "black", "asian", "indian", "latino", "middle_eastern"]
@@ -19,6 +20,7 @@ if __name__ == "__main__":
         try: 
             image_url = row[0]
             original_image_path = row[3]
+            print(image_url)
             # race = 'white'
             # race_image_path = os.path.join(image_path, race, image_url.split('/')[0])
             # os.makedirs(race_image_path, exist_ok=True)
