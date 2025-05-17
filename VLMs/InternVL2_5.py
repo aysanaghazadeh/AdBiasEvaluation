@@ -141,7 +141,7 @@ class InternVL2_5(nn.Module):
         pixel_values1 = self.load_image(image_1, max_num=12).to(torch.bfloat16).cuda()
         pixel_values2 = self.load_image(image_2, max_num=12).to(torch.bfloat16).cuda()
         pixel_values = torch.cat((pixel_values1, pixel_values2), dim=0)
-        generation_config = dict(max_new_tokens=1024, do_sample=True)
+        generation_config = dict(max_new_tokens=128, do_sample=True)
         question = '<image>\n<image>\n' + prompt
         response, history = self.model.chat(self.tokenizer, pixel_values, question, generation_config,
                                history=None, return_history=True)
