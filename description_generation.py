@@ -38,8 +38,8 @@ def get_llm(args):
 
 
 def get_single_description(args, image_url, pipe):
-    # image = Image.open(os.path.join(args.data_path, args.test_set_images, image_url))
-    image = Image.open(f'../Data/PittAd/train_images_all/{image_url}')
+    image = Image.open(os.path.join(args.data_path, args.test_set_images, image_url))
+    # image = Image.open(f'../Data/PittAd/train_images_all/{image_url}')
     env = Environment(loader=FileSystemLoader(args.prompt_path))
     template = env.get_template(args.VLM_prompt)
     prompt = template.render()
@@ -77,53 +77,55 @@ def get_descriptions(args):
     if args.task == 'whoops':
         images = [f'{i}.png' for i in range(500)]
     else:
-        images = get_train_data(args)['ID'].values
-        images = list(json.load(open(os.path.join(args.data_path, args.test_set_QA))).keys())
-        # images = pd.read_csv(os.path.join(args.result_path, args.test_set_QA)).image_url.values
+        # images = get_train_data(args)['ID'].values
+        # images = list(json.load(open(os.path.join(args.data_path, args.test_set_QA))).keys())
+        images = pd.read_csv(os.path.join(args.result_path, args.test_set_QA)).image_url.values[0:200]
     print(f'number of images in the set: {len(images)}')
     print('*' * 100)
-    description_file = os.path.join(args.data_path, 'train',
-                                    f'_{args.VLM}'
-                                    f'_{args.VLM_prompt.replace(".jinja", "")}'
-                                    f'_origin.csv')
+    description_file = os.path.join(args.result_path, 
+                                    # f'_{args.VLM_prompt.replace(".jinja", "")}'
+                                    f'_race_gender_image_description.json')
     # description_file = os.path.join(args.result_path,
     #                                 f'{args.description_type}'
     #                                 f'_{args.VLM}'
     #                                 f'_{args.test_set_QA.replace(".csv", "")}'
     #                                 f'_description_single_paragraph_full_description.csv')
     
-    if os.path.exists(description_file):
-        print(description_file)
-        processed_images = set(pd.read_csv(description_file).ID.values)
-        # return pd.read_csv(description_file)
-        print(f'number of images already processed: {len(processed_images)}')
-        print(f'image 1: {list(processed_images)[0]}')
-        print('-' * 100)
-    else:
-        with open(description_file, 'w', newline='') as file:
-            writer = csv.writer(file)
-            # Write the header
-            writer.writerow(['ID', 'description'])
-        processed_images = set()
+    # if os.path.exists(description_file):
+    #     print(description_file)
+    #     processed_images = set(pd.read_csv(description_file).ID.values)
+    #     # return pd.read_csv(description_file)
+    #     print(f'number of images already processed: {len(processed_images)}')
+    #     print(f'image 1: {list(processed_images)[0]}')
+    #     print('-' * 100)
+    # else:
+    #     with open(description_file, 'w', newline='') as file:
+    #         writer = csv.writer(file)
+    #         # Write the header
+    #         writer.writerow(['ID', 'description'])
+    processed_images = {}
     pipe = get_model(args)
     
     for image_url in images:
         if image_url in processed_images:
             print(f'image {image_url} already processed')
             continue
-        processed_images.add(image_url)
+        # processed_images.add(image_url)
         if args.description_type == 'combine':
             description = get_combine_description(args, image_url, pipe)
         else:
             description = get_single_description(args, image_url, pipe)
         print(f'output of image {image_url} is {description}')
         print('-' * 80)
-        pair = [image_url, description]
-        with open(description_file, 'a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(pair)
+        # pair = [image_url, description]
+        processed_images[image_url] = description
+        # with open(description_file, 'a', newline='') as file:
+        #     writer = csv.writer(file)
+        #     writer.writerow(pair)
+        with open(description_file, 'w') as file:
+            json.dump(processed_images, file)
 
-    return pd.read_csv(description_file)
+    return processed_images
 
 
 def get_llm_generated_prompt(args, test_images):
@@ -200,6 +202,8 @@ def get_negative_descriptions(args):
 if __name__ == '__main__':
     args = get_args()
     test_images = get_test_data(args)['ID'].values[:290]
+    args.test_set_QA = 'results/AR_DALLE3_20250507_181113.csv'
+    args.test_set_images = '../../experiments/generated_images/20250507_181113/AR_DALLE3'
     descriptions = get_descriptions(args)
     # descriptions = get_llm_generated_prompt(args, test_images)
     # get_negative_descriptions(args)
