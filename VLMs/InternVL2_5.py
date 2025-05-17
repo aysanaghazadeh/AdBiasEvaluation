@@ -7,6 +7,9 @@ from PIL import Image
 from torchvision.transforms.functional import InterpolationMode
 from transformers import AutoModel, AutoTokenizer, AutoConfig
 from torch import nn
+from lmdeploy import pipeline, TurbomindEngineConfig
+from lmdeploy.vl import load_image
+from lmdeploy.vl.constants import IMAGE_TOKEN
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
@@ -17,19 +20,21 @@ class InternVL2_5(nn.Module):
         super(InternVL2_5, self).__init__()
         # If you set `load_in_8bit=True`, you will need two 80GB GPUs.
         # If you set `load_in_8bit=False`, you will need at least three 80GB GPUs.
-        self.path = 'OpenGVLab/InternVL2-26B'
-        # self.device_map = self.split_model('InternVL2-26B')
-        self.model = AutoModel.from_pretrained(
-            self.path,
-            torch_dtype=torch.bfloat16,
-            load_in_8bit=False,
-            low_cpu_mem_usage=True,
-            use_flash_attn=True,
-            trust_remote_code=True,
-            token='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',
-            device_map='auto'
-        ).eval()
-        self.tokenizer = AutoTokenizer.from_pretrained(self.path, trust_remote_code=True, use_fast=False)
+        # self.path = 'OpenGVLab/InternVL2-26B'
+        # # self.device_map = self.split_model('InternVL2-26B')
+        # self.model = AutoModel.from_pretrained(
+        #     self.path,
+        #     torch_dtype=torch.bfloat16,
+        #     load_in_8bit=False,
+        #     low_cpu_mem_usage=True,
+        #     use_flash_attn=True,
+        #     trust_remote_code=True,
+        #     token='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',
+        #     device_map='auto'
+        # ).eval()
+        # self.tokenizer = AutoTokenizer.from_pretrained(self.path, trust_remote_code=True, use_fast=False)
+        model = 'OpenGVLab/InternVL2_5-1B'
+        pipe = pipeline(model, backend_config=TurbomindEngineConfig(session_len=8192)).to(args.device)
 
     def build_transform(self, input_size):
         MEAN, STD = IMAGENET_MEAN, IMAGENET_STD
@@ -129,21 +134,30 @@ class InternVL2_5(nn.Module):
         return device_map
 
     def forward(self, images, prompt):
-        image_1 = images[0]
-        image_2 = images[1]
-        generation_config = dict(max_new_tokens=512, do_sample=True)
-        history = None
-        # multi-image multi-round conversation, separate images (多图多轮对话，独立图像)
-        pixel_values1 = self.load_image(image_1, max_num=12).to(torch.bfloat16).cuda()
-        pixel_values2 = self.load_image(image_2, max_num=12).to(torch.bfloat16).cuda()
-        pixel_values = torch.cat((pixel_values1, pixel_values2), dim=0)
-        num_patches_list = [pixel_values1.size(0), pixel_values2.size(0)]
+        image_urls=[
+            'https://raw.githubusercontent.com/open-mmlab/mmdeploy/main/demo/resources/human-pose.jpg',
+            'https://raw.githubusercontent.com/open-mmlab/mmdeploy/main/demo/resources/det.jpg'
+        ]
 
-        question = prompt
-        response, history = self.model.chat(self.tokenizer, pixel_values, question, generation_config,
-                                history=history, num_patches_list=num_patches_list, return_history=True)
-        print(f'User: {question}\nAssistant: {response}')
-        return response
+        images = [load_image(img_url) for img_url in image_urls]
+        # Numbering images improves multi-image conversations
+        response = self.pipe((f'Image-1: {IMAGE_TOKEN}\nImage-2: {IMAGE_TOKEN}\n{prompt}', images))
+        print(response.text)
+        # image_1 = images[0]
+        # image_2 = images[1]
+        # generation_config = dict(max_new_tokens=512, do_sample=True)
+        # history = None
+        # # multi-image multi-round conversation, separate images (多图多轮对话，独立图像)
+        # pixel_values1 = self.load_image(image_1, max_num=12).to(torch.bfloat16).cuda()
+        # pixel_values2 = self.load_image(image_2, max_num=12).to(torch.bfloat16).cuda()
+        # pixel_values = torch.cat((pixel_values1, pixel_values2), dim=0)
+        # num_patches_list = [pixel_values1.size(0), pixel_values2.size(0)]
+
+        # question = prompt
+        # response, history = self.model.chat(self.tokenizer, pixel_values, question, generation_config,
+        #                         history=history, num_patches_list=num_patches_list, return_history=True)
+        # print(f'User: {question}\nAssistant: {response}')
+        # return response
 
 
 
