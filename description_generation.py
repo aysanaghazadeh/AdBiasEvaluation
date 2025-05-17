@@ -103,7 +103,10 @@ def get_descriptions(args):
     #         writer = csv.writer(file)
     #         # Write the header
     #         writer.writerow(['ID', 'description'])
-    processed_images = {}
+    if os.path.exists(description_file):
+        processed_images = json.load(open(description_file))
+    else:
+        processed_images = {}
     pipe = get_model(args)
     
     for image_url in images:
