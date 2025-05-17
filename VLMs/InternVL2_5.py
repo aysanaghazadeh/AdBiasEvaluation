@@ -22,7 +22,7 @@ class InternVL2_5(nn.Module):
         super(InternVL2_5, self).__init__()
         # If you set `load_in_8bit=True`, you will need two 80GB GPUs.
         # If you set `load_in_8bit=False`, you will need at least three 80GB GPUs.
-        self.path = 'OpenGVLab/InternVL2-26B'
+        self.path = 'OpenGVLab/InternVL2-7B'
         # # self.device_map = self.split_model('InternVL2-26B')
         self.model = AutoModel.from_pretrained(
             self.path,
