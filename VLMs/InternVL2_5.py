@@ -31,8 +31,9 @@ class InternVL2_5(nn.Module):
             low_cpu_mem_usage=True,
             use_flash_attn=True,
             trust_remote_code=True,
-            token='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'
-        ).eval().cuda()
+            token='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',
+            device_map='auto'
+        ).eval()
         self.tokenizer = AutoTokenizer.from_pretrained(self.path, trust_remote_code=True, use_fast=False)
         # model = 'OpenGVLab/InternVL2_5-1B'
         # pipe = pipeline("image-text-to-text", model="OpenGVLab/InternVL2_5-1B", trust_remote_code=True).to(args.device)
