@@ -31,11 +31,12 @@ if __name__ == "__main__":
         else:
             descriptions[f'gender_{race}'] = {}
     for image_url in data:
-        print(f'describing image {image_url}')
+        print(image_url)
         try:
             for race in races:
                 if image_url in descriptions[race] and image_url in descriptions[f'gender_{race}']:
                     continue
+                print(f'describing image {image_url}, race {race}')
                 if race != 'white':
                     prompt = f'''In the following description, replace the 'white person' with '{race} person', changing the race characteristic of the person. Only return the new description without any further explanation.
                     {data[image_url]}
