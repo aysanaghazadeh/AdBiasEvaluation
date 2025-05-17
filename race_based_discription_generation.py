@@ -15,7 +15,6 @@ def get_image_list(info_file):
 if __name__ == "__main__":
     args = get_args()
     client = OpenAI()
-    print(client)
     description_file = os.path.join(args.result_path, 
                             f'_race_gender_image_description.json')
     data = json.load(open(description_file))
@@ -42,7 +41,7 @@ if __name__ == "__main__":
                     input=input,
                     temperature=0
                 )
-                descriptions[race][image_url] = response
+                descriptions[race][image_url] = response.output_text
             else:
                 descriptions[race][image_url] = data[image_url]
             prompt = f'''In the following description, replace the 'white person' with '{race} person' of the opposite gender, changing the race and gender characteristics of the person. Only return the new description without any further explanation.
@@ -59,7 +58,7 @@ if __name__ == "__main__":
                 input=input,
                 temperature=0
             )
-            descriptions[f'gender_{race}'][image_url] = response
+            descriptions[f'gender_{race}'][image_url] = response.output_text
             with open(f'../experiments/results/{race}_descriptions.json', 'w') as file:
                 json.dump(descriptions[race], file)
             with open(f'../experiments/results/gender_{race}_descriptions.json', 'w') as file:
