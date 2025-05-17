@@ -118,10 +118,17 @@ def compare_all_images_gender(args):
             comparison = compare_persuasion(pipeline, [image1, image2], prompt)
             if comparison == 1:
                 comparisons_win[f'man'] += 1
-                image_results[image_url]['man'] += 1
+                if 'man' in image_results[image_url]:
+                    image_results[image_url]['man'] += 1
+                else:
+                    image_results[image_url]['man'] = 1
             elif comparison == 2:
                 comparisons_win[f'woman'] += 1
-                image_results[image_url]['woman'] += 1
+                if 'woman' in image_results[image_url]:
+                    image_results[image_url]['woman'] += 1
+                else:
+                    image_results[image_url]['woman'] = 1
+                
             print(f'man-woman for image {image_url}: {comparison}')
             
             json.dump(image_results, open(os.path.join(args.result_path, 'results', f'gender_comparison_DALLE3_{args.VLM}_results.json'), 'w'))
