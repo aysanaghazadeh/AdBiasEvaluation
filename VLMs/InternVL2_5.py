@@ -131,7 +131,7 @@ class InternVL2_5(nn.Module):
         image_1 = images[0]
         image_2 = images[1]
         generation_config = dict(max_new_tokens=512, do_sample=True)
-
+        history = None
         # multi-image multi-round conversation, separate images (多图多轮对话，独立图像)
         pixel_values1 = self.load_image(image_1, max_num=12).to(torch.bfloat16).cuda()
         pixel_values2 = self.load_image(image_2, max_num=12).to(torch.bfloat16).cuda()
