@@ -25,9 +25,28 @@ if __name__ == "__main__":
     for race in races:
         descriptions[f'gender_{race}'] = {}
     for image_url in data:
-        for race in races:
-            if race != 'white':
-                prompt = f'''In the following description, replace the 'white person' with '{race} person', changing the race characteristic of the person. Only return the new description without any further explanation.
+        print(f'describing image {image_url}')
+        try:
+            for race in races:
+                if race != 'white':
+                    prompt = f'''In the following description, replace the 'white person' with '{race} person', changing the race characteristic of the person. Only return the new description without any further explanation.
+                    {data[image_url]}
+                    '''
+                    input = [{
+                                "role": "user",
+                                "content": [
+                                    {"type": "input_text", "text": prompt},
+                                ]
+                            }]
+                    response = client.responses.create(
+                        model="gpt-4o-2024-08-06",
+                        input=input,
+                        temperature=0
+                    )
+                    descriptions[race][image_url] = response.output_text
+                else:
+                    descriptions[race][image_url] = data[image_url]
+                prompt = f'''In the following description, replace the 'white person' with '{race} person' of the opposite gender, changing the race and gender characteristics of the person. Only return the new description without any further explanation.
                 {data[image_url]}
                 '''
                 input = [{
@@ -41,27 +60,13 @@ if __name__ == "__main__":
                     input=input,
                     temperature=0
                 )
-                descriptions[race][image_url] = response.output_text
-            else:
-                descriptions[race][image_url] = data[image_url]
-            prompt = f'''In the following description, replace the 'white person' with '{race} person' of the opposite gender, changing the race and gender characteristics of the person. Only return the new description without any further explanation.
-            {data[image_url]}
-            '''
-            input = [{
-                        "role": "user",
-                        "content": [
-                            {"type": "input_text", "text": prompt},
-                        ]
-                    }]
-            response = client.responses.create(
-                model="gpt-4o-2024-08-06",
-                input=input,
-                temperature=0
-            )
-            descriptions[f'gender_{race}'][image_url] = response.output_text
-            with open(f'../experiments/results/{race}_descriptions.json', 'w') as file:
-                json.dump(descriptions[race], file)
-            with open(f'../experiments/results/gender_{race}_descriptions.json', 'w') as file:
-                json.dump(descriptions[f'gender_{race}'], file)
-            
-            
+                descriptions[f'gender_{race}'][image_url] = response.output_text
+                with open(f'../experiments/results/{race}_descriptions.json', 'w') as file:
+                    json.dump(descriptions[race], file)
+                with open(f'../experiments/results/gender_{race}_descriptions.json', 'w') as file:
+                    json.dump(descriptions[f'gender_{race}'], file)
+        except Exception as e:
+            print(f"Error processing image {image_url}")
+            print(e)
+            continue        
+                
