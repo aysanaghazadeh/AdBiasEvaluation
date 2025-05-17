@@ -9,8 +9,7 @@ import pandas as pd
 from configs.inference_config import get_args
 from util.prompt_engineering.prompt_generation import PromptGenerator
 from LLMs.LLM import LLM
-from VLMs.InternVL2 import InternVL
-from VLMs.LLAVA16 import LLAVA16
+from VLMs.VLM import VLM
 
 
 def get_model(args):
@@ -18,16 +17,17 @@ def get_model(args):
     if args.description_type == 'combine':
         pipe = LLM(args)
         return pipe
-    model_map = {
-        'LLAVA': 'llava-hf/llava-1.5-13b-hf'
-    }
-    if args.VLM in model_map:
-        model_id = model_map[args.VLM]
-        pipe = pipeline("image-to-text", model=model_id, device_map='auto')
-    elif args.VLM == 'InternVL':
-        pipe = InternVL(args)
-    elif args.VLM == 'LLAVA16':
-        pipe = LLAVA16(args)
+    # model_map = {
+    #     'LLAVA': 'llava-hf/llava-1.5-13b-hf'
+    # }
+    # if args.VLM in model_map:
+    #     model_id = model_map[args.VLM]
+    #     pipe = pipeline("image-to-text", model=model_id, device_map='auto')
+    # elif args.VLM == 'InternVL':
+    #     pipe = InternVL(args)
+    # elif args.VLM == 'LLAVA16':
+    #     pipe = LLAVA16(args)
+    pipe= VLM(args)
     return pipe
 
 
