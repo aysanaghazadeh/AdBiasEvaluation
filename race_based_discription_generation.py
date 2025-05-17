@@ -13,7 +13,7 @@ def get_image_list(info_file):
     return df.values
 
 if __name__ == "__main__":
-    args = get_args
+    args = get_args()
     client = OpenAI()
     print(client)
     description_file = os.path.join(args.result_path, 
