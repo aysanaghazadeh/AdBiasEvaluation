@@ -21,9 +21,15 @@ if __name__ == "__main__":
     races = ["white", "black", "asian", "indian", "latino", "middle_eastern"]
     descriptions = {}
     for race in races:
-        descriptions[race] = {}
+        if os.path.exists(f'../experiments/results/{race}_descriptions.json'):
+            descriptions[race] = json.load(open(f'../experiments/results/{race}_descriptions.json'))
+        else:
+            descriptions[race] = {}
     for race in races:
-        descriptions[f'gender_{race}'] = {}
+        if os.path.exists(f'../experiments/results/gender_{race}_descriptions.json'):
+            descriptions[f'gender_{race}'] = json.load(open(f'../experiments/results/gender_{race}_descriptions.json'))
+        else:
+            descriptions[f'gender_{race}'] = {}
     for image_url in data:
         print(f'describing image {image_url}')
         try:
