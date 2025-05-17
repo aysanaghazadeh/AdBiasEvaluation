@@ -141,7 +141,7 @@ class InternVL2_5(nn.Module):
 
         question = prompt
         response, history = self.model.chat(self.tokenizer, pixel_values, question, generation_config,
-                                    num_patches_list=num_patches_list)
+                                history=history, num_patches_list=num_patches_list, return_history=True)
         print(f'User: {question}\nAssistant: {response}')
         return response
 
