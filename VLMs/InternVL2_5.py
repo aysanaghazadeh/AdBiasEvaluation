@@ -138,31 +138,12 @@ class InternVL2_5(nn.Module):
         pixel_values = torch.cat((pixel_values1, pixel_values2), dim=0)
         num_patches_list = [pixel_values1.size(0), pixel_values2.size(0)]
 
-        question = 'Image-1: <image>\nImage-2: <image>\nDescribe the two images in detail.'
-        response, history = self.model.chat(self.tokenizer, pixel_values, question, generation_config,
-                                    num_patches_list=num_patches_list,
-                                    history=None, return_history=True)
-        print(f'User: {question}\nAssistant: {response}')
-
-        question = 'What are the similarities and differences between these two images.'
+        question = prompt
         response, history = self.model.chat(self.tokenizer, pixel_values, question, generation_config,
                                     num_patches_list=num_patches_list,
                                     history=history, return_history=True)
         print(f'User: {question}\nAssistant: {response}')
+        return response
 
 
 
-
-
-        pixel_values = pixel_values.to(torch.bfloat16).cuda()
-        video_prefix = ''.join([f'Frame{i+1}: <image>\n' for i in range(len(num_patches_list))])
-        question = video_prefix + 'What is the red panda doing?'
-        # Frame1: <image>\nFrame2: <image>\n...\nFrame8: <image>\n{question}
-        response, history = model.chat(tokenizer, pixel_values, question, generation_config,
-                                    num_patches_list=num_patches_list, history=None, return_history=True)
-        print(f'User: {question}\nAssistant: {response}')
-
-        question = 'Describe this video in detail.'
-        response, history = model.chat(tokenizer, pixel_values, question, generation_config,
-                                    num_patches_list=num_patches_list, history=history, return_history=True)
-        print(f'User: {question}\nAssistant: {response}')
