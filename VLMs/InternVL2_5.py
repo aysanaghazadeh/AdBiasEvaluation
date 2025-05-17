@@ -7,9 +7,11 @@ from PIL import Image
 from torchvision.transforms.functional import InterpolationMode
 from transformers import AutoModel, AutoTokenizer, AutoConfig
 from torch import nn
-from lmdeploy import pipeline, TurbomindEngineConfig
-from lmdeploy.vl import load_image
-from lmdeploy.vl.constants import IMAGE_TOKEN
+from transformers import pipeline
+
+# from lmdeploy import pipeline, TurbomindEngineConfig
+# from lmdeploy.vl import load_image
+# from lmdeploy.vl.constants import IMAGE_TOKEN
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
@@ -34,7 +36,7 @@ class InternVL2_5(nn.Module):
         # ).eval()
         # self.tokenizer = AutoTokenizer.from_pretrained(self.path, trust_remote_code=True, use_fast=False)
         model = 'OpenGVLab/InternVL2_5-1B'
-        pipe = pipeline(model, backend_config=TurbomindEngineConfig(session_len=8192)).to(args.device)
+        pipe = pipeline("image-text-to-text", model="OpenGVLab/InternVL2_5-1B", trust_remote_code=True).to(args.device)
 
     def build_transform(self, input_size):
         MEAN, STD = IMAGENET_MEAN, IMAGENET_STD
