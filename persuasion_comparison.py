@@ -85,7 +85,7 @@ def compare_all_images_gender(args):
         image_results = {}
     images = images.image_url.values
     pipeline = VLM(args)
-    races = ['black', 'asian', 'indian', 'latino', 'middle_eastern']
+    races = ['white', 'black', 'asian', 'indian', 'latino', 'middle_eastern']
     comparisons_win = {'man': 0, 'woman': 0}
     
     for image_url in images:
