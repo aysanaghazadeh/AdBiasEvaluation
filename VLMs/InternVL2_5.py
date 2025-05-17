@@ -18,7 +18,7 @@ class InternVL2_5(nn.Module):
         # If you set `load_in_8bit=True`, you will need two 80GB GPUs.
         # If you set `load_in_8bit=False`, you will need at least three 80GB GPUs.
         self.path = 'OpenGVLab/InternVL2-26B'
-        self.device_map = self.split_model('InternVL2-26B')
+        # self.device_map = self.split_model('InternVL2-26B')
         self.model = AutoModel.from_pretrained(
             self.path,
             torch_dtype=torch.bfloat16,
@@ -27,7 +27,7 @@ class InternVL2_5(nn.Module):
             use_flash_attn=True,
             trust_remote_code=True,
             token='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',
-            device_map=self.device_map).eval()
+        ).eval()
         self.tokenizer = AutoTokenizer.from_pretrained(self.path, trust_remote_code=True, use_fast=False)
 
     def build_transform(self, input_size):
