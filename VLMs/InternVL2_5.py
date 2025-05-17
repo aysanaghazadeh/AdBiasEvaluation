@@ -22,7 +22,7 @@ class InternVL2_5(nn.Module):
         super(InternVL2_5, self).__init__()
         # If you set `load_in_8bit=True`, you will need two 80GB GPUs.
         # If you set `load_in_8bit=False`, you will need at least three 80GB GPUs.
-        self.path = 'OpenGVLab/InternVL2_5-1B'
+        self.path = 'OpenGVLab/InternVL2_5-8B'
         # # self.device_map = self.split_model('InternVL2-26B')
         self.model = AutoModel.from_pretrained(
             self.path,
@@ -138,12 +138,13 @@ class InternVL2_5(nn.Module):
         
         image_1 = images[0]
         image_2 = images[1]
+        history=None
         pixel_values1 = self.load_image(image_1, max_num=12).to(torch.bfloat16).cuda()
         pixel_values2 = self.load_image(image_2, max_num=12).to(torch.bfloat16).cuda()
         pixel_values = torch.cat((pixel_values1, pixel_values2), dim=0)
         generation_config = dict(max_new_tokens=128, do_sample=True)
         question = '<image>\n<image>\n' + prompt
         response, history = self.model.chat(self.tokenizer, pixel_values, question, generation_config,
-                               history=None, return_history=True)
+                               history=history, return_history=True)
         print(f'User: {question}\nAssistant: {response}')
         return response
