@@ -9,6 +9,7 @@ class GPT4_o(nn.Module):
         self.client = OpenAI()
 
     def forward(self, images, prompt):
+        
         def encode_image(image_path):
             with open(image_path, "rb") as image_file:
                 return base64.b64encode(image_file.read()).decode('utf-8')
@@ -18,11 +19,17 @@ class GPT4_o(nn.Module):
                         {"type": "input_text", "text": prompt},
                     ]
                 }]
-        for image in images:
+        if type(images) == list:
+            for image in images:
+                input[0]["content"].append({
+                    "type": "input_image",
+                    "image_url": f"data:image/jpeg;base64,{encode_image(image)}"
+                })
+        else:
             input[0]["content"].append({
-                "type": "input_image",
-                "image_url": f"data:image/jpeg;base64,{encode_image(image)}"
-            })
+                    "type": "input_image",
+                    "image_url": f"data:image/jpeg;base64,{encode_image(images)}"
+                })
         response = self.client.responses.create(
             model="gpt-4o-2024-08-06",
             input=input,
