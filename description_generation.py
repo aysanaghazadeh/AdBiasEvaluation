@@ -110,7 +110,7 @@ def get_descriptions(args):
     pipe = get_model(args)
     
     for image_url in images:
-        if image_url in processed_images:
+        if image_url in processed_images and "I'm sorry, I can't assist with that request." not in processed_images[image_url]:
             print(f'image {image_url} already processed')
             continue
         # processed_images.add(image_url)
