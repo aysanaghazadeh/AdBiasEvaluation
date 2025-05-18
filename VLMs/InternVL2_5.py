@@ -140,12 +140,21 @@ class InternVL2_5(nn.Module):
         image_1 = images[0]
         image_2 = images[1]
         history=None
-        pixel_values1 = self.load_image(image_1, max_num=12).to(torch.bfloat16).cuda()
-        pixel_values2 = self.load_image(image_2, max_num=12).to(torch.bfloat16).cuda()
-        pixel_values = torch.cat((pixel_values1, pixel_values2), dim=0)
-        generation_config = dict(max_new_tokens=128, do_sample=True)
         question = '<image>\n<image>\n' + prompt
-        response, history = self.model.chat(self.tokenizer, pixel_values, question, generation_config,
-                               history=history, return_history=True)
+        pixel_values1 = self.load_image(image1, max_num=12).to(torch.bfloat16).cuda()
+        pixel_values2 = self.load_image(image2, max_num=12).to(torch.bfloat16).cuda()
+        pixel_values = torch.cat((pixel_values1, pixel_values2), dim=0)
+        num_patches_list = [pixel_values1.size(0), pixel_values2.size(0)]
+        generation_config = dict(
+            num_beams=1,
+            max_new_tokens=128,
+            do_sample=False,
+        )
+        response, history = self.model.chat(self.tokenizer,
+                                       pixel_values,
+                                       question,
+                                       generation_config,
+                                       num_patches_list=num_patches_list,
+                                       history=history, return_history=True)
         print(f'User: {question}\nAssistant: {response}')
         return response

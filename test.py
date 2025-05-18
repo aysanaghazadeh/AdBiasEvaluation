@@ -379,8 +379,8 @@ for race in races:
 
 # print(topic_based_distribution)
 
-# with open('/Users/aysanaghazadeh/experiments/topic_based_race_comparison_DALLE3_InternVL2_5_results.json', 'w') as file:
-#     json.dump(topic_based_distribution, file)
+with open('/Users/aysanaghazadeh/experiments/topic_based_race_comparison_DALLE3_InternVL2_5_results.json', 'w') as file:
+    json.dump(topic_based_distribution, file)
 
 
 import json
