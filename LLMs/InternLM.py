@@ -37,7 +37,8 @@ class InternLM(nn.Module):
             # messages = [
             #     {"role": "user", "content": prompt},
             # ]
-            return self.pipe(prompt)
+            output =  self.pipe(prompt)
+            print(output)
             # length = 0
             # for response, history in self.model.stream_chat(self.tokenizer, prompt, history=[]):
             #     output = history[0][-1]
