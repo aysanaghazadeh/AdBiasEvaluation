@@ -45,7 +45,7 @@ def compare_all_images_race(args):
         else:
             descriptions[race] = {}
     if os.path.exists(os.path.join(args.result_path, 'results', f'race_description_comparison_DALLE3_{args.LLM}_results.json')):
-        image_results = json.load(open(os.path.join(args.result_path, 'results', f'race_desciprtion_comparison_DALLE3_{args.LLM}_results.json')))
+        image_results = json.load(open(os.path.join(args.result_path, 'results', f'race_description_comparison_DALLE3_{args.LLM}_results.json')))
     else:
         image_results = {}
     pipeline = LLM(args)

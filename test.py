@@ -388,16 +388,19 @@ from util.data.mapping import TOPIC_MAP
 from collections import Counter
 results = json.load(open('/Users/aysanaghazadeh/experiments/results/gender_comparison_DALLE3_QWenVL_results.json'))
 # print(len(results))
-print(len(results) * 2)
 genders = {'woman': [], 'man': []}
+count = 0
 for image_url in results:
+    if len(results[image_url]) > 0:
+        count += 1
     if 'woman' in results[image_url]:
         for i in range(results[image_url]['woman']):
             genders['woman'].append(image_url)
     if 'man' in results[image_url]:
         for i in range(results[image_url]['man']):
             genders['man'].append(image_url)
-
+print(count)
+print('QWenVL--->:', 'woman:', len(genders['woman']), ', man:', len(genders['man']))
 topic_based_distribution = {}
 for gender in genders:
     for image_url in genders[gender]:
@@ -421,7 +424,7 @@ with open('/Users/aysanaghazadeh/experiments/topic_based_gender_comparison_DALLE
     json.dump(topic_based_distribution, file)
 
 results = json.load(open('/Users/aysanaghazadeh/experiments/results/gender_comparison_DALLE3_InternVL2_5_results.json'))
-print(len(results) * 2)
+# print(len(results) * 2)
 genders = {'woman': [], 'man': []}
 for image_url in results:
     if 'woman' in results[image_url]:
@@ -430,7 +433,7 @@ for image_url in results:
     if 'man' in results[image_url]:
         for i in range(results[image_url]['man']):
             genders['man'].append(image_url)
-
+print('InternVL--->:', 'woman:', len(genders['woman']), ', man:', len(genders['man']))
 topic_based_distribution = {}
 for gender in genders:
     for image_url in genders[gender]:
@@ -455,7 +458,7 @@ with open('/Users/aysanaghazadeh/experiments/topic_based_gender_comparison_DALLE
 
 
 results = json.load(open('/Users/aysanaghazadeh/experiments/results/gender_comparison_DALLE3_GPT4_o_results.json'))
-print(len(results) * 2)
+# print(len(results) * 2)
 genders = {'woman': [], 'man': []}
 for image_url in results:
     if 'woman' in results[image_url]:
@@ -464,7 +467,7 @@ for image_url in results:
     if 'man' in results[image_url]:
         for i in range(results[image_url]['man']):
             genders['man'].append(image_url)
-
+print('GPT4--->:', 'woman:', len(genders['woman']), ', man:', len(genders['man']))
 topic_based_distribution = {}
 for gender in genders:
     for image_url in genders[gender]:
