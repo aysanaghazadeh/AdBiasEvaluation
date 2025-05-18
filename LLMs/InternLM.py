@@ -4,7 +4,7 @@ import torch
 from peft import PeftModel
 import os
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 
 class InternLM(nn.Module):
@@ -20,12 +20,17 @@ class InternLM(nn.Module):
             # self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
             #
             # self.model = self.model.eval()
-            self.tokenizer = AutoTokenizer.from_pretrained("internlm/internlm2-base-7b", trust_remote_code=True)
-            self.model = AutoModelForCausalLM.from_pretrained("internlm/internlm2-base-7b",
-                                                              torch_dtype=torch.float16,
-                                                              load_in_8bit=True,
-                                                              trust_remote_code=True)
-            self.model = self.model.eval()
+            self.pipe = pipeline("text-generation", 
+                                 model="internlm/internlm2_5-7b-chat",
+                                 load_in_8_bit=True,
+                                 device_map=True, 
+                                 trust_remote_code=True)
+            # self.tokenizer = AutoTokenizer.from_pretrained("internlm/internlm2-base-7b", trust_remote_code=True)
+            # self.model = AutoModelForCausalLM.from_pretrained("internlm/internlm2-base-7b",
+            #                                                   torch_dtype=torch.float16,
+            #                                                   load_in_8bit=True,
+            #                                                   trust_remote_code=True)
+            # self.model = self.model.eval()
 
     def forward(self, prompt):
         if not self.args.train:
