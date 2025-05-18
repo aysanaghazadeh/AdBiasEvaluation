@@ -147,7 +147,7 @@ class InternVL2_5(nn.Module):
         num_patches_list = [pixel_values1.size(0), pixel_values2.size(0)]
         generation_config = dict(
             num_beams=1,
-            max_new_tokens=128,
+            max_new_tokens=256,
             do_sample=False,
         )
         response, history = self.model.chat(self.tokenizer,
