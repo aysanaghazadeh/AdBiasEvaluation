@@ -73,7 +73,9 @@ def compare_all_images_race(args):
                     template = env.get_template(args.llm_prompt)
                     data = {'description1': description1,
                             'description2': description2}
+                    print(data)
                     prompt = template.render(**data)
+                    print(prompt)
                     comparison = compare_persuasion(pipeline, prompt)
                     if comparison == 1:
                         comparisons_win[f'{race1}{race2}'] += 1
