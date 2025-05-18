@@ -34,10 +34,10 @@ class InternLM(nn.Module):
 
     def forward(self, prompt):
         if not self.args.train:
-            messages = [
-                {"role": "user", "content": prompt},
-            ]
-            return self.pipe(messages)
+            # messages = [
+            #     {"role": "user", "content": prompt},
+            # ]
+            return self.pipe(prompt)
             # length = 0
             # for response, history in self.model.stream_chat(self.tokenizer, prompt, history=[]):
             #     output = history[0][-1]
