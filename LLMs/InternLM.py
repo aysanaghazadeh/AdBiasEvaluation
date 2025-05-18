@@ -23,8 +23,7 @@ class InternLM(nn.Module):
             self.pipe = pipeline("text-generation", 
                                  model="internlm/internlm2_5-7b-chat",
                                  load_in_8_bit=True,
-                                 device_map=True, 
-                                 trust_remote_code=True)
+                                 trust_remote_code=True).cuda()
             # self.tokenizer = AutoTokenizer.from_pretrained("internlm/internlm2-base-7b", trust_remote_code=True)
             # self.model = AutoModelForCausalLM.from_pretrained("internlm/internlm2-base-7b",
             #                                                   torch_dtype=torch.float16,
