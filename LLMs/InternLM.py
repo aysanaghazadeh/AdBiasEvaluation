@@ -34,17 +34,21 @@ class InternLM(nn.Module):
 
     def forward(self, prompt):
         if not self.args.train:
-
+            messages = [
+                {"role": "user", "content": prompt},
+            ]
+            return self.pipe(messages)
             # length = 0
             # for response, history in self.model.stream_chat(self.tokenizer, prompt, history=[]):
             #     output = history[0][-1]
             #     length = len(response)
             # return output
-            inputs = self.tokenizer([prompt], return_tensors="pt")
-            for k, v in inputs.items():
-                inputs[k] = v.cuda()
-            gen_kwargs = {"temperature": 0.8, "do_sample": True}
-            output = self.model.generate(**inputs, **gen_kwargs)
-            output = self.tokenizer.decode(output[0].tolist(), skip_special_tokens=True)
-            return output
+            
+            # inputs = self.tokenizer([prompt], return_tensors="pt")
+            # for k, v in inputs.items():
+            #     inputs[k] = v.cuda()
+            # gen_kwargs = {"temperature": 0.8, "do_sample": True}
+            # output = self.model.generate(**inputs, **gen_kwargs)
+            # output = self.tokenizer.decode(output[0].tolist(), skip_special_tokens=True)
+            # return output
 
