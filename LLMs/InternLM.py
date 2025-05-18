@@ -19,6 +19,7 @@ class InternLM(nn.Module):
 
     def forward(self, prompt):
         if not self.args.train:
+            
             response, history = self.model.chat(self.tokenizer, prompt, history=[])
             return response
             
