@@ -92,45 +92,59 @@ def compare_all_images_gender(args):
         if image_url in image_results:
             continue
         image_results[image_url] = {}
-        race = random.choice(races)
-        if image_exists_gender(image_dir, image_url, race):
-            env = Environment(loader=FileSystemLoader(args.prompt_path))
-            template = env.get_template(args.VLM_prompt)
-            
-            image1 = os.path.join(image_dir, race, image_url)
-            image2 = os.path.join(image_dir, f'gender_{race}', image_url)
-        
-            data = {'options': '1. woman, 2. man'}
-            prompt = template.render(**data)
-            comparison = compare_persuasion(pipeline, [image1, image2], prompt)
-            if comparison == 1:
-                comparisons_win[f'woman'] += 1
-                image_results[image_url]['woman'] = 1
-                image_results[image_url]['man'] = 0
-            elif comparison == 2:
-                comparisons_win[f'man'] += 1
-                image_results[image_url]['woman'] = 0
-                image_results[image_url]['man'] = 1
-            print(f'woman-man for image {image_url}: {comparison}')
-            data = {'options': '1. man, 2. woman'}
-            prompt = template.render(**data)
-            comparison = compare_persuasion(pipeline, [image1, image2], prompt)
-            comparison = compare_persuasion(pipeline, [image1, image2], prompt)
-            if comparison == 1:
-                comparisons_win[f'man'] += 1
-                if 'man' in image_results[image_url]:
-                    image_results[image_url]['man'] += 1
-                else:
-                    image_results[image_url]['man'] = 1
-            elif comparison == 2:
-                comparisons_win[f'woman'] += 1
-                if 'woman' in image_results[image_url]:
-                    image_results[image_url]['woman'] += 1
-                else:
-                    image_results[image_url]['woman'] = 1
+        for race in races:
+            if image_exists_gender(image_dir, image_url, race):
+                env = Environment(loader=FileSystemLoader(args.prompt_path))
+                template = env.get_template(args.VLM_prompt)
                 
-            print(f'man-woman for image {image_url}: {comparison}')
+                image1 = os.path.join(image_dir, race, image_url)
+                image2 = os.path.join(image_dir, f'gender_{race}', image_url)
             
+                data = {'options': '1. woman, 2. man'}
+                prompt = template.render(**data)
+                comparison = compare_persuasion(pipeline, [image1, image2], prompt)
+                if comparison == 1:
+                    comparisons_win[f'woman'] += 1
+                    if image_url not in image_results:
+                        image_results[image_url] = {}
+                    if 'woman'  in image_results[image_url]:
+                        image_results[image_url]['woman'] += 1
+                    else:
+                        image_results[image_url]['woman'] = 1
+                        image_results[image_url]['man'] = 0
+                elif comparison == 2:
+                    comparisons_win[f'man'] += 1
+                    if image_url not in image_results:
+                        image_results[image_url] = {}
+                    if 'man' in image_results[image_url]:
+                        image_results[image_url]['man'] += 1
+                    else:
+                        image_results[image_url]['woman'] = 0
+                        image_results[image_url]['man'] = 1
+                print(f'woman-man {race} for image {image_url}: {comparison}')
+                data = {'options': '1. man, 2. woman'}
+                prompt = template.render(**data)
+                comparison = compare_persuasion(pipeline, [image1, image2], prompt)
+                if comparison == 1:
+                    comparisons_win[f'woman'] += 1
+                    if image_url not in image_results:
+                        image_results[image_url] = {}
+                    if 'woman'  in image_results[image_url]:
+                        image_results[image_url]['woman'] += 1
+                    else:
+                        image_results[image_url]['woman'] = 1
+                        image_results[image_url]['man'] = 0
+                elif comparison == 2:
+                    comparisons_win[f'man'] += 1
+                    if image_url not in image_results:
+                        image_results[image_url] = {}
+                    if 'man' in image_results[image_url]:
+                        image_results[image_url]['man'] += 1
+                    else:
+                        image_results[image_url]['woman'] = 0
+                        image_results[image_url]['man'] = 1
+                print(f'man-woman {race} for image {image_url}: {comparison}')
+                
             json.dump(image_results, open(os.path.join(args.result_path, 'results', f'gender_comparison_DALLE3_{args.VLM}_results.json'), 'w'))
                     
     print(comparisons_win)
