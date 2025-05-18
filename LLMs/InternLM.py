@@ -12,33 +12,19 @@ class InternLM(nn.Module):
         super(InternLM, self).__init__()
         self.args = args
         if not args.train:
-            # model_path = "internlm/internlm2_5-7b-chat"
-            # self.model = AutoModelForCausalLM.from_pretrained(model_path,
-            #                                                   torch_dtype=torch.float16,
-            #                                                   trust_remote_code=True,
-            #                                                   load_in_8bit=True)
-            # self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
-            #
-            # self.model = self.model.eval()
-            self.pipe = pipeline("text-generation", 
-                                 model="internlm/internlm2_5-7b-chat",
-                                 load_in_8_bit=True,
-                                 trust_remote_code=True)
-            self.tokenizer = AutoTokenizer.from_pretrained("internlm/internlm2-base-7b", trust_remote_code=True)
-            self.pipe = self.tokenizer
-            # self.model = AutoModelForCausalLM.from_pretrained("internlm/internlm2-base-7b",
-            #                                                   torch_dtype=torch.float16,
-            #                                                   load_in_8bit=True,
-            #                                                   trust_remote_code=True)
-            # self.model = self.model.eval()
+            
+            self.tokenizer = AutoTokenizer.from_pretrained("internlm/internlm2_5-7b-chat", trust_remote_code=True)
+            self.model = AutoModelForCausalLM.from_pretrained("internlm/internlm2_5-7b-chat", torch_dtype=torch.float16, trust_remote_code=True).cuda()
+            self.model = self.model.eval()
 
     def forward(self, prompt):
         if not self.args.train:
             # messages = [
             #     {"role": "user", "content": prompt},
             # ]
-            output =  self.pipe(prompt)
-            print(output)
+            response, history = self.model.chat(self.tokenizer, prompt, history=[])
+            print(response)
+            return response
             # length = 0
             # for response, history in self.model.stream_chat(self.tokenizer, prompt, history=[]):
             #     output = history[0][-1]
