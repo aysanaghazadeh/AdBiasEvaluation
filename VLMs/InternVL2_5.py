@@ -141,8 +141,8 @@ class InternVL2_5(nn.Module):
         image_2 = images[1]
         history=None
         question = '<image>\n<image>\n' + prompt
-        pixel_values1 = self.load_image(image1, max_num=12).to(torch.bfloat16).cuda()
-        pixel_values2 = self.load_image(image2, max_num=12).to(torch.bfloat16).cuda()
+        pixel_values1 = self.load_image(image_1, max_num=12).to(torch.bfloat16).cuda()
+        pixel_values2 = self.load_image(image_2, max_num=12).to(torch.bfloat16).cuda()
         pixel_values = torch.cat((pixel_values1, pixel_values2), dim=0)
         num_patches_list = [pixel_values1.size(0), pixel_values2.size(0)]
         generation_config = dict(
