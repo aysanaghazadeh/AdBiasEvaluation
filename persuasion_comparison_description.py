@@ -69,7 +69,7 @@ def compare_all_images_race(args):
                     description1 = descriptions[race1][image_url]
                     description2 = descriptions[race2][image_url]
                     env = Environment(loader=FileSystemLoader(args.prompt_path))
-                    template = env.get_template(args.LLM_prompt)
+                    template = env.get_template(args.llm_prompt)
                     data = {'description1': description1,
                             'description2': description2}
                     prompt = template.render(**data)
