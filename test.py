@@ -358,6 +358,8 @@ for image_url in results:
                 races[race1].append(image_url)
             else:
                 races[race2].append(image_url)
+for race in races:
+    print(race, len(races[race]))
 topic_based_distribution = {}
 for race in races:
     for image_url in races[race]:
@@ -377,71 +379,111 @@ for race in races:
 
 # print(topic_based_distribution)
 
-with open('/Users/aysanaghazadeh/experiments/topic_based_race_comparison_DALLE3_InternVL2_5_results.json', 'w') as file:
+# with open('/Users/aysanaghazadeh/experiments/topic_based_race_comparison_DALLE3_InternVL2_5_results.json', 'w') as file:
+#     json.dump(topic_based_distribution, file)
+
+
+import json
+from util.data.mapping import TOPIC_MAP
+from collections import Counter
+results = json.load(open('/Users/aysanaghazadeh/experiments/results/gender_comparison_DALLE3_QWenVL_results.json'))
+# print(len(results))
+print(len(results) * 2)
+genders = {'woman': [], 'man': []}
+for image_url in results:
+    if 'woman' in results[image_url]:
+        for i in range(results[image_url]['woman']):
+            genders['woman'].append(image_url)
+    if 'man' in results[image_url]:
+        for i in range(results[image_url]['man']):
+            genders['man'].append(image_url)
+
+topic_based_distribution = {}
+for gender in genders:
+    for image_url in genders[gender]:
+        image_topic_ids = topics[image_url]
+        image_topic_id = Counter(image_topic_ids).most_common(1)[0][0]
+        if image_topic_id in TOPIC_MAP:
+            topic = ', '.join(TOPIC_MAP[image_topic_id])
+        else:
+            topic = image_topic_id
+        if topic in topic_based_distribution:
+            if gender in topic_based_distribution[topic]:
+                topic_based_distribution[topic][gender] += 1
+            else:
+                topic_based_distribution[topic][gender] = 1
+        else:
+            topic_based_distribution[topic] = {gender: 1}
+
+# print(topic_based_distribution)
+
+with open('/Users/aysanaghazadeh/experiments/topic_based_gender_comparison_DALLE3_QWenVL_results.json', 'w') as file:
+    json.dump(topic_based_distribution, file)
+
+results = json.load(open('/Users/aysanaghazadeh/experiments/results/gender_comparison_DALLE3_InternVL2_5_results.json'))
+print(len(results) * 2)
+genders = {'woman': [], 'man': []}
+for image_url in results:
+    if 'woman' in results[image_url]:
+        for i in range(results[image_url]['woman']):
+            genders['woman'].append(image_url)
+    if 'man' in results[image_url]:
+        for i in range(results[image_url]['man']):
+            genders['man'].append(image_url)
+
+topic_based_distribution = {}
+for gender in genders:
+    for image_url in genders[gender]:
+        image_topic_ids = topics[image_url]
+        image_topic_id = Counter(image_topic_ids).most_common(1)[0][0]
+        if image_topic_id in TOPIC_MAP:
+            topic = ', '.join(TOPIC_MAP[image_topic_id])
+        else:
+            topic = image_topic_id
+        if topic in topic_based_distribution:
+            if gender in topic_based_distribution[topic]:
+                topic_based_distribution[topic][gender] += 1
+            else:
+                topic_based_distribution[topic][gender] = 1
+        else:
+            topic_based_distribution[topic] = {gender: 1}
+
+# print(topic_based_distribution)
+
+with open('/Users/aysanaghazadeh/experiments/topic_based_gender_comparison_DALLE3_InternVL2_5_results.json', 'w') as file:
     json.dump(topic_based_distribution, file)
 
 
-# import json
-# from util.data.mapping import TOPIC_MAP
-# from collections import Counter
-# results = json.load(open('/Users/aysanaghazadeh/experiments/results/gender_comparison_DALLE3_QWenVL_results.json'))
-# results2 = json.load(open('/Users/aysanaghazadeh/experiments/results/gender_comparison_DALLE3_InternVL2_5_results.json'))
-# results3 = json.load(open('/Users/aysanaghazadeh/experiments/results/gender_comparison_DALLE3_GPT4_o_results.json'))
-# # print(len(results))
-# print(len(results) * 2)
-# genders = {'woman': 0, 'man': 0}
-# for image_url in results:
-#     if 'woman' in results[image_url]:
-#         genders['woman'] += results[image_url]['woman']
-#     if 'man' in results[image_url]:
-#         genders['man'] += results[image_url]['man']
-# print(genders)
-# genders = {'woman': 0, 'man': 0}
-# for image_url in results2:
-#     if 'woman' in results2[image_url]:
-#         genders['woman'] += results2[image_url]['woman']
-#     if 'man' in results2[image_url]:
-#         genders['man'] += results2[image_url]['man']
-# print(genders)     
-# genders = {'woman': 0, 'man': 0}
-# for image_url in results3:
-#     if 'woman' in results3[image_url]:
-#         genders['woman'] += results[image_url]['woman']
-#     if 'man' in results3[image_url]:
-#         genders['man'] += results3[image_url]['man']
-# print(genders)      
-# topics = json.load(open('../Data/PittAd/train/Topics_train.json'))
-# races = {'woman': [], 'man': []}
-# for image_url in results_2:
-#     for race1 in races:
-#         for race2 in races:
-#             if race1 == race2:
-#                 continue
-#             if f'{race1}{race2}' not in results[image_url]:
-#                 continue
-#             if results[image_url][f'{race1}{race2}'] == 1:
-#                 races[race1].append(image_url)
-#             else:
-#                 races[race2].append(image_url)
-# topic_based_distribution = {}
-# for race in races:
-#     for image_url in races[race]:
-#         image_topic_ids = topics[image_url]
-#         image_topic_id = Counter(image_topic_ids).most_common(1)[0][0]
-#         if image_topic_id in TOPIC_MAP:
-#             topic = ', '.join(TOPIC_MAP[image_topic_id])
-#         else:
-#             topic = image_topic_id
-#         if topic in topic_based_distribution:
-#             if race in topic_based_distribution[topic]:
-#                 topic_based_distribution[topic][race] += 1
-#             else:
-#                 topic_based_distribution[topic][race] = 1
-#         else:
-#             topic_based_distribution[topic] = {race: 1}
+results = json.load(open('/Users/aysanaghazadeh/experiments/results/gender_comparison_DALLE3_GPT4_o_results.json'))
+print(len(results) * 2)
+genders = {'woman': [], 'man': []}
+for image_url in results:
+    if 'woman' in results[image_url]:
+        for i in range(results[image_url]['woman']):
+            genders['woman'].append(image_url)
+    if 'man' in results[image_url]:
+        for i in range(results[image_url]['man']):
+            genders['man'].append(image_url)
 
-# # print(topic_based_distribution)
+topic_based_distribution = {}
+for gender in genders:
+    for image_url in genders[gender]:
+        image_topic_ids = topics[image_url]
+        image_topic_id = Counter(image_topic_ids).most_common(1)[0][0]
+        if image_topic_id in TOPIC_MAP:
+            topic = ', '.join(TOPIC_MAP[image_topic_id])
+        else:
+            topic = image_topic_id
+        if topic in topic_based_distribution:
+            if gender in topic_based_distribution[topic]:
+                topic_based_distribution[topic][gender] += 1
+            else:
+                topic_based_distribution[topic][gender] = 1
+        else:
+            topic_based_distribution[topic] = {gender: 1}
 
-# with open('/Users/aysanaghazadeh/experiments/topic_based_gender_comparison_DALLE3_QWenVL_results.json', 'w') as file:
-#     json.dump(topic_based_distribution, file)
+# print(topic_based_distribution)
+
+with open('/Users/aysanaghazadeh/experiments/topic_based_gender_comparison_DALLE3_GPT4_o_results.json', 'w') as file:
+    json.dump(topic_based_distribution, file)
 
