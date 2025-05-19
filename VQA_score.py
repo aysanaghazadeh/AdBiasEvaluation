@@ -26,6 +26,7 @@ if __name__ == "__main__":
             image_country_score = clip_flant5_score(images=[image], texts=[country])
             average_score = (image_AR_score + image_country_score) / 2 
             images_scores[filename][country] = [average_score, image_AR_score, image_country_score]
+            print(filename, images_scores[filename])
     with open(os.path.join(args.result_path, 'results', f'VQA_score_{args.T2I_model}.json'), 'w') as file:
         json.dump(images_scores, file)
             
