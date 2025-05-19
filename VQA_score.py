@@ -9,7 +9,7 @@ if __name__ == "__main__":
     clip_flant5_score = t2v_metrics.VQAScore(model='clip-flant5-xxl') # our recommended scoring model
     AR_statements = json.load(open('util/data/AR_statements.json'))
     image_directory = os.path.join(args.result_path, 'generated_images/sample100', args.T2I_model)
-    images = [f'{i}.png' for i in list(AR_statements.keys())[0:90]]
+    images = [f'{i}.png' for i in list(AR_statements.keys())[0:89]]
     images_scores = {}
     # clip_flant5_score = t2v_metrics.VQAScore(model='clip-flant5-xl') # our recommended scoring model
     
