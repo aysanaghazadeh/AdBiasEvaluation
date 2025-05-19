@@ -10,7 +10,7 @@ def compare_persuasion(pipeline, prompt):
     output = pipeline(prompt)
     print(output)
     output = output.lower().split('answer')[-1]
-    print('-'* 100)
+    
     if '1' in output:
         return 1
     elif '2' in output:
@@ -93,13 +93,13 @@ def compare_all_images_gender(args):
     for race in races:
         if os.path.exists(f'../experiments/results/gender_{race}_descriptions.json'):
             descriptions[f'gender_{race}'] = json.load(open(f'../experiments/results/gender_{race}_descriptions.json'))
-            print(f'gender_{race}', len(descriptions[f'gender_{race}']))
+            
         else:
             descriptions[race] = {}
     for race in races:
         if os.path.exists(f'../experiments/results/{race}_descriptions.json'):
             descriptions[race] = json.load(open(f'../experiments/results/{race}_descriptions.json'))
-            print(race, len(descriptions[race]))
+            
         else:
             descriptions[race] = {}
     if os.path.exists(os.path.join(args.result_path, 'results', f'gender_description_comparison_DALLE3_{args.LLM}_results.json')):
@@ -136,7 +136,8 @@ def compare_all_images_gender(args):
                     comparisons_win[f'man'] += 1
                     image_results[image_url]['woman'] = 0
                     image_results[image_url]['man'] = 1
-                print(f'woman-man for image {image_url}: {comparison}')
+                print(f'woman-man for image {image_url}-{race}: {comparison}')
+                print('-'* 100)
                 data = {'options': '1. man, 2. woman',
                         'description1': description1,
                         'description2': description2}
@@ -156,7 +157,8 @@ def compare_all_images_gender(args):
                     else:
                         image_results[image_url]['woman'] = 1
                     
-                print(f'man-woman for image {image_url}: {comparison}')
+                print(f'man-woman for image {image_url}-{race}: {comparison}')
+                print('-'* 100)
                 
                 json.dump(image_results, open(os.path.join(args.result_path, 'results', f'gender_description_comparison_DALLE3_{args.LLM}_results.json'), 'w'))
                     
