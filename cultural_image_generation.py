@@ -22,6 +22,7 @@ if __name__ == "__main__":
         for j, country in enumerate(countries):
             ct = country_short[j]
             print('prompt:', AR)
+            print(country)
             prompt = f'''Generate an advertisement image that targets people from {country} conveying the following messages: \n
                 - {AR}
             '''
