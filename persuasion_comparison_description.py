@@ -88,6 +88,7 @@ def compare_all_images_race(args):
 def compare_all_images_gender(args):
     images = pd.read_csv(os.path.join(args.result_path, 'results', 'AR_DALLE3_20250507_181113.csv')).image_url.values
     descriptions = {}
+    races = ['white', 'black', 'asian', 'indian', 'latino', 'middle_eastern']
     for race in races:
         if os.path.exists(f'../experiments/results/gender_{race}_descriptions.json'):
             descriptions[race] = json.load(open(f'../experiments/results/gender_{race}_descriptions.json'))
