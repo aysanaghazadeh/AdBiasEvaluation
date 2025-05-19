@@ -376,10 +376,10 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
             for i, t in enumerate(timesteps):
                 if self.interrupt:
                     continue
-                if i < 5:
+                if i < 10:
                     mod = i % 1
                 else:
-                    mod = i % 5
+                    mod = i % 10
                 if mod == 0:
                     prompt_embeds = self.projection_block(style_image, original_prompt_embeds, reason_embeds, cultural_components_embeds, i)
                     # prompt_embeds = prompt_embeds.to()
