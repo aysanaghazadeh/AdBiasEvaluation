@@ -21,7 +21,7 @@ class T2IModel(nn.Module):
             'Flux': Flux,
             'GPTImage': GPT_Image,
             'SD3': SD3,
-            'Custom_SD3': CustomeSD3
+            'Custome_SD3': CustomeSD3
         }
         self.model = model_map[args.T2I_model](args)
 
