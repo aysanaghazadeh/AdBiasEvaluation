@@ -426,7 +426,7 @@
 
 import json
 
-scores = json.load(open('/Users/aysanaghazadeh/experiments/results/VQA_score_SD3.json'))
+scores = json.load(open('/Users/aysanaghazadeh/experiments/results/VQA_score_Flux.json'))
 average_score = 0
 count = 0
 i = 0
@@ -435,7 +435,7 @@ for image_url in scores:
         break
     i += 1
     for race in scores[image_url]:
-        average_score += scores[image_url][race][0]
+        average_score += scores[image_url][race][2]
         count += 1
 print(average_score/count)
     
