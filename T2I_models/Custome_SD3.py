@@ -25,7 +25,7 @@ class ProjectionBlock(torch.nn.Module):
 
     def forward(self, image, encoded_prompt, encoded_reason, encoded_cultural_components, time_step):
         
-        if time_step < 5:
+        if time_step < 10:
             return encoded_prompt
         # encoded_cultural_components = torch.cat([e for e in encoded_cultural_components], dim=0)
         
@@ -38,7 +38,7 @@ class ProjectionBlock(torch.nn.Module):
         if time_step < 20:
             # print(encoded_prompt.size(), cultural_components_reason.size())
             # print(torch.cat([encoded_prompt, cultural_components_reason], dim=1).size())
-            return torch.cat([encoded_cultural_components, encoded_reason, encoded_prompt], dim=1)
+            return torch.cat([encoded_cultural_components, encoded_prompt, encoded_reason], dim=1)
         encoded_prompt = encoded_prompt.to(self.args.device)
         inputs = self.CLIP_processor(images=image, return_tensors="pt").to(self.args.device)
         clip_image_features = self.CLIP_model.get_image_features(**inputs)
