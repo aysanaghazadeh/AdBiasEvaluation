@@ -342,8 +342,8 @@
 import json
 from util.data.mapping import TOPIC_MAP
 from collections import Counter
-results = json.load(open('/Users/aysanaghazadeh/experiments/results/race_comparison_DALLE3_InternVL2_5_results.json'))
-results_2 = json.load(open('/Users/aysanaghazadeh/experiments/results/race_comparison_DALLE3_QWenVL_results.json'))
+results = json.load(open('/Users/aysanaghazadeh/experiments/results/race_description_comparison_DALLE3_GPT4_o_results.json'))
+# results_2 = json.load(open('/Users/aysanaghazadeh/experiments/results/race_comparison_DALLE3_QWenVL_results.json'))
 print(len(results))
 topics = json.load(open('../Data/PittAd/train/Topics_train.json'))
 races = {'white': [], 'black': [], 'asian': [], 'indian': [], 'latino': [], 'middle_eastern': []}
@@ -379,7 +379,7 @@ for race in races:
 
 # print(topic_based_distribution)
 
-with open('/Users/aysanaghazadeh/experiments/topic_based_race_comparison_DALLE3_InternVL2_5_results.json', 'w') as file:
+with open('/Users/aysanaghazadeh/experiments/topic_based_race_description_comparison_DALLE3_GPT4_o_results.json', 'w') as file:
     json.dump(topic_based_distribution, file)
 
 
