@@ -376,7 +376,7 @@ class CustomStableDiffusionPipeline(StableDiffusion3Pipeline):
             for i, t in enumerate(timesteps):
                 if self.interrupt:
                     continue
-                if i < 10:
+                if i < 10 and i > 5:
                     mod = i % 1
                 else:
                     mod = i % 10
