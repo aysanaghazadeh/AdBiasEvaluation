@@ -93,11 +93,13 @@ def compare_all_images_gender(args):
     for race in races:
         if os.path.exists(f'../experiments/results/gender_{race}_descriptions.json'):
             descriptions[race] = json.load(open(f'../experiments/results/gender_{race}_descriptions.json'))
+            print(f'gender_{race}', len(descriptions[f'gender_{race}']))
         else:
             descriptions[race] = {}
     for race in races:
         if os.path.exists(f'../experiments/results/{race}_descriptions.json'):
             descriptions[race] = json.load(open(f'../experiments/results/{race}_descriptions.json'))
+            print(race, len(descriptions[race]))
         else:
             descriptions[race] = {}
     if os.path.exists(os.path.join(args.result_path, 'results', f'gender_description_comparison_DALLE3_{args.LLM}_results.json')):
