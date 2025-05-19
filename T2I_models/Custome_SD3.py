@@ -72,7 +72,7 @@ class CustomeSD3(nn.Module):
             load_in_8bit=True,
         ).to(self.device)
         self.projection_block = ProjectionBlock(args)
-        self.projection_block.load_state_dict(torch.load("../models/SD3_modified/checkpoint-500/projection_block.pt"))
+        # self.projection_block.load_state_dict(torch.load("../models/SD3_modified/checkpoint-500/projection_block.pt"))
         self.projection_block.to(self.device) 
         self.pipeline.projection_block = self.projection_block
         self.country_image_map = json.load(open(os.path.join(args.data_path, "train/countries_image_map_single.json")))
