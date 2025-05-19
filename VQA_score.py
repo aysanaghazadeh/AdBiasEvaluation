@@ -17,6 +17,7 @@ if __name__ == "__main__":
     country_short = ['fr', 'cn', 'uae', 'sa', 'm']
 
     for filename in images:
+        images_scores[filename] = {}
         for i, country in enumerate(countries):
             ct = country_short[i]
             
