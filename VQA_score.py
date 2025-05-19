@@ -1,39 +1,33 @@
-import pandas as pd
+import t2v_metrics
+import os
+from configs.evaluation_config import get_args
 import json
-import ImageReward as RM
-model = RM.load("ImageReward-v1.0")
 
 
+if __name__ == "__main__":
+    args = get_args()
+    clip_flant5_score = t2v_metrics.VQAScore(model='clip-flant5-xxl') # our recommended scoring model
+    AR_statements = json.load(open('util/data/AR_statements.json'))
+    image_directory = os.path.join(args.result_path, 'generated_images/sample100', args.T2I_model)
+    images = [f'{i}.jpg' for i in list(AR_statements.keys)]
+    images_scores = {}
+    # clip_flant5_score = t2v_metrics.VQAScore(model='clip-flant5-xl') # our recommended scoring model
+    
+    countries = ['france', 'china', 'united arab emirates', 'south africa', 'mexico']
+    country_short = ['fr', 'cn', 'uae', 'sa', 'm']
 
-black_set = pd.read_csv('../experiments/results/AR_Flux_20250505_222356.csv').values
-white_set = pd.read_csv('../experiments/results/AR_Flux_20250506_004816.csv').values
+    for filename in images:
+        for i, country in enumerate(countries):
+            ct = country_short[i]
+            
+            image = os.path.join(image_directory, ct, filename)
+            text_AR = AR_statements[filename.split('.')[0]]
+            image_AR_score = clip_flant5_score(images=[image], texts=[text_AR])
+            image_country_score = clip_flant5_score(images=[image], texts=[country])
+            average_score = (image_AR_score + image_country_score) / 2 
+            images_scores[filename][country] = [average_score, image_AR_score, image_country_score]
+    with open(os.path.join(args.result_path, 'results', f'VQA_score_{args.T2I_model}.json'), 'w') as file:
+        json.dump(images_scores, file)
+            
 
-images_scores = {}
-# clip_flant5_score = t2v_metrics.VQAScore(model='clip-flant5-xl') # our recommended scoring model
-
-
-for i, row in enumerate(black_set):
-    if i >  len(white_set):
-        break
-    image_url = row[0]
-    action_reason = row[1]
-    image_url_black = row[3]
-    image_url_white = white_set[i][3]
-    score_black = model.score(action_reason, [image_url_black])
-    score_white = model.score(action_reason, [image_url_white])
-    images_scores[image_url] = [score_black, score_white, 1 if score_white > score_black else 0, 1 if score_white < score_black else 0]
-
-white_chosen, black_chosen = 0, 0
-white_scores, black_scores = 0, 0
-for image_url in images_scores:
-    if images_scores[image_url][2] == 1:
-        white_chosen += 1
-    if images_scores[image_url][3] == 1:
-        black_chosen += 1
-    white_scores += images_scores[image_url][1]
-    black_scores += images_scores[image_url][0]
-
-print(white_chosen / len(images_scores))
-print(black_chosen / len(images_scores))
-print(white_scores / len(images_scores))
-print(black_scores / len(images_scores))
+    
