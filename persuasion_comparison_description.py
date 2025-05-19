@@ -42,6 +42,7 @@ def compare_all_images_race(args):
     for race in races:
         if os.path.exists(f'../experiments/results/{race}_descriptions.json'):
             descriptions[race] = json.load(open(f'../experiments/results/{race}_descriptions.json'))
+            print(len(descriptions[race]))
         else:
             descriptions[race] = {}
     if os.path.exists(os.path.join(args.result_path, 'results', f'race_description_comparison_DALLE3_{args.LLM}_results.json')):
