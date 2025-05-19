@@ -267,7 +267,7 @@ COUNTRY_TO_VISUAL = {
     "nigeria": "Zuma Rock",
     "south africa": "Table Mountain",
     "qatar": "Aspire Tower",
-    "united arab emirates": "Burj Khalifa",
+    "united arab emirates": "desert",
     "saudi arabia": "Kaaba",
     "pakistan": "Badshahi Mosque",
     "bangladesh": "Rickshaw",
