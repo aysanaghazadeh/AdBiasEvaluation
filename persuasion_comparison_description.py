@@ -112,14 +112,14 @@ def compare_all_images_gender(args):
     races = ['white', 'black', 'asian', 'indian', 'latino', 'middle_eastern']
     comparisons_win = {'man': 0, 'woman': 0}
     
-    for image_url in images:
+    for image_url in images[:112]:
         if image_url in image_results:
             continue
         image_results[image_url] = {}
         for race in races:
             if description_exists_gender(descriptions, image_url):
                 env = Environment(loader=FileSystemLoader(args.prompt_path))
-                template = env.get_template(args.VLM_prompt)
+                template = env.get_template(args.llm_prompt)
                 description1 = descriptions[race][image_url]
                 description2 = descriptions[f'gender_{race}'][image_url]
             
