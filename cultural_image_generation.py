@@ -19,6 +19,8 @@ if __name__ == "__main__":
     countries = ['france', 'china', 'united arab emirates', 'south africa', 'mexico']
     country_short = ['fr', 'cn', 'uae', 'sa', 'm']
     for i, AR in ARs.items():
+        if str(i) != '14':
+            continue
         for j, country in enumerate(countries):
             ct = country_short[j]
             print('prompt:', AR)
