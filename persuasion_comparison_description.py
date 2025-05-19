@@ -92,7 +92,7 @@ def compare_all_images_gender(args):
     races = ['white', 'black', 'asian', 'indian', 'latino', 'middle_eastern']
     for race in races:
         if os.path.exists(f'../experiments/results/gender_{race}_descriptions.json'):
-            descriptions[race] = json.load(open(f'../experiments/results/gender_{race}_descriptions.json'))
+            descriptions[f'gender_{race}'] = json.load(open(f'../experiments/results/gender_{race}_descriptions.json'))
             print(f'gender_{race}', len(descriptions[f'gender_{race}']))
         else:
             descriptions[race] = {}
