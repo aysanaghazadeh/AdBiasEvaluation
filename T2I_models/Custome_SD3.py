@@ -8,6 +8,7 @@ import json
 import os
 import random
 from PIL import Image
+from util.data.mapping import COUNTRY_TO_VISUAL
 
 class ProjectionBlock(torch.nn.Module):
     def __init__(self, args):
@@ -76,6 +77,7 @@ class CustomeSD3(nn.Module):
         self.pipeline.projection_block = self.projection_block
         self.country_image_map = json.load(open(os.path.join(args.data_path, "train/countries_image_map_single.json")))
         self.image_cultural_components_map = json.load(open(os.path.join(args.data_path, "train/components.json")))
+        
 
     def forward(self, prompt):
         country = prompt.split("Generate an advertisement image that targets people from ")[-1].split(" conveying the following messages:")[0]
@@ -89,7 +91,10 @@ class CustomeSD3(nn.Module):
             negative_style_image = '4/85894.jpg'
         style_image = Image.open(os.path.join(self.args.data_path, "train_images_total", style_images[0]))
         negative_style_image = Image.open(os.path.join(self.args.data_path, "train_images_total", negative_style_image))
-        cultural_components = ''
+        if country in COUNTRY_TO_VISUAL:
+            cultural_components = COUNTRY_TO_VISUAL[country]
+        else:
+            cultural_components = ''
         for image in style_images:
             cultural_components += ' ' + ', '.join(self.image_cultural_components_map[image])
         print(cultural_components)
