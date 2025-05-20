@@ -13,9 +13,9 @@ class AuraFlow(nn.Module):
             bnb_8bit_compute_dtype=torch.float16
         )
         self.pipeline = DiffusionPipeline.from_pretrained(
-                            "/u/aya34/HF_CACHE/hub/models--fal--AuraFlow-v0.2/snapshots/ea13150f559b7f85d2c5959297f7de10325584b4/transformer",
+                            "/u/aya34/HF_CACHE/hub/models--fal--AuraFlow-v0.2",  # ← This is the key fix
                             torch_dtype=torch.float16,
-                            variant="fp16"  # This tells it to look for `*.fp16.safetensors`
+                            variant="fp16"
                         ).to("cuda")
 
     def forward(self, prompt):
