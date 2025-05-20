@@ -27,7 +27,7 @@ if __name__ == "__main__":
             image_AR_score = model.score(text_AR, [image])
             image_country_score = model.score(country, [image])
             average_score = (image_AR_score + image_country_score) / 2 
-            images_scores[filename][country] = [average_score.item(), image_AR_score.item(), image_country_score.item()]
+            images_scores[filename][country] = [average_score, image_AR_score, image_country_score]
         print(filename, images_scores[filename])
         with open(os.path.join(args.result_path, 'results', f'Image_Reward_score_{args.T2I_model}.json'), 'w') as file:
             json.dump(images_scores, file)
