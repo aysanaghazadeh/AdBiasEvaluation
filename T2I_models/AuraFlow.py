@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from diffusers import AuraFlowPipeline, DiffusionPipeline
+from diffusers import AuraFlowPipeline
 from transformers import BitsAndBytesConfig
 
 
@@ -12,10 +12,10 @@ class AuraFlow(nn.Module):
             load_in_8bit=True,
             bnb_8bit_compute_dtype=torch.float16
         )
-        self.pipeline = DiffusionPipeline.from_pretrained(
-                            "/u/aya34/HF_CACHE/hub/models--fal--AuraFlow-v0.2",  # ← This is the key fix
+        self.pipeline = AuraFlowPipeline.from_pretrained(
+                            "fal/AuraFlow-v0.2",
                             torch_dtype=torch.float16,
-                            variant="fp16"
+                            variant="fp16",
                         ).to("cuda")
 
     def forward(self, prompt):
