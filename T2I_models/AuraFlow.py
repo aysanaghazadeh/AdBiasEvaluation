@@ -15,7 +15,6 @@ class AuraFlow(nn.Module):
         self.pipeline = AuraFlowPipeline.from_pretrained(
                             "fal/AuraFlow-v0.2",
                             torch_dtype=torch.float16,
-                            variant="fp16",
                         ).to("cuda")
 
     def forward(self, prompt):
