@@ -8,6 +8,7 @@ from T2I_models.Flux import Flux
 from T2I_models.gpt_image import GPT_Image
 from T2I_models.SD3 import SD3
 from T2I_models.Custome_SD3 import CustomeSD3
+from T2I_models.Custome_SD3_early import CustomeSD3Early
 
 class T2IModel(nn.Module):
     def __init__(self, args):
@@ -21,7 +22,9 @@ class T2IModel(nn.Module):
             'Flux': Flux,
             'GPTImage': GPT_Image,
             'SD3': SD3,
-            'Custome_SD3': CustomeSD3
+            'Custome_SD3': CustomeSD3,
+            'Custome_SD3_early': CustomeSD3Early
+            
         }
         self.model = model_map[args.T2I_model](args)
 
