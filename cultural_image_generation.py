@@ -19,7 +19,7 @@ if __name__ == "__main__":
     countries = ['India', 'Turkey']
     country_short = ['in', 'tr']
     for i, AR in ARs.items():
-        if i < 40:
+        if int(i) < 40:
             continue
         for j, country in enumerate(countries):
             
