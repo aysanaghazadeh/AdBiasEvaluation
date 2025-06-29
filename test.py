@@ -427,16 +427,17 @@ results = json.load(open('/Users/aysanaghazadeh/experiments/results/gender_compa
 
 import json
 
-scores = json.load(open('/Users/aysanaghazadeh/experiments/results/VQA_score_PixArt.json'))
-average_score = 0
-count = 0
-i = 0
-for image_url in scores:
-    if i >= 90:
-        break
-    i += 1
-    for race in scores[image_url]:
-        average_score += scores[image_url][race][0]
-        count += 1
-print(average_score/count)
+scores = json.load(open('/Users/aysanaghazadeh/experiments/results/VQA_score_AuraFlow.json'))
+for j in range(3):
+    average_score = 0
+    count = 0
+    i = 0
+    for image_url in scores:
+        if i >= 90:
+            break
+        i += 1
+        for race in scores[image_url]:
+            average_score += scores[image_url][race][j]
+            count += 1
+    print(j, average_score/count)
     
