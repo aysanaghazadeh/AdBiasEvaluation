@@ -425,19 +425,34 @@ results = json.load(open('/Users/aysanaghazadeh/experiments/results/gender_compa
 # with open('/Users/aysanaghazadeh/experiments/topic_based_gender_description_comparison_DALLE3_GPT4_o_results.json', 'w') as file:
 #     json.dump(topic_based_distribution, file)
 
-import json
+# import json
 
-scores = json.load(open('/Users/aysanaghazadeh/experiments/results/VQA_score_AuraFlow.json'))
-for j in range(3):
-    average_score = 0
-    count = 0
-    i = 0
-    for image_url in scores:
-        if i >= 90:
-            break
-        i += 1
-        for race in scores[image_url]:
-            average_score += scores[image_url][race][j]
-            count += 1
-    print(j, average_score/count)
+# scores = json.load(open('/Users/aysanaghazadeh/experiments/results/VQA_score_AuraFlow.json'))
+# for j in range(3):
+#     average_score = 0
+#     count = 0
+#     i = 0
+#     for image_url in scores:
+#         if i >= 90:
+#             break
+#         i += 1
+#         for race in scores[image_url]:
+#             average_score += scores[image_url][race][j]
+#             count += 1
+#     print(j, average_score/count)
     
+import json
+country_image_map = json.load(open('/Users/aysanaghazadeh/Downloads/countries_image_map_single.json'))
+country_image_count = {}
+for country in country_image_map:
+    country_image_count[country] = len(country_image_map[country])
+sorted_country_image_count = sorted(country_image_count.items(), key=lambda x: x[1], reverse=True)
+for i, (country, count) in enumerate(sorted_country_image_count):
+    if i >= 20:
+        break
+    print(country, count)
+
+
+
+print(country_image_count['turkey'])
+
