@@ -16,11 +16,10 @@ if __name__ == "__main__":
     model = T2IModel(args)
     ARs = json.load(open('util/data/AR_statements.json'))
 
-    countries = ['India', 'Turkey']
-    country_short = ['in', 'tr']
+    countries = ['france', 'china', 'united arab emirates', 'south africa', 'mexico']
+    country_short = ['fr', 'cn', 'uae', 'sa', 'm']
     for i, AR in ARs.items():
-        if int(i) < 40:
-            continue
+        
         for j, country in enumerate(countries):
             
             ct = country_short[j]
