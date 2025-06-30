@@ -28,7 +28,7 @@ class ProjectionBlock(torch.nn.Module):
         if time_step < 6:
             return encoded_prompt
         encoded_cultural_components = torch.cat([e for e in encoded_cultural_components], dim=0)
-        
+        print(encoded_cultural_components.size())
         cultural_components_reason, _ = self.texts_cross_attention(
                                         query=encoded_reason,              # (1, 154, 4096)
                                         key=encoded_cultural_components,          # (1, 1, 4096)
