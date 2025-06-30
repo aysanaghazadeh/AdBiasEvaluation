@@ -31,6 +31,10 @@ if __name__ == "__main__":
         print(filename, images_scores[filename])
         with open(os.path.join(args.result_path, 'results', f'Image_Reward_score_{args.T2I_model}.json'), 'w') as file:
             json.dump(images_scores, file)
-            
-
-    
+    average_scores = [0, 0, 0]
+    for filename in images_scores:
+        for country in images_scores[filename]:
+            average_scores[0] += images_scores[filename][country][0]
+            average_scores[1] += images_scores[filename][country][1]
+            average_scores[2] += images_scores[filename][country][2]
+    print(average_scores[0]/len(images_scores), average_scores[1]/len(images_scores), average_scores[2]/len(images_scores))
