@@ -24,7 +24,7 @@ class ProjectionBlock(torch.nn.Module):
         self.args = args
 
     def forward(self, image, encoded_prompt, encoded_reason, encoded_cultural_components, time_step):
-        print(encoded_prompt.size(), cultural_components_reason.size())
+        print(encoded_prompt.size(), encoded_cultural_components.size())
         if time_step < 6:
             return encoded_prompt
         encoded_cultural_components = torch.cat([e for e in encoded_cultural_components], dim=0)
