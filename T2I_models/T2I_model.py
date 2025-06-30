@@ -12,6 +12,7 @@ from T2I_models.Custome_SD3_early import CustomeSD3Early
 from T2I_models.Custome_SD3_late import CustomeSD3Late
 from T2I_models.Custome_SD3_no_cultural_component import CustomeSD3NoCulturalComponent
 from T2I_models.Custome_SD3_no_image import CustomeSD3NoImage
+from T2I_models.Custome_SD3_multiple_images import CustomeSD3MultipleImages
 
 class T2IModel(nn.Module):
     def __init__(self, args):
@@ -29,7 +30,8 @@ class T2IModel(nn.Module):
             'Custome_SD3_early': CustomeSD3Early,
             'Custome_SD3_late': CustomeSD3Late,
             'Custome_SD3_ncc': CustomeSD3NoCulturalComponent,
-            'Custome_SD3_ni': CustomeSD3NoImage
+            'Custome_SD3_ni': CustomeSD3NoImage,
+            'Custome_SD3_mi': CustomeSD3MultipleImages
         }
         self.model = model_map[args.T2I_model](args)
 
